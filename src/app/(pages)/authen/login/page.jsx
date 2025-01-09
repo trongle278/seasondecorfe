@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import ThemeSwitch from "./../../../components/ThemeSwitch";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,11 +19,22 @@ export default function Login() {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
+    arrows: false,
     appendDots: (dots) => (
-      <div style={{ bottom: '-15px', position: 'relative' }}>{dots}</div>
+      <div
+        style={{
+          bottom: "-15px",
+          position: "relative",
+        }}
+        className="dark:bg-gray-800"
+      >
+        <ul className="slick-dots">{dots}</ul>
+      </div>
     ),
   };
   
+  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Email:", email);
@@ -30,8 +42,12 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-200 via-yellow-100 to-green-200">
-      <div className="bg-white shadow-2xl rounded-xl flex max-w-4xl overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-200 via-yellow-100 to-green-200 dark:from-gray-800 dark:to-gray-900">
+      <div className="absolute top-5 right-5">
+        <ThemeSwitch />
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl flex max-w-4xl overflow-hidden">
         {/* Left Side: Carousel */}
         <div className="w-1/2 hidden md:block">
           <Slider {...settings}>
@@ -67,11 +83,11 @@ export default function Login() {
         </div>
 
         {/* Right Side: Login Form */}
-        <div className="w-full md:w-1/2 p-10 bg-gradient-to-br from-white to-gray-100">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        <div className="w-full md:w-1/2 p-10 bg-gradient-to-br from-white to-gray-100 dark:from-gray-700 dark:to-gray-800">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
             Welcome Back!
           </h2>
-          <p className="text-gray-600 mb-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300 mb-8 text-center">
             Login to your account and start exploring seasonal decorations.
           </p>
 
@@ -81,7 +97,7 @@ export default function Login() {
             <div className="relative">
               <FontAwesomeIcon
                 icon={faEnvelope}
-                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400"
+                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
               />
               <input
                 type="email"
@@ -89,7 +105,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                 required
               />
             </div>
@@ -98,7 +114,7 @@ export default function Login() {
             <div className="relative">
               <FontAwesomeIcon
                 icon={faLock}
-                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400"
+                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
               />
               <input
                 type="password"
@@ -106,7 +122,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                 required
               />
             </div>
@@ -120,7 +136,16 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-gray-600 text-center mt-8">
+          {/* Google Login */}
+          <div className="mt-4 text-center">
+            <button
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+            >
+              Login with Google
+            </button>
+          </div>
+
+          <p className="text-gray-600 dark:text-gray-300 text-center mt-8">
             Don't have an account?{" "}
             <a href="/signup" className="text-orange-500 hover:underline">
               Sign up
