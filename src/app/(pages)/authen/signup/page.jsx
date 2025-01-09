@@ -154,7 +154,7 @@ export default function SignUp() {
 
 <p className="text-center text-gray-600 dark:text-gray-300 mt-6">
   Already have an account?{" "}
-  <a href="/login" className="text-orange-500 hover:underline">
+  <a href="/authen/login" className="text-orange-500 hover:underline">
     Login
   </a>
 </p>
