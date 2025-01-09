@@ -189,3 +189,24 @@ html, body {
   height: 100%;
   position: relative;
 }
+.slick-dots {
+ 
+  bottom: 1px !important; 
+ 
+  display: flex !important;
+  justify-content: center !important; 
+  align-items: center !important;
+}
+
+.slick-dots li {
+  margin: 0 5px;
+}
+
+.slick-dots li button:before {
+  font-size: 12px; 
+  color: #ccc; 
+}
+
+.slick-dots li.slick-active button:before {
+  color: #ff8800; 
+}
