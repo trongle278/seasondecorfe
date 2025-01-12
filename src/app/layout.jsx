@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import Header from "./components/layouts/header/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,9 +21,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="antialiased dark:bg-transparent">
         <Providers>
-          <div id="__next">{children}</div>
+          <div id="__next">
+            <Header />
+            <>{children}</>
+          </div>
         </Providers>
       </body>
     </html>
