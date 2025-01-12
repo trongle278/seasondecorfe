@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import ThemeSwitch from "./../../../components/ThemeSwitch";
+import Link from "next/link";
 
 export default function SignUp() {
   const settings = {
@@ -154,10 +155,11 @@ export default function SignUp() {
 
 <p className="text-center text-gray-600 dark:text-gray-300 mt-6">
   Already have an account?{" "}
-  <a href="/authen/login" className="text-orange-500 hover:underline">
+  <Link href="/authen/login" className="text-orange-500 hover:underline">
     Login
-  </a>
+  </Link>
 </p>
+
 </div>
 </div>
 

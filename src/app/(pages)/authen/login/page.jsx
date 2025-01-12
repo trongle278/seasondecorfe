@@ -6,6 +6,8 @@ import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import ThemeSwitch from "./../../../components/ThemeSwitch";
+import Link from "next/link";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -135,21 +137,22 @@ export default function Login() {
               Login
             </button>
           </form>
-
-          {/* Google Login */}
           <div className="mt-4 text-center">
-            <button
-              className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
-            >
-              Login with Google
-            </button>
-          </div>
-
+  <button
+    className="w-full py-3 flex items-center justify-center bg-gradient-to-r from-[#00FFA9] to-[#0D4DFF] text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition-transform"
+  >
+    <FontAwesomeIcon
+      icon={faGoogle}
+      className="mr-2 text-white"
+    />
+    Login with Google
+  </button>
+</div>
           <p className="text-gray-600 dark:text-gray-300 text-center mt-8">
             Don't have an account?{" "}
-            <a href="/authen/signup" className="text-orange-500 hover:underline">
+            <Link href="/authen/signup" className="text-orange-500 hover:underline">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
