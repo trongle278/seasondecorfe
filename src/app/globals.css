@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  box-sizing: border-box;
+}
+
 :root {
   margin: 0;
   padding: 0;
   --background: #ffffff;
   --foreground: #171717;
-  
+
   --rem-scale-design-width: 1920;
   --rem-scale-scale-factor: 1;
   --rem-scale-scale-min: 0.1;
@@ -33,28 +37,43 @@
   --color-primary: #5fc1f1;
   --color-secondary: #f15ff1;
   --color-action: var(--color-neutral-0);
-  --color-action-light: 
-color-mix(in srgb, var(--color-neutral-0) var(--light-percentage), var(--color-white));
+  --color-action-light: color-mix(
+    in srgb,
+    var(--color-neutral-0) var(--light-percentage),
+    var(--color-white)
+  );
   --color-action-contrast: var(--color-white);
   --color-action-default: var(--color-action);
   --color-action-inverse: var(--color-neutral-100);
   --color-action-highlight: var(--color-highlight);
   --color-action-muted: var(--color-neutral-60);
   --color-highlight: #0e87eb;
-  --color-highlight-light: 
-color-mix(in srgb, var(--color-highlight) var(--light-percentage), var(--color-white));
+  --color-highlight-light: color-mix(
+    in srgb,
+    var(--color-highlight) var(--light-percentage),
+    var(--color-white)
+  );
   --color-highlight-contrast: var(--color-white);
   --color-success: var(--color-green);
-  --color-success-light: 
-color-mix(in srgb, var(--color-success) var(--light-percentage), var(--color-white));
+  --color-success-light: color-mix(
+    in srgb,
+    var(--color-success) var(--light-percentage),
+    var(--color-white)
+  );
   --color-success-contrast: var(--color-action-contrast);
   --color-warning: var(--color-yellow);
-  --color-warning-light: 
-color-mix(in srgb, var(--color-warning) var(--light-percentage), var(--color-white));
+  --color-warning-light: color-mix(
+    in srgb,
+    var(--color-warning) var(--light-percentage),
+    var(--color-white)
+  );
   --color-warning-contrast: var(--color-action-contrast);
   --color-error: var(--color-red);
-  --color-error-light: 
-color-mix(in srgb, var(--color-error) var(--light-percentage), var(--color-white));
+  --color-error-light: color-mix(
+    in srgb,
+    var(--color-error) var(--light-percentage),
+    var(--color-white)
+  );
   --color-error-contrast: var(--color-action-contrast);
   --color-viewport-background: var(--color-white);
   --color-text-primary: var(--color-neutral-10);
@@ -66,9 +85,12 @@ color-mix(in srgb, var(--color-error) var(--light-percentage), var(--color-white
   --color-nav-light: var(--color-white);
   --color-nav-dark: var(--color-text-primary);
   --color-nprogress: #f6668b;
-  --font-primary-stack: "Oracle", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Noto Sans Regular", Helvetica Neue, Helvetica, Arial, sans-serif;
+  --font-primary-stack: "Oracle", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    "Noto Sans TC", "Noto Sans Regular", Helvetica Neue, Helvetica, Arial,
+    sans-serif;
   --font-secondary-stack: Arial, Helvetica Neue, Helvetica, sans-serif;
-  --font-tertiary-stack: Lucida Sans Typewriter, Lucida Console, monaco, Bitstream Vera Sans Mono, monospace;
+  --font-tertiary-stack: Lucida Sans Typewriter, Lucida Console, monaco,
+    Bitstream Vera Sans Mono, monospace;
   --font-family: var(--font-primary-stack);
   --font-family-heading: var(--font-family);
   --font-weight-thin: 100;
@@ -89,7 +111,7 @@ color-mix(in srgb, var(--color-error) var(--light-percentage), var(--color-white
   --font-size-h5: 4rem;
   --font-size-h6: 3rem;
   --font-size-body: var(--font-size-base);
-  --font-size-body-sm: max(10px, calc(var(--font-size-base)* 0.75));
+  --font-size-body-sm: max(10px, calc(var(--font-size-base) * 0.75));
   --font-size-body-lg: max(22px, 2.2rem);
   --line-height-reset: 1;
   --line-height-text: 1.5;
@@ -99,64 +121,76 @@ color-mix(in srgb, var(--color-error) var(--light-percentage), var(--color-white
   --line-height-h4: 87%;
   --line-height-h5: 140%;
   --line-height-h6: 87%;
-  --font-h1: var(--font-weight-extra-light) var(--font-size-h1) / var(--line-height-h1) var(--font-family-heading);
-  --font-h2: 250 var(--font-size-h2) / var(--line-height-h2) var(--font-family-heading);
-  --font-h3: 250 var(--font-size-h3) / var(--line-height-h3) var(--font-family-heading);
-  --font-h4: var(--font-weight-light) var(--font-size-h4) / var(--line-height-h4) var(--font-family-heading);
-  --font-h5: var(--font-weight-light) var(--font-size-h5) / var(--line-height-h5) var(--font-family-heading);
-  --font-h6: var(--font-weight-light) var(--font-size-h6) / var(--line-height-h6) var(--font-family-heading);
-  --font-sub-h1-light: var(--font-weight-light) 3rem / 100% var(--font-family-heading);
-  --font-sub-h2: var(--font-weight-normal) 3.2rem / 118% var(--font-family-heading);
-  --font-sub-h2-mobile: var(--font-weight-normal) 2rem / 120% var(--font-family-heading);
-  --font-body: var(--font-weight-normal) var(--font-size-body) / 120% var(--font-family);
+  --font-h1: var(--font-weight-extra-light) var(--font-size-h1) /
+    var(--line-height-h1) var(--font-family-heading);
+  --font-h2: 250 var(--font-size-h2) / var(--line-height-h2)
+    var(--font-family-heading);
+  --font-h3: 250 var(--font-size-h3) / var(--line-height-h3)
+    var(--font-family-heading);
+  --font-h4: var(--font-weight-light) var(--font-size-h4) /
+    var(--line-height-h4) var(--font-family-heading);
+  --font-h5: var(--font-weight-light) var(--font-size-h5) /
+    var(--line-height-h5) var(--font-family-heading);
+  --font-h6: var(--font-weight-light) var(--font-size-h6) /
+    var(--line-height-h6) var(--font-family-heading);
+  --font-sub-h1-light: var(--font-weight-light) 3rem / 100%
+    var(--font-family-heading);
+  --font-sub-h2: var(--font-weight-normal) 3.2rem / 118%
+    var(--font-family-heading);
+  --font-sub-h2-mobile: var(--font-weight-normal) 2rem / 120%
+    var(--font-family-heading);
+  --font-body: var(--font-weight-normal) var(--font-size-body) / 120%
+    var(--font-family);
   --font-size-label-2: max(12.8px, 1.8rem);
   --font-label-0: 400 max(10px, 1.4rem) / 120% var(--font-family-heading);
   --font-size-label-1: max(11.4px, 1.6rem);
   --font-label-1: 400 var(--font-size-label-1) / 120% var(--font-family-heading);
   --font-label-2: 350 var(--font-size-label-2) / 110% var(--font-family-heading);
-  --font-label-2-medium: 500 max(12.8px, 1.8rem) / 120% var(--font-family-heading);
+  --font-label-2-medium: 500 max(12.8px, 1.8rem) / 120%
+    var(--font-family-heading);
   --font-label-3: 400 max(14px, 2rem) / 100% var(--font-family-heading);
   --font-label-4: 400 max(16px, 2.4rem) / 120% var(--font-family-heading);
   --font-label-4-light: 300 max(16px, 2.4rem) / 120% var(--font-family-heading);
-  --font-mega-nav-anchor: 300 var(--font-size-label-1) / 140% var(--font-family-heading);
+  --font-mega-nav-anchor: 300 var(--font-size-label-1) / 140%
+    var(--font-family-heading);
   --spacing-base: 3.6rem;
-  --spacing-xs: calc(var(--spacing-base)* 0.25);
-  --spacing-sm: calc(var(--spacing-base)* 0.5);
+  --spacing-xs: calc(var(--spacing-base) * 0.25);
+  --spacing-sm: calc(var(--spacing-base) * 0.5);
   --spacing-md: var(--spacing-base);
-  --spacing-lg: calc(var(--spacing-base)* 1.3);
-  --spacing-xl: calc(var(--spacing-base)* 2);
+  --spacing-lg: calc(var(--spacing-base) * 1.3);
+  --spacing-xl: calc(var(--spacing-base) * 2);
   --browser-chrome-height: 0px;
-  --linear: cubic-bezier(0.25,0.25,0.75,0.75);
-  --ease: cubic-bezier(0.25,0.1,0.25,1);
-  --ease-in: cubic-bezier(0.42,0,1,1);
-  --ease-out: cubic-bezier(0,0,0.58,1);
-  --ease-in-out: cubic-bezier(0.42,0,0.58,1);
-  --ease-in-quad: cubic-bezier(0.55,0.085,0.68,0.53);
-  --ease-in-cubic: cubic-bezier(0.55,0.055,0.675,0.19);
-  --ease-in-quart: cubic-bezier(0.895,0.03,0.685,0.22);
-  --ease-in-quint: cubic-bezier(0.755,0.05,0.855,0.06);
-  --ease-in-sine: cubic-bezier(0.47,0,0.745,0.715);
-  --ease-in-expo: cubic-bezier(0.95,0.05,0.795,0.035);
-  --ease-in-circ: cubic-bezier(0.6,0.04,0.98,0.335);
-  --ease-in-back: cubic-bezier(0.6,-0.28,0.735,0.045);
-  --ease-out-quad: cubic-bezier(0.25,0.46,0.45,0.94);
-  --ease-out-cubic: cubic-bezier(0.215,0.61,0.355,1);
-  --ease-out-quart: cubic-bezier(0.165,0.84,0.44,1);
-  --ease-out-quint: cubic-bezier(0.23,1,0.32,1);
-  --ease-out-sine: cubic-bezier(0.39,0.575,0.565,1);
-  --ease-out-expo: cubic-bezier(0.19,1,0.22,1);
-  --ease-out-circ: cubic-bezier(0.075,0.82,0.165,1);
-  --ease-out-back: cubic-bezier(0.175,0.885,0.32,1.275);
-  --ease-in-out-quad: cubic-bezier(0.455,0.03,0.515,0.955);
-  --ease-in-out-cubic: cubic-bezier(0.645,0.045,0.355,1);
-  --ease-in-out-quart: cubic-bezier(0.77,0,0.175,1);
-  --ease-in-out-quint: cubic-bezier(0.86,0,0.07,1);
-  --ease-in-out-sine: cubic-bezier(0.445,0.05,0.55,0.95);
-  --ease-in-out-expo: cubic-bezier(1,0,0,1);
-  --ease-in-out-circ: cubic-bezier(0.785,0.135,0.15,0.86);
-  --ease-in-out-back: cubic-bezier(0.68,-0.55,0.265,1.55);
+  --linear: cubic-bezier(0.25, 0.25, 0.75, 0.75);
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-in: cubic-bezier(0.42, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.58, 1);
+  --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-in-out-sine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --animation-duration: 0.5s;
-  --animation-duration-slow: calc(var(--animation-duration)* 2);
+  --animation-duration-slow: calc(var(--animation-duration) * 2);
   --animation-duration-fast: calc(var(--animation-duration) / 2);
   --animation-timing: var(--ease-out-cubic);
   --border-width: 1px;
@@ -167,34 +201,36 @@ color-mix(in srgb, var(--color-error) var(--light-percentage), var(--color-white
   --focus-outline-width: 1px;
   --focus-outline-offset: 2px;
   --focus-outline: var(--focus-outline-width) solid var(--color-highlight);
-  --elevation-1: 0px 2px 24px 0px rgba(0, 0, 0, .15);
-  --elevation-2: 0px 1px 2px rgba(0, 0, 0, .3), 0px 2px 6px 2px rgba(0, 0, 0, .15);
-  --elevation-3: 0px 3px 9px 3px rgba(0, 0, 0, .12), 0px 1px 3px rgba(0, 0, 0, .3);
-  --elevation-4: 0px 2px 14px 4px rgba(0, 0, 0, .15), 0px 2px 5px rgba(0, 0, 0, .3);
-  --elevation-5: 0px 8px 12px 6px rgba(0, 0, 0, .15), 0px 4px 4px rgba(0, 0, 0, .3);
+  --elevation-1: 0px 2px 24px 0px rgba(0, 0, 0, 0.15);
+  --elevation-2: 0px 1px 2px rgba(0, 0, 0, 0.3),
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --elevation-3: 0px 3px 9px 3px rgba(0, 0, 0, 0.12),
+    0px 1px 3px rgba(0, 0, 0, 0.3);
+  --elevation-4: 0px 2px 14px 4px rgba(0, 0, 0, 0.15),
+    0px 2px 5px rgba(0, 0, 0, 0.3);
+  --elevation-5: 0px 8px 12px 6px rgba(0, 0, 0, 0.15),
+    0px 4px 4px rgba(0, 0, 0, 0.3);
   --button-font-weight: 350;
   --button-font-size: max(12px, 1.8rem);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: var(--color-black);
 }
 
-html, body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  overflow: hidden;
+html,
+body,
+#__next {
+  width: 100%;
   height: 100%;
-  position: relative;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
 }
-.slick-dots {
- 
 
- 
+.slick-dots {
   display: flex !important;
-  justify-content: center !important; 
+  justify-content: center !important;
   align-items: center !important;
 }
 

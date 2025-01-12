@@ -1,3 +1,12 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
+const svgToDataUri = require("mini-svg-data-uri");
+
+const colors = require("tailwindcss/colors");
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -9,9 +18,23 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['"Oracle"', '"Noto Sans JP"', '"Noto Sans KR"', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
-        secondary: ['Arial', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
-        tertiary: ['Lucida Sans Typewriter', 'Lucida Console', 'monaco', 'Bitstream Vera Sans Mono', 'monospace'],
+        primary: [
+          '"Oracle"',
+          '"Noto Sans JP"',
+          '"Noto Sans KR"',
+          "Helvetica Neue",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        secondary: ["Arial", "Helvetica Neue", "Helvetica", "sans-serif"],
+        tertiary: [
+          "Lucida Sans Typewriter",
+          "Lucida Console",
+          "monaco",
+          "Bitstream Vera Sans Mono",
+          "monospace",
+        ],
       },
       colors: {
         black: "var(--color-black)",
@@ -79,81 +102,125 @@ export default {
         nprogress: "var(--color-nprogress)",
       },
       fontSize: {
-        base: 'clamp(12px, 2rem, 24px)', 
-        display: '4.8rem',
-        h1: '25rem',
-        h2: '17rem',
-        h3: '7.2rem',
-        h4: '5.2rem',
-        h5: '4rem',
-        h6: '3rem',
-        body: 'clamp(12px, 2rem, 24px)',
-        bodySm: 'clamp(10px, calc(2rem*0.75), 18px)',
-        bodyLg: 'clamp(22px, 2.2rem, 28px)',
+        base: "clamp(12px, 2rem, 24px)",
+        display: "4.8rem",
+        h1: "25rem",
+        h2: "17rem",
+        h3: "7.2rem",
+        h4: "5.2rem",
+        h5: "4rem",
+        h6: "3rem",
+        body: "clamp(12px, 2rem, 24px)",
+        bodySm: "clamp(10px, calc(2rem*0.75), 18px)",
+        bodyLg: "clamp(22px, 2.2rem, 28px)",
       },
       lineHeight: {
         reset: 1,
         text: 1.5,
-        h1: '90%',
-        h2: '87%',
-        h3: '120%',
-        h4: '87%',
-        h5: '140%',
-        h6: '87%',
+        h1: "90%",
+        h2: "87%",
+        h3: "120%",
+        h4: "87%",
+        h5: "140%",
+        h6: "87%",
       },
       spacing: {
-        base: '3.6rem',
-        xs: 'calc(3.6rem * 0.25)',
-        sm: 'calc(3.6rem * 0.5)',
-        md: '3.6rem',
-        lg: 'calc(3.6rem * 1.3)',
-        xl: 'calc(3.6rem * 2)',
+        base: "3.6rem",
+        xs: "calc(3.6rem * 0.25)",
+        sm: "calc(3.6rem * 0.5)",
+        md: "3.6rem",
+        lg: "calc(3.6rem * 1.3)",
+        xl: "calc(3.6rem * 2)",
       },
       keyframes: {
+        aurora: {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
         fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
         fadeOut: {
-          '0%': { opacity: '1' },
-          '100%': { opacity: '0' },
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
         },
         scaleIn: {
-          '0%': { transform: 'scale(0.8)' },
-          '100%': { transform: 'scale(1)' },
+          "0%": { transform: "scale(0.8)" },
+          "100%": { transform: "scale(1)" },
         },
         scaleOut: {
-          '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(0.8)' },
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(0.8)" },
         },
         rotate360: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
         },
       },
       animation: {
-        'fade-in': 'fadeIn 1s ease-out-sine forwards',
-        'fade-out': 'fadeOut 1s ease-in-sine forwards',
-        'scale-in': 'scaleIn 0.5s ease-in-out-cubic forwards',
-        'scale-out': 'scaleOut 0.5s ease-in-out-cubic forwards',
-        'rotate': 'rotate360 1s ease-out-quint infinite linear',
+        aurora: "aurora 60s linear infinite",
+        "fade-in": "fadeIn 1s ease-out-sine forwards",
+        "fade-out": "fadeOut 1s ease-in-sine forwards",
+        "scale-in": "scaleIn 0.5s ease-in-out-cubic forwards",
+        "scale-out": "scaleOut 0.5s ease-in-out-cubic forwards",
+        rotate: "rotate360 1s ease-out-quint infinite linear",
       },
       // Custom timing functions (you can use them with Tailwind utilities)
       transitionTimingFunction: {
-        'ease-in': 'cubic-bezier(0.42, 0, 1, 1)',
-        'ease-out': 'cubic-bezier(0, 0, 0.58, 1)',
-        'ease-in-out': 'cubic-bezier(0.42, 0, 0.58, 1)',
-        'ease-in-quad': 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
-        'ease-in-cubic': 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
-        'ease-out-cubic': 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+        "ease-in": "cubic-bezier(0.42, 0, 1, 1)",
+        "ease-out": "cubic-bezier(0, 0, 0.58, 1)",
+        "ease-in-out": "cubic-bezier(0.42, 0, 0.58, 1)",
+        "ease-in-quad": "cubic-bezier(0.55, 0.085, 0.68, 0.53)",
+        "ease-in-cubic": "cubic-bezier(0.55, 0.055, 0.675, 0.19)",
+        "ease-out-cubic": "cubic-bezier(0.215, 0.61, 0.355, 1)",
       },
       // Custom animation durations (make sure to modify as per needs)
       animationDuration: {
-        'duration': '0.5s',
-        'duration-slow': '1s', // For longer animations
-        'duration-fast': '0.25s', // For quicker animations
+        duration: "0.5s",
+        "duration-slow": "1s", // For longer animations
+        "duration-fast": "0.25s", // For quicker animations
       },
     },
   },
-  plugins: [],
+  plugins: [
+    addVariablesForColors,
+    function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          "bg-grid": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\" width=\"32\" height=\"32\" fill=\"none\" stroke=\"${value}\"><path d=\"M0 .5H31.5V32\"/></svg>`
+            )}")`,
+          }),
+          "bg-grid-small": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\" width=\"8\" height=\"8\" fill=\"none\" stroke=\"${value}\"><path d=\"M0 .5H31.5V32\"/></svg>`
+            )}")`,
+          }),
+          "bg-dot": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\" width=\"16\" height=\"16\" fill=\"none\"><circle fill=\"${value}\" id=\"pattern-circle\" cx=\"10\" cy=\"10\" r=\"1.6257413380501518\"></circle></svg>`
+            )}")`,
+          }),
+        },
+        { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
+      );
+    },
+  ],
 };
+
+function addVariablesForColors({ addBase, theme }) {
+  const allColors = flattenColorPalette(theme("colors"));
+  const newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ":root": newVars,
+  });
+}
