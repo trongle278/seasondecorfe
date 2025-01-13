@@ -228,6 +228,7 @@ body,
   padding: 0;
 }
 
+
 .slick-dots {
   display: flex !important;
   justify-content: center !important;
@@ -259,3 +260,4 @@ body,
   color: #ffffff; /* Màu vàng nổi bật cho chế độ tối */
   opacity: 1;
 }
+
