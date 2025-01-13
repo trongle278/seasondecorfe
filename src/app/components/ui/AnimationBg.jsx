@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { cn } from "@/app/utils/Utils";
 import React from "react";
 
@@ -57,7 +57,7 @@ export const AnimationBackground = ({children}) => {
         }}
         className="relative flex flex-col gap-4 items-center justify-center px-4 dark:text-white"
       >
-        {children}
+      {children}
       </motion.div>
     </EffectBackground>
 
