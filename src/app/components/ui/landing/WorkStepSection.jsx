@@ -8,8 +8,8 @@ import { FaRocketchat } from "react-icons/fa";
 
 const WorkStepSection = () => {
   return (
-    <div className="bg-transparent py-12 sm:py-16 lg:py-20 xl:pb-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="bg-transparent py-12 sm:py-28 lg:py-20 xl:pb-36">
+      <div className="mx-auto max-w-[84rem] px-4 sm:px-6 lg:px-0">
         <div className="text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
             How It Works
