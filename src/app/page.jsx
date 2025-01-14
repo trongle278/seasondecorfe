@@ -13,6 +13,7 @@ import WorkStepSection from "./components/ui/landing/WorkStepSection";
 import HighlightSection from "./components/ui/landing/HighlightSection";
 import InspiredSection from "./components/ui/landing/InspiredSection";
 import ScrollAnimationWrapper from "./components/ScrollAnimation";
+import ProviderSign from "./components/ui/landing/ProviderSign";
 
 export default function Main() {
   const words = ["spring", "summer", "autumn ", "winter"];
@@ -68,6 +69,12 @@ export default function Main() {
           <ScrollAnimationWrapper>
             <InspiredSection />
           </ScrollAnimationWrapper>
+
+          <ScrollAnimationWrapper>
+            <ProviderSign />
+          </ScrollAnimationWrapper>
+
+
         </div>
       </AnimationBackground>
     </>

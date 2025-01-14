@@ -141,6 +141,14 @@ export default {
             backgroundPosition: "350% 50%, 350% 50%",
           },
         },
+        shimmer: {
+          from: {
+            backgroundPosition: "0 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
+          },
+        },
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -164,6 +172,7 @@ export default {
       },
       animation: {
         aurora: "aurora 60s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
         "fade-in": "fadeIn 1s ease-out-sine forwards",
         "fade-out": "fadeOut 1s ease-in-sine forwards",
         "scale-in": "scaleIn 0.5s ease-in-out-cubic forwards",

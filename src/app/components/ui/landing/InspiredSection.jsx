@@ -149,8 +149,8 @@ const InspiredSection = () => {
   ];
 
   return (
-    <section className="w-full bg-transparent">
-      <div className="max-w-[1336px] m-0 w-full overflow-hidden py-[2.75rem] px-[13px]">
+    <section className="flex flex-col justify-center items-center w-full bg-transparent">
+      <div className="max-w-[84rem] m-0 w-full overflow-hidden py-[2.75rem]">
         <div className="text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
             Get Inspired

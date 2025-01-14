@@ -13,7 +13,7 @@ export const EffectBackground = ({
     (<main>
       <div
         className={cn(
-          "relative flex flex-col h-full items-center justify-center bg-zinc-50 dark:bg-zinc-900  text-slate-950 transition-bg",
+          "relative h-full items-center justify-center bg-zinc-50 dark:bg-zinc-900  text-slate-950 transition-bg",
           className
         )}
         {...props}>
@@ -55,7 +55,7 @@ export const AnimationBackground = ({children}) => {
           duration: 0.8,
           ease: "easeInOut",
         }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4 dark:text-white"
+        className="dark:text-white"
       >
       {children}
       </motion.div>

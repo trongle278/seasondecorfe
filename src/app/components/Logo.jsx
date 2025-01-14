@@ -36,7 +36,7 @@ const Logo = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <h1 className="text-black dark:text-white font-tertiary">Season Decor</h1>
+          <h1 className="text-black dark:text-white font-tertiary">SeasonDecor</h1>
         </div>
       </Link>
     </div>

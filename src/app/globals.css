@@ -7,15 +7,9 @@
 }
 
 :root {
-  margin: 0;
-  padding: 0;
   --background: #ffffff;
   --foreground: #171717;
 
-  --rem-scale-design-width: 1920;
-  --rem-scale-scale-factor: 1;
-  --rem-scale-scale-min: 0.1;
-  --rem-scale-scale-max: 1;
   --light-percentage: 70%;
   --color-black: #000;
   --color-white: #fff;
@@ -113,14 +107,6 @@
   --font-size-body: var(--font-size-base);
   --font-size-body-sm: max(10px, calc(var(--font-size-base) * 0.75));
   --font-size-body-lg: max(22px, 2.2rem);
-  --line-height-reset: 1;
-  --line-height-text: 1.5;
-  --line-height-h1: 90%;
-  --line-height-h2: 87%;
-  --line-height-h3: 120%;
-  --line-height-h4: 87%;
-  --line-height-h5: 140%;
-  --line-height-h6: 87%;
   --font-h1: var(--font-weight-extra-light) var(--font-size-h1) /
     var(--line-height-h1) var(--font-family-heading);
   --font-h2: 250 var(--font-size-h2) / var(--line-height-h2)
@@ -212,6 +198,83 @@
     0px 4px 4px rgba(0, 0, 0, 0.3);
   --button-font-weight: 350;
   --button-font-size: max(12px, 1.8rem);
+  --height: 5px;
+  --width: 1px;
+  --color: hsla(0, 0%, 100%, .2);
+}
+
+.common_gridLineVertical__V_DBc {
+  --background: #fff;
+  --color: rgba(0, 0, 0, .2);
+  --height: 5px;
+  --width: 1px;
+  --fade-stop: 90%;
+  --offset: -100px;
+}
+
+.common_gridLineHorizontal__WPmNg {
+  --background: #fff;
+  --color: rgba(0, 0, 0, .2);
+  --height: 1px;
+  --width: 5px;
+  --fade-stop: 90%;
+  --offset: -100px;
+}
+
+.common_gridLineHorizontalDark__HxUpx {
+  --background: #fff;
+  --color: hsla(0, 0%, 100%, 0.2);
+  --height: 1px;
+  --width: 5px;
+  --fade-stop: 90%;
+  --offset: -100px;
+}
+
+.common_gridLineHorizontalDark__HxUpx,
+.common_gridLineHorizontal__WPmNg {
+  position: absolute;
+  width: calc(100% + var(--offset));
+  height: var(--height);
+  left: calc(var(--offset) / 2 * -1);
+  background: linear-gradient(
+    to right,
+    var(--color),
+    var(--color) 50%,
+    transparent 0,
+    transparent
+  );
+  background-size: var(--width) var(--height);
+  mask: linear-gradient(
+      to left,
+      var(--background) var(--fade-stop),
+      transparent
+    ),
+    linear-gradient(to right, var(--background) var(--fade-stop), transparent),
+    linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(
+      to left,
+      var(--background) var(--fade-stop),
+      transparent
+    ),
+    linear-gradient(to right, var(--background) var(--fade-stop), transparent),
+    linear-gradient(#000, #000);
+  mask-composite: exclude;
+  -webkit-mask-composite: exclude;
+  z-index: 20;
+}
+
+.common_gridLineVerticalDark__IgDT_, .common_gridLineVertical__V_DBc {
+  position: absolute;
+  height: calc(100% + var(--offset));
+  width: var(--width);
+  top: calc(var(--offset) / 2* -1);
+  background: linear-gradient(to bottom, var(--color), var(--color) 50%, transparent 0, transparent);
+  background-size: var(--width) var(--height);
+  mask: linear-gradient(to top, var(--background) var(--fade-stop), transparent), linear-gradient(to bottom, var(--background) var(--fade-stop), transparent), linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(to top, var(--background) var(--fade-stop), transparent), linear-gradient(to bottom, var(--background) var(--fade-stop), transparent), linear-gradient(#000, #000);
+  mask-composite: exclude;
+  -webkit-mask-composite: exclude;
+  z-index: 20;
 }
 
 .dark {
@@ -227,7 +290,6 @@ body,
   margin: 0;
   padding: 0;
 }
-
 
 .slick-dots {
   display: flex !important;
@@ -260,4 +322,3 @@ body,
   color: #ffffff; /* Màu vàng nổi bật cho chế độ tối */
   opacity: 1;
 }
-

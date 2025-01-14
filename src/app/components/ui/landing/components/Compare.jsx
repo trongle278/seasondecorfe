@@ -184,11 +184,11 @@ export const Compare = ({
         </motion.div>
       </AnimatePresence>
       {/* Add labels for Before and After */}
-      <div className="inline-flex items-center absolute top-2/4 left-4 transform -translate-y-1/2 z-50 text-white bg-black bg-opacity-50 px-3 py-1 rounded-md text-sm">
+      <div className="inline-flex items-center absolute top-2/4 left-4 transform -translate-y-1/2 z-40 text-white bg-black bg-opacity-50 px-3 py-1 rounded-md text-sm">
         <FaAngleLeft />
         Before
       </div>
-      <div className="inline-flex items-center absolute top-2/4 right-4 transform -translate-y-1/2 z-50 text-white bg-black bg-opacity-50 px-3 py-1 rounded-md text-sm">
+      <div className="inline-flex items-center absolute top-2/4 right-4 transform -translate-y-1/2 z-40 text-white bg-black bg-opacity-50 px-3 py-1 rounded-md text-sm">
         After
         <FaAngleRight />
       </div>
