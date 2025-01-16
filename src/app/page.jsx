@@ -14,69 +14,73 @@ import HighlightSection from "./components/ui/landing/HighlightSection";
 import InspiredSection from "./components/ui/landing/InspiredSection";
 import ScrollAnimationWrapper from "./components/ScrollAnimation";
 import ProviderSign from "./components/ui/landing/ProviderSign";
+import MainWrapper from "./components/MainWrapper";
+import { ProviderSpotlight } from "./components/ui/landing/ProviderSpotlight";
+import { FeaturesSection } from "./components/ui/landing/FeatureSection";
 
 export default function Main() {
   const words = ["spring", "summer", "autumn ", "winter"];
 
   return (
     <>
-      <AnimationBackground>
-        <div className="relative pb-40 bg-transparent dark:bg-transparent  pt-20 md:pt-20 overflow-hidden px-2 md:px-4 lg:px-8 ">
-          <div className="max-w-[84rem] w-full mx-auto  relative">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-10 md:pb-20">
-              <div className="left-wrapper flex flex-col items-start xl:px-0 px-8 py-40">
-                <Button2
-                  label="Introducing new decorations"
-                  icon={<FaAngleRight />}
-                />
-                <h1 className="text-4xl md:text-7xl font-bold mb-6 relative text-left dark:text-zinc-100 text-zinc-700 max-w-4xl">
-                  <span
-                    style={{
-                      display: "inline-block",
-                      verticalAlign: "top",
-                      textDecoration: "inherit",
-                      textWrap: "balance",
-                    }}
-                  >
-                    We bring you the best decorations
-                    <br />
-                    for
-                    <FlipWords words={words} />
-                  </span>
-                </h1>
-                <h2 className="relative text-sm sm:text-xl text-zinc-500 dark:text-zinc-300 tracking-wide mb-8 text-left max-w-2xl antialiased leading-loose">
-                  Our platform is dedicated to connecting users with skilled
-                  house decorators from all over. Whether you're looking to
-                  refresh a single room or transform your entire home, we
-                  connect you with the right decorators, no matter where you
-                  are.
-                </h2>
-                <div className="flex relative sm:flex-row flex-col space-y-2 justify-center sm:space-y-0 sm:space-x-4 sm:justify-start mb-4 w-full">
-                  <WhiteBgButon whiteBtnlable="Browse providers" />
-                  <BlackBgButton blackBtnlable="Custom design" />
-                </div>
-                <HighlightSection />
+      <MainWrapper>
+        <div className="max-w-[84rem] w-full mx-auto  relative">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 pb-10 md:pb-20">
+            <div className="left-wrapper flex flex-col items-start xl:px-0 px-8 py-40">
+              <Button2
+                label="Introducing new decorations"
+                icon={<FaAngleRight />}
+              />
+              <h1 className="text-4xl md:text-7xl font-bold mb-6 relative text-left dark:text-zinc-100 text-zinc-700 max-w-4xl">
+                <span
+                  style={{
+                    display: "inline-block",
+                    verticalAlign: "top",
+                    textDecoration: "inherit",
+                    textWrap: "balance",
+                  }}
+                >
+                  We bring you the best decorations
+                  <br />
+                  for
+                  <FlipWords words={words} />
+                </span>
+              </h1>
+              <h2 className="relative text-sm sm:text-xl text-zinc-500 dark:text-zinc-300 tracking-wide mb-8 text-left max-w-2xl antialiased leading-loose">
+                Our platform is dedicated to connecting users with skilled house
+                decorators from all over. Whether you're looking to refresh a
+                single room or transform your entire home, we connect you with
+                the right decorators, no matter where you are.
+              </h2>
+              <div className="flex relative sm:flex-row flex-col space-y-2 justify-center sm:space-y-0 sm:space-x-4 sm:justify-start mb-4 w-full">
+                <WhiteBgButon whiteBtnlable="Browse providers" />
+                <BlackBgButton blackBtnlable="Custom design" />
               </div>
-              <div className="hidden xl:block w-full h-full relative">
-                <BannerCarousel />
-              </div>
+              <HighlightSection />
+            </div>
+            <div className="hidden xl:block w-full h-full relative">
+              <BannerCarousel />
             </div>
           </div>
-          <ScrollAnimationWrapper>
-            <WorkStepSection />
-          </ScrollAnimationWrapper>
-
-          <ScrollAnimationWrapper>
-            <InspiredSection />
-          </ScrollAnimationWrapper>
-
-          <ScrollAnimationWrapper>
-            <ProviderSign />
-          </ScrollAnimationWrapper>
-
-
         </div>
-      </AnimationBackground>
+        <ScrollAnimationWrapper>
+          <WorkStepSection />
+        </ScrollAnimationWrapper>
+
+        <ScrollAnimationWrapper>
+          <InspiredSection />
+        </ScrollAnimationWrapper>
+
+        <ScrollAnimationWrapper>
+          <ProviderSign />
+        </ScrollAnimationWrapper>
+        <ProviderSpotlight />
+
+        <ScrollAnimationWrapper>
+          <FeaturesSection />
+        </ScrollAnimationWrapper>
+
+      </MainWrapper>
     </>
   );
 }
