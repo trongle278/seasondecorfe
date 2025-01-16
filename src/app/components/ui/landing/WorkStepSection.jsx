@@ -18,7 +18,7 @@ const WorkStepSection = () => {
             Explore your favorite decorations with ease
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg font-normal text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
-            Create your own blog with us and launch it with just 4 easy steps
+            Create your own style with us and launch it with just 4 easy steps
           </p>
         </div>
         <ul className="mx-auto mt-12 grid max-w-md grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:max-w-5xl lg:grid-cols-4">
@@ -30,7 +30,7 @@ const WorkStepSection = () => {
             <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-transparent">
               <MdOutlineExplore />
             </div>
-            <div className="ml-6 lg:ml-0 lg:mt-10">
+            <div className="ml-6 lg:ml-0 lg:mt-10 flex-col">
               <h3 className="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500 dark:text-zinc-300">
                 Explore Inspiration
               </h3>

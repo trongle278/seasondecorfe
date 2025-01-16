@@ -3,6 +3,10 @@
 import Image from "next/image";
 import ButtonInvert from "../Buttons/ButtonInvert";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import { AnimatedTooltip } from "./components/AnimatedTooltip";
+import { people } from "@/app/people";
+import { Input } from "../Inputs/Input";
+import { IoIosMail } from "react-icons/io";
 
 const ProviderSign = () => {
   return (
@@ -20,11 +24,11 @@ const ProviderSign = () => {
       </div>
       <div className="relative">
         <div className="section1 grid grid-cols-1 md:grid-cols-6 mt-12">
-          <div className="p-4 sm:p-8 relative overflow-hidden col-span-1 md:col-span-3 border-r dark:border-neutral-800">
+          <div className="p-4 sm:p-32 relative overflow-hidden col-span-1 md:col-span-3 border-r dark:border-neutral-800">
             <p className="mx-auto mt-4 text-lg font-tertiary text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
               Our platform is dedicated to connecting users with skilled house
             </p>
-            <h2 className="text-sm text-muted font-normal dark:text-muted-dark text-left max-w-xl mx-0 md:text-sm my-2">
+            <h2 className="text-black dark:text-primary font-normal text-left max-w-xl mx-0 md:text-sm my-2">
               <ul className="list-disc font-primary py-5 text-sm">
                 <li className="my-3">
                   Expand your reach to potential customers seeking house decor
@@ -46,10 +50,23 @@ const ProviderSign = () => {
                 </li>
               </ul>
             </h2>
+            <div className="flex flex-col mb-4 max-w-xs">
+              <Input placeholder="Your email for us to contact" type="text" icon={<IoIosMail />}/>
+            </div>
+
             <ButtonInvert label="Get started" icon={<FaLongArrowAltRight />} />
           </div>
           <div className="section2 p-4 sm:p-8 relative overflow-hidden col-span-1 md:col-span-3">
-            <div className="relative w-full h-[600px] flex items-center justify-center">
+            <div className="flex flex-col items-center mt-10 mb-3">
+              <div className="flex flex-col sm:flex-row mb-2 lg:justify-start justify-center items-center">
+                <AnimatedTooltip items={people} />
+              </div>
+              <p className="text-neutral-400 text-sm ml-8 relative z-40 lg:text-left text-center mb-5">
+                Trusted by 27,000+ providers
+              </p>
+            </div>
+
+            <div className="relative w-full h-[400px] flex items-center justify-center">
               <div
                 className="absolute w-[80%] max-w-[220px] aspect-[9/16] transition-all duration-300 hover:z-50 hover:scale-105"
                 style={{

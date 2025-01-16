@@ -8,6 +8,7 @@ import ThemeSwitch from "../../ThemeSwitch";
 import Logo from "../../Logo";
 import RightWrapper from "./RightWrapper";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -22,26 +23,29 @@ export default function Header() {
           </div>
           <section className="left-wrapper desktop-only flex items-center space-x-6 text-sm font-medium xl:flex">
             <div className="flex items-center gap-4 transition-all">
-              <div className="relative group px-2 py-3 transition-all">
+              <div className="relative group transition-all">
                 <p className="flex cursor-pointer items-center gap-2 group-hover:text-red">
                   <span>Providers</span>
                   <IoIosArrowDown className="rotate-180 transition-all group-hover:rotate-0" />
                 </p>
                 <DropdownSection items="hello" />
               </div>
-              <div className="relative group px-2 py-3 transition-all">
+              <div className="relative group transition-all">
                 <p className="flex cursor-pointer items-center gap-2 group-hover:text-red">
                   <span>Features</span>
                   <IoIosArrowDown className="rotate-180 transition-all group-hover:rotate-0" />
                 </p>
                 <DropdownSection items="hello2" />
               </div>
-              <div className="relative group px-2 py-3 transition-all">
-                <p className="flex cursor-pointer items-center gap-2 group-hover:text-red">
-                  <span>Pricing</span>
-                  <IoIosArrowDown className="rotate-180 transition-all group-hover:rotate-0" />
+              <div className="relative">
+                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
+                  <Link href="/pricing">Pricing</Link>
                 </p>
-                <DropdownSection items="hello" />
+              </div>
+              <div className="relative">
+                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
+                  <Link href="/blog">Blog</Link>
+                </p>
               </div>
             </div>
           </section>
