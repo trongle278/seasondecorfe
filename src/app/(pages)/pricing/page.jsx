@@ -1,7 +1,10 @@
-"use client"
+"use client";
 import MainWrapper from "@/app/components/MainWrapper";
 import PricingCard from "@/app/components/ui/PricingCard/PricingCard";
 import { toast } from "sonner";
+import { FeaturesSection } from "@/app/components/ui/landing/FeatureSection";
+import ScrollAnimationWrapper from "@/app/components/ScrollAnimation";
+import LandingEndSection from "@/app/components/ui/landing/LandingEndSection";
 
 const PricingPage = () => {
   return (
@@ -30,7 +33,7 @@ const PricingPage = () => {
               cardcontent3="Foundations of Elegance"
               cardcontent4="Compact Decor Transformation"
               cardcontent5="Basic Style Revamp"
-              clickToBuy={()=> toast.success("Thank you")}
+              clickToBuy={() => toast.success("Success`")}
             />
             <PricingCard
               className="dark:bg-black dark:border-white bg-white  rounded-3xl px-6 py-8 ring-1 ring-gray-900/10 sm:mx-8 lg:mx-0 border border-transparent h-full flex flex-col justify-between"
@@ -53,6 +56,13 @@ const PricingPage = () => {
           </div>
         </div>
       </div>
+      <ScrollAnimationWrapper>
+        <FeaturesSection />
+      </ScrollAnimationWrapper>
+
+      <ScrollAnimationWrapper>
+        <LandingEndSection />
+      </ScrollAnimationWrapper>
     </MainWrapper>
   );
 };

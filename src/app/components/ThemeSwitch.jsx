@@ -1,16 +1,29 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "next-themes";
 import IconButton from "@mui/material/IconButton";
 
 export default function ThemeSwitch() {
+  const [mounted, setMounted] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <>Loading icon</>
+    );
+  }
+
 
   return (
     <>
       {resolvedTheme === "dark" ? (
-        <IconButton  onClick={() => setTheme("light")}>
+        <IconButton onClick={() => setTheme("light")}>
           <FiSun
             size={25}
             color="#fff"
