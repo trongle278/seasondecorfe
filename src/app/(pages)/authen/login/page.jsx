@@ -1,17 +1,22 @@
 "use client";
-import Slider from "react-slick";
+
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import ThemeSwitch from "./../../../components/ThemeSwitch";
-import Link from "next/link";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
   const settings = {
     dots: true,
@@ -22,70 +27,46 @@ export default function Login() {
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
-    appendDots: (dots) => (
-      <div
-        style={{
-          bottom: "-15px",
-          position: "relative",
-        }}
-        className="dark:bg-gray-800"
-      >
-        <ul className="slick-dots">{dots}</ul>
-      </div>
-    ),
   };
-  
-  
-
-  const handleSubmit = (e) => {
+  const handleGoogleLogin = async () => {
+    await signIn("google", { callbackUrl: "/" });
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    setError("");
+
+    const response = await signIn("credentials", {
+      redirect: false, // Quan trọng: Không redirect khi có lỗi
+      email,
+      password,
+    });
+
+    if (response?.error) {
+      setError(response.error); // Hiển thị lỗi trên form
+      toast.error(response.error);
+    } else {
+      toast.success("Login successful!");
+      router.push("/"); // Chuyển hướng nếu thành công
+    }
   };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-200 via-yellow-100 to-green-200 dark:from-gray-800 dark:to-gray-900">
-      <div className="absolute top-5 right-5">
-        <ThemeSwitch />
-      </div>
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl flex max-w-4xl overflow-hidden">
-        {/* Left Side: Carousel */}
         <div className="w-1/2 hidden md:block">
           <Slider {...settings}>
-            <div>
-              <img
-                src="/autumn.png"
-                alt="Autumn"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/winter.png"
-                alt="Winter"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/spring.png"
-                alt="Spring"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/summer.png"
-                alt="Summer"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {["autumn", "winter", "spring", "summer"].map((season) => (
+              <div key={season}>
+                <img
+                  src={`/${season}.png`}
+                  alt={season}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </Slider>
         </div>
 
-        {/* Right Side: Login Form */}
-        <div className="w-full md:w-1/2 p-10 bg-gradient-to-br from-white to-gray-100 dark:from-gray-700 dark:to-gray-800">
+        <div className="w-full md:w-1/2 p-10 bg-gray-50 dark:bg-gray-700">
           <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
             Welcome Back!
           </h2>
@@ -93,66 +74,46 @@ export default function Login() {
             Login to your account and start exploring seasonal decorations.
           </p>
 
-          {/* Form */}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Email Input */}
             <div className="relative">
-              <FontAwesomeIcon
-                icon={faEnvelope}
-                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-              />
+              <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
-                id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                className="w-full pl-10 py-3 border rounded-lg focus:ring-2 focus:ring-orange-400"
                 required
               />
             </div>
 
-            {/* Password Input */}
             <div className="relative">
-              <FontAwesomeIcon
-                icon={faLock}
-                className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-              />
+              <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
-                id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                className="w-full pl-10 py-3 border rounded-lg focus:ring-2 focus:ring-orange-400"
                 required
               />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-gradient-to-r from-orange-400 to-green-400 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition-transform"
-            >
+            <button type="submit" className="w-full py-3 bg-orange-400 text-white font-bold rounded-lg hover:shadow-lg transition-transform">
               Login
             </button>
           </form>
+
           <div className="mt-4 text-center">
-  <button
-    className="w-full py-3 flex items-center justify-center bg-gradient-to-r from-[#00FFA9] to-[#0D4DFF] text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition-transform"
-  >
-    <FontAwesomeIcon
-      icon={faGoogle}
-      className="mr-2 text-white"
-    />
-    Login with Google
-  </button>
-</div>
+            <button onClick={handleGoogleLogin} className="w-full py-3 flex items-center justify-center bg-blue-500 text-white font-bold rounded-lg hover:shadow-lg transition-transform">
+              <FontAwesomeIcon icon={faGoogle} className="mr-2" /> Login with Google
+            </button>
+          </div>
+
           <p className="text-gray-600 dark:text-gray-300 text-center mt-8">
-            Don't have an account?{" "}
-            <Link href="/authen/signup" className="text-orange-500 hover:underline">
-              Sign up
-            </Link>
+            Don't have an account? <Link href="/authen/signup" className="text-orange-500 hover:underline">Sign up</Link>
           </p>
         </div>
       </div>

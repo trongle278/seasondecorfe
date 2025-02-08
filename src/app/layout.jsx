@@ -5,6 +5,7 @@ import Header from "./components/layouts/header/Header";
 import Footer from "./components/layouts/footer/Footer";
 import { Toasterprovider } from "./providers/toasterprovider";
 import ReduxProvider from "./providers/reduxprovider";
+import AuthProvider from "./providers/authprovider"; // Import mới
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,14 +27,16 @@ export default function RootLayout({ children }) {
     <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
       <body className="antialiased dark:bg-transparent">
         <ReduxProvider>
-          <Providers>
-            <Toasterprovider />
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </Providers>
+          <AuthProvider> {/* Bọc trong AuthProvider */}
+            <Providers>
+              <Toasterprovider />
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </Providers>
+          </AuthProvider>
         </ReduxProvider>
       </body>
     </html>

@@ -1,76 +1,69 @@
 import axios from "axios";
+import Cookies from "js-cookie";
+import { redirect } from "next/navigation";
 
 const baseURL = 'http://localhost:5297/';
 
 const onRequestSuccess = (config) => {
-    //config.headers['Authorization'] = `Bearer ${helpers.cookie_get('AT')}`;
-    //config.headers['Authorization'] = `Bearer ${token}`;
-    // lay token tu cookies
+    const token = Cookies.get('AT'); // Lấy token từ cookie
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
     config.headers['Content-Type'] = 'application/json';
-  return config;
+    return config;
 };
 
-const onRequestError = (error) => {
-    return Promise.reject(error);
-}
+const onRequestError = (error) => Promise.reject(error);
 
-const onResponseSuccess = (response) => {
-    return response.data;
-}
+const onResponseSuccess = (response) => response.data;
 
 const onResponseError = (error) => {
     if (error.response) {
         if (error.response.status === 401) {
-          window.location.href = '/authen/login';
+            redirect('/authen/login');
         }
         return Promise.reject(error.response.data);
-      }
-      return Promise.reject(error);
-}
+    }
+    return Promise.reject(error);
+};
 
 axios.interceptors.request.use(onRequestSuccess, onRequestError);
 axios.interceptors.response.use(onResponseSuccess, onResponseError);
 axios.defaults.baseURL = baseURL;
 
-var BaseRequest = {
+const BaseRequest = {
     Get: async (url) => {
-        try{
-            const response = await axios.get(url);
-            return response.data;
-            
-
+        try {
+            return await axios.get(url);
         } catch (err) {
-            console.log('err', err);
-
+            console.error("GET request error:", err);
+            throw err;
         }
     },
     Post: async (url, data) => {
-        try{ 
-            const response = await axios.post(url, data);
-            return response.data;
+        try {
+            return await axios.post(url, data);
         } catch (err) {
-            console.log('err', err);
-
+            console.error("POST request error:", err);
+            throw err;
         }
     },
-
     Put: async (url, data) => {
-        try{
-            const response = await axios.put(url, data);
-            return response.data;
+        try {
+            return await axios.put(url, data);
         } catch (err) {
-            console.log('err', err)
+            console.error("PUT request error:", err);
+            throw err;
         }
     },
-
     Delete: async (url) => {
-        try{
-            const response = await axios.delete(url);
-            return response.data;
+        try {
+            return await axios.delete(url);
         } catch (err) {
-            console.log('err', err)
+            console.error("DELETE request error:", err);
+            throw err;
         }
     },
-}
+};
 
 export default BaseRequest;
