@@ -17,6 +17,7 @@ import ProviderSign from "./components/ui/landing/ProviderSign";
 import MainWrapper from "./components/MainWrapper";
 import { ProviderSpotlight } from "./components/ui/landing/ProviderSpotlight";
 import { FeaturesSection } from "./components/ui/landing/FeatureSection";
+import LandingEndSection from "./components/ui/landing/LandingEndSection";
 
 export default function Main() {
   const words = ["spring", "summer", "autumn ", "winter"];
@@ -80,6 +81,9 @@ export default function Main() {
           <FeaturesSection />
         </ScrollAnimationWrapper>
 
+        <ScrollAnimationWrapper>
+          <LandingEndSection />
+        </ScrollAnimationWrapper>
       </MainWrapper>
     </>
   );

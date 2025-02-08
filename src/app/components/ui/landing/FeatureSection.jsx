@@ -59,7 +59,7 @@ export function FeaturesSection() {
     },
   ];
   return (
-    <>
+    <div className="mt-40">
       <div className="text-center">
         <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
           Features
@@ -73,7 +73,7 @@ export function FeaturesSection() {
           <Feature key={feature.title} {...feature} index={index} />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
