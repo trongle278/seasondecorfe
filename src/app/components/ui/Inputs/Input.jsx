@@ -3,7 +3,19 @@ import * as React from "react";
 import { cn } from "@/app/utils/Utils";
 import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
 
-const Input = React.forwardRef(({ className, type, icon, ...props }, ref) => {
+const Input = ({
+  id,
+  className,
+  label,
+  type,
+  icon,
+  placeholder,
+  register = () => {},
+
+  disabled,
+  required,
+  errors,
+}) => {
   const radius = 100; // change this to increase the rdaius of the hover effect
   const [visible, setVisible] = React.useState(false);
 
@@ -32,30 +44,38 @@ const Input = React.forwardRef(({ className, type, icon, ...props }, ref) => {
       onMouseLeave={() => setVisible(false)}
       className="p-[2px] rounded-lg transition duration-300 group/input"
     >
-       <div className="relative items-center">
-          {icon && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-neutral-400 pointer-events-none">
-              {icon}
-            </span>
-          )}
-          <input
-            type={type}
-            className={cn(
-              `flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
+      <div className="relative items-center">
+        {icon && (
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-neutral-400 pointer-events-none">
+            {icon}
+          </span>
+        )}
+        <input
+          id={id}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          {...register(id, { required })}
+          type={type}
+          className={cn(
+            `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
               file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
               focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
               disabled:cursor-not-allowed disabled:opacity-50
               dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
-              group-hover/input:shadow-none transition duration-400`,
-              className
-            )}
-            ref={ref}
-            {...props}
-          />
-        </div>
+              group-hover/input:shadow-none transition duration-400
+              ${errors?.[id] ? "border-rose-500" : "border-neutral-300"}
+              ${
+                errors?.[id]
+                  ? "focus:border-rose-500"
+                  : "focus:border-neutral-black"
+              }`,
+            className
+          )}
+        />
+      </div>
     </motion.div>
   );
-});
-Input.displayName = "Input";
+};
 
-export { Input };
+export default Input;

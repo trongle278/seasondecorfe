@@ -3,55 +3,54 @@ import React from "react";
 import { motion } from "motion/react";
 
 export function ColourfulText({
-  text
+  children,
+  className = "",
+  colors = ["#ffaa40", "#9c40ff", "#ffaa40"],
+  animationSpeed = 8,
+  showBorder = false,
 }) {
-  const colors = [
-    "rgb(131, 179, 32)",
-    "rgb(47, 195, 106)",
-    "rgb(42, 169, 210)",
-    "rgb(4, 112, 202)",
-    "rgb(107, 10, 255)",
-    "rgb(183, 0, 218)",
-    "rgb(218, 0, 171)",
-    "rgb(230, 64, 92)",
-    "rgb(232, 98, 63)",
-    "rgb(249, 129, 47)",
-  ];
+  const gradientStyle = {
+    backgroundImage: `linear-gradient(to right, ${colors.join(", ")})`,
+    animationDuration: `${animationSpeed}s`,
+  };
 
-  const [currentColors, setCurrentColors] = React.useState(colors);
-  const [count, setCount] = React.useState(0);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      const shuffled = [...colors].sort(() => Math.random() - 0.5);
-      setCurrentColors(shuffled);
-      setCount((prev) => prev + 1);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return text.split("").map((char, index) => (
-    <motion.span
-      key={`${char}-${count}-${index}`}
-      initial={{
-        y: 0,
-      }}
-      animate={{
-        color: currentColors[index % currentColors.length],
-        y: [0, -3, 0],
-        scale: [1, 1.01, 1],
-        filter: ["blur(0px)", `blur(5px)`, "blur(0px)"],
-        opacity: [1, 0.8, 1],
-      }}
-      transition={{
-        duration: 0.5,
-        delay: index * 0.05,
-      }}
-      className="inline-block font-sans tracking-wide">
-      {char}
-    </motion.span>
-  ));
+  return (
+    <div
+      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 overflow-hidden cursor-pointer ${className}`}
+    >
+      {showBorder && (
+        <div
+          className="absolute inset-0 bg-cover z-0 pointer-events-none animate-gradient"
+          style={{
+            ...gradientStyle,
+            backgroundSize: "300% 100%",
+          }}
+        >
+          <div
+            className="absolute inset-0 bg-black rounded-[1.25rem] z-[-1]"
+            style={{
+              width: "calc(100% - 2px)",
+              height: "calc(100% - 2px)",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          ></div>
+        </div>
+      )}
+      <div
+        className="inline-block relative z-2 text-transparent bg-cover animate-gradient"
+        style={{
+          ...gradientStyle,
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          backgroundSize: "300% 100%",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export function ColourfulTextSection() {
@@ -65,7 +64,15 @@ export function ColourfulTextSection() {
         transition={{ duration: 1 }}
       />
       <h1 className="text-2xl md:text-5xl lg:text-7xl font-bold text-center text-white relative z-2 font-sans">
-        Build your <br/> <ColourfulText text="dream" /> <ColourfulText text="house" /> <br /> you will ever find
+        Let's build your <br />
+        <ColourfulText
+          colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+          animationSpeed={3}
+          showBorder={false}
+          className="mt-5"
+        >
+          Dream house
+        </ColourfulText>
       </h1>
     </div>
   );

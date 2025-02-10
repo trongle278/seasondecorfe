@@ -4,34 +4,35 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
+import Input from "@/app/components/ui/Inputs/Input";
+import { useForm } from "react-hook-form";
+import { IoMailOutline } from "react-icons/io5";
+import { TbLockPassword } from "react-icons/tb";
+import Button2 from "@/app/components/ui/Buttons/Button2";
+import { FaGoogle } from "react-icons/fa";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
   const router = useRouter();
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    //resolver: yupResolver(schema),
+  });
   const handleGoogleLogin = async () => {
     await signIn("google", { callbackUrl: "/" });
   };
-  const handleSubmit = async (e) => {
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -50,70 +51,80 @@ export default function Login() {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl flex max-w-4xl overflow-hidden">
-        <div className="w-1/2 hidden md:block">
-          <Slider {...settings}>
-            {["autumn", "winter", "spring", "summer"].map((season) => (
-              <div key={season}>
-                <img
-                  src={`/${season}.png`}
-                  alt={season}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </Slider>
-        </div>
-
-        <div className="w-full md:w-1/2 p-10 bg-gray-50 dark:bg-gray-700">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
+    <div className="min-h-screen">
+      <div className="container mx-auto flex h-screen w-screen flex-col items-center justify-center">
+        <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
             Welcome Back!
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300 text-center">
             Login to your account and start exploring seasonal decorations.
           </p>
 
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col space-y-8"
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          >
             <div className="relative">
-              <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
+              <Input
+                id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email Address"
-                className="w-full pl-10 py-3 border rounded-lg focus:ring-2 focus:ring-orange-400"
+                placeholder="Your email"
+                errors={errors}
+                register={register}
                 required
+                icon={<IoMailOutline />}
               />
             </div>
 
             <div className="relative">
-              <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
+              <Input
+                id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full pl-10 py-3 border rounded-lg focus:ring-2 focus:ring-orange-400"
+                errors={errors}
+                register={register}
                 required
+                icon={<TbLockPassword />}
               />
             </div>
 
-            <button type="submit" className="w-full py-3 bg-orange-400 text-white font-bold rounded-lg hover:shadow-lg transition-transform">
-              Login
-            </button>
+            <Button2
+              type="submit"
+              label="Continue with email"
+              btnClass="w-full mt-3 mb-1"
+              labelClass="justify-center p-3"
+            />
           </form>
 
-          <div className="mt-4 text-center">
-            <button onClick={handleGoogleLogin} className="w-full py-3 flex items-center justify-center bg-blue-500 text-white font-bold rounded-lg hover:shadow-lg transition-transform">
-              <FontAwesomeIcon icon={faGoogle} className="mr-2" /> Login with Google
-            </button>
+          <div className="relative">
+            <div className="w-full h-px dark:bg-neutral-900 bg-white"></div>
+            <div className="w-full h-px bg-neutral-200 dark:bg-neutral-800"></div>
+            <div className="absolute inset-0 h-5 w-5 m-auto rounded-xl dark:bg-neutral-800 bg-white shadow-input dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)] flex items-center justify-center">
+              <span className="h-3 w-3 text-[10px] font-bold text-neutral-400 dark:text-neutral-300 !m-0 !p-0 leading-[10px] ml-[4px] inline-block">
+                or
+              </span>
+            </div>
           </div>
 
-          <p className="text-gray-600 dark:text-gray-300 text-center mt-8">
-            Don't have an account? <Link href="/authen/signup" className="text-orange-500 hover:underline">Sign up</Link>
+          <Button2
+            type="button"
+            onClick={handleGoogleLogin}
+            label="Continue with"
+            btnClass="w-full m-0"
+            labelClass="justify-center p-3"
+            icon={<FaGoogle />}
+          />
+
+          <p className="text-gray-600 dark:text-gray-300 text-center">
+            Don't have an account ?
+            <Link
+              href="/authen/signup"
+              className="text-orange-500 hover:underline ml-2"
+            >
+              Sign up
+            </Link>
           </p>
         </div>
       </div>

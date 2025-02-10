@@ -1,169 +1,232 @@
-
 "use client";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import ThemeSwitch from "./../../../components/ThemeSwitch";
+import * as React from "react";
 import Link from "next/link";
+import Input from "@/app/components/ui/Inputs/Input";
+import { useForm } from "react-hook-form";
+import { Label } from "@/app/components/ui/Inputs/Label";
+import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
+import Button2 from "@/app/components/ui/Buttons/Button2";
+import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
+import { RegisterCustomer } from "@/app/api/register/Register";
+import { ClipLoader } from "react-spinners";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import useOTPModal from "@/app/hooks/useOTPModel";
+
+const schema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+
+  email: yup
+    .string()
+    .email("Email is invalid. Please enter a valid email address.")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 
 export default function SignUp() {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-    appendDots: (dots) => (
-      <div
-        style={{
-          bottom: "-15px",
-          position: "relative",
-        }}
-        className="dark:bg-gray-800"
-      >
-        <ul className="slick-dots">{dots}</ul>
-      </div>
-    ),
+  const [isLoading, setIsLoading] = React.useState(false);
+  const OTPModal = useOTPModal();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      gender: "",
+      phone: "",
+      address: "",
+      dob: "",
+    },
+    //resolver: yupResolver(schema),
+  });
+
+  const Gender = watch("gender");
+
+  const handleGenderChange = (selectedGender) => {
+    setValue("gender", selectedGender); // Update form value
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Account created successfully");
-  };
+  const onSubmit = React.useCallback(async (data) => {
+    const userData = {
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      dateOfBirth: data.dob,
+      gender: data.gender === "true",
+      phone: data.phone,
+      address: data.address,
+    };
+    try {
+      setIsLoading(true);
+      const userEmail = data.email;
+      console.log(userData);
+
+      const res = await RegisterCustomer(userData);
+      setIsLoading(false);
+      if (res?.success) {
+        OTPModal.onOpen(data.email);
+    } else {
+        console.log("API Error: ", res);
+    }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-200 via-yellow-100 to-green-200 dark:from-gray-800 dark:to-gray-900">
-      <div className="absolute top-5 right-5">
-        <ThemeSwitch />
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl flex max-w-4xl overflow-hidden">
-        {/* Left Side: Carousel */}
-        <div className="w-1/2 hidden md:block">
-          <Slider {...settings}>
-            <div>
-              <img
-                src="/autumn.png"
-                alt="Autumn"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/winter.png"
-                alt="Winter"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/spring.png"
-                alt="Spring"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <img
-                src="/summer.png"
-                alt="Summer"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </Slider>
-        </div>
-
+    <div className="min-h-screen">
+      <div className="container mx-auto flex h-screen w-screen flex-col items-center justify-center">
         {/* Right Side: Sign Up Form */}
-        <div className="w-full md:w-1/2 p-10 bg-gradient-to-br from-white to-gray-100 dark:from-gray-700 dark:to-gray-800">
-<h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4 text-center">
-  Create Your Account
-</h2>
-<p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-  Start exploring seasonal decorations for your home.
-</p>
+        <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
+            Create Your Account
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 text-center">
+            Start exploring seasonal decorations for your home.
+          </p>
 
-{/* Form */}
-<form className="space-y-5">
-  {/* Full Name Input */}
-  <div className="relative">
-    <FontAwesomeIcon
-      icon={faUser}
-      className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-    />
-    <input
-      type="text"
-      placeholder="Full Name"
-      className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-      required
-    />
-  </div>
+          {/* Form */}
+          <form className="flex flex-col gap-5">
+            {/* Full Name Input */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
+                <div className="flex flex-col space-y-2 w-full">
+                  <Label htmlFor="firstname">First name</Label>
+                  <Input
+                    id="firstName"
+                    placeholder="Tyler"
+                    type="text"
+                    required
+                    register={register}
+                    errors={errors}
+                    className="pl-3"
+                  />
+                  {errors.firstName && (
+                    <p className="text-red">{errors.firstName.message}</p>
+                  )}
+                </div>
+                <div className="flex flex-col space-y-2 w-full">
+                  <Label htmlFor="lastname">Last name</Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Duren"
+                    required
+                    register={register}
+                    errors={errors}
+                    type="text"
+                    className="pl-3"
+                  />
+                  {errors.lastName && (
+                    <p className="text-red">{errors.lastName.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col space-y-2 w-full mb-4">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  placeholder="example@mail.com"
+                  required
+                  register={register}
+                  errors={errors}
+                  type="text"
+                  className="pl-3"
+                />
+                {errors.email && (
+                  <p className="text-red">{errors.email.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-2 w-full mb-4">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  placeholder="••••••••"
+                  required
+                  register={register}
+                  errors={errors}
+                  type="password"
+                  className="pl-3"
+                />
+                {errors.password && (
+                  <p className="text-red">{errors.password.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-2 w-full mb-4">
+                <Label htmlFor="confirmpassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  required
+                  register={register}
+                  errors={errors}
+                  type="password"
+                  className="pl-3"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-red">{errors.confirmPassword.message}</p>
+                )}
+              </div>
+              <div className="flex flex-row md:flex-row space-y-2 md:space-y-0 md:space-x-2 my-5 items-center justify-between">
+                <div className="flex flex-col">
+                  <DropdownSelect
+                    label="Gender"
+                    gender={Gender}
+                    onChange={handleGenderChange}
+                  />
+                </div>
 
-  {/* Email Input */}
-  <div className="relative">
-    <FontAwesomeIcon
-      icon={faEnvelope}
-      className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-    />
-    <input
-      type="email"
-      placeholder="Email Address"
-      className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-      required
-    />
-  </div>
+                <div className="flex flex-col">
+                  <BasicDatePicker
+                    label="Day of birth"
+                    selectedDate={watch("dob")}
+                    onChange={(date) => setValue("dob", date)}
+                    required={true}
+                  />
+                </div>
+              </div>
+            </div>
 
-  {/* Password Input */}
-  <div className="relative">
-    <FontAwesomeIcon
-      icon={faLock}
-      className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-    />
-    <input
-      type="password"
-      placeholder="Password"
-      className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-      required
-    />
-  </div>
+            {/* Submit Button */}
+            <Button2
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+              label={
+                isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Continue"
+              }
+              btnClass="w-full"
+              labelClass="justify-center p-3 z-0"
+            />
+          </form>
 
-  {/* Confirm Password Input */}
-  <div className="relative">
-    <FontAwesomeIcon
-      icon={faLock}
-      className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-300"
-    />
-    <input
-      type="password"
-      placeholder="Confirm Password"
-      className="w-full pl-10 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-      required
-    />
-  </div>
-
-  {/* Submit Button */}
-  <button
-    type="submit"
-    className="w-full py-3 bg-gradient-to-r from-orange-400 to-green-400 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition-transform"
-  >
-    Create Account
-  </button>
-</form>
-
-<p className="text-center text-gray-600 dark:text-gray-300 mt-6">
-  Already have an account?{" "}
-  <Link href="/authen/login" className="text-orange-500 hover:underline">
-    Login
-  </Link>
-</p>
-
-</div>
-</div>
-
-
+          <p className="text-center text-gray-600 dark:text-gray-300">
+            Already have an account ?
+            <Link
+              href="/authen/login"
+              className="text-orange-500 hover:underline ml-2"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

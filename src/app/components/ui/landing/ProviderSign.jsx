@@ -5,7 +5,7 @@ import ButtonInvert from "../Buttons/ButtonInvert";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { people } from "@/app/people";
-import { Input } from "../Inputs/Input";
+import Input from "../Inputs/Input";
 import { IoIosMail } from "react-icons/io";
 
 const ProviderSign = () => {
