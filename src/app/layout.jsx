@@ -6,6 +6,7 @@ import Footer from "./components/layouts/footer/Footer";
 import { Toasterprovider } from "./providers/toasterprovider";
 import ReduxProvider from "./providers/reduxprovider";
 import AuthProvider from "./providers/authprovider"; // Import mới
+import OTPConfirmModal from "./components/ui/Modals/OTPmodal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,13 +26,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
-      <body className="antialiased dark:bg-transparent">
+      <body className="antialiased dark:bg-black">
         <ReduxProvider>
           <AuthProvider> {/* Bọc trong AuthProvider */}
             <Providers>
               <Toasterprovider />
+
               <div className="flex min-h-screen flex-col">
                 <Header />
+                <OTPConfirmModal />
                 <main className="flex-1">{children}</main>
                 <Footer />
               </div>

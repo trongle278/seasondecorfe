@@ -7,8 +7,16 @@ import Logo from "../../Logo";
 import RightWrapper from "./RightWrapper";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import DecoratorHeader from "./components/DecoratorHeader";
 
 export default function Header() {
+  const pathname = usePathname();
+  const isSellerRegistration = pathname === "/seller/registration";
+
+  if (isSellerRegistration) {
+    return <DecoratorHeader />; 
+  }
   return (
     <header
       className="z-[50] sticky top-0 w-full border-b bg-white dark:bg-black border-neutral-200 dark:border-white/[0.1]"
@@ -23,12 +31,12 @@ export default function Header() {
             <div className="flex items-center gap-4 transition-all">
               <div className="relative">
                 <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                <Link href="/provider">Providers</Link>
+                  <Link href="/provider">Providers</Link>
                 </p>
               </div>
               <div className="relative">
                 <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                <Link href="/features">Features</Link>           
+                  <Link href="/features">Features</Link>
                 </p>
               </div>
               <div className="relative">
@@ -48,7 +56,7 @@ export default function Header() {
             <div className="search-container text-black">
               <button className="flex relative justify-start items-center text-sm text-muted-foreground dark:border-white/[0.2] py-2 w-fit border border-transparent shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] px-4 rounded-xl bg-white dark:bg-brand">
                 <SearchOutlinedIcon className="text-muted-foreground dark:text-black" />
-                <span className="transition-colors hover:text-foreground/80 text-foreground/60 text-xs sm:text-sm font-medium pl-2 pr-4">
+                <span className="transition-colors hover:text-foreground/80 text-foreground/60 text-xs sm:text-sm font-medium pl-2 pr-4 dark:text-black">
                   Search for anything
                 </span>
               </button>

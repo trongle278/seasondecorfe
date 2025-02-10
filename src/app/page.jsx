@@ -1,9 +1,8 @@
 "use client";
 
-import { AnimationBackground } from "./components/ui/AnimationBg";
 import Button2 from "./components/ui/Buttons/Button2";
 import { FaAngleRight } from "react-icons/fa6";
-import { FlipWords } from "./components/ui/Flipword";
+import RotatingText from "./components/ui/Flipword";
 import { BannerCarousel } from "./components/BannerCarousel";
 import {
   WhiteBgButon,
@@ -30,6 +29,7 @@ export default function Main() {
             <div className="left-wrapper flex flex-col items-start xl:px-0 px-8 py-40">
               <Button2
                 label="Introducing new decorations"
+                labelClass="py-1.5 px-4"
                 icon={<FaAngleRight />}
               />
               <h1 className="text-4xl md:text-7xl font-bold mb-6 relative text-left dark:text-zinc-100 text-zinc-700 max-w-4xl">
@@ -41,10 +41,22 @@ export default function Main() {
                     textWrap: "balance",
                   }}
                 >
-                  We bring you the best decorations
+                  We bring you the best decorations for
                   <br />
-                  for
-                  <FlipWords words={words} />
+                  
+                  <RotatingText
+                    texts={["Spring", "Summer", "Fall", "Winter"]}
+                    mainClassName="px-2 sm:px-2 md:px-3 bg-cyan-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-start rounded-lg w-fit mt-3 "
+
+                    staggerFrom={"last"}
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "-120%" }}
+                    staggerDuration={0.025}
+                    splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                    rotationInterval={3000}
+                  />
                 </span>
               </h1>
               <h2 className="relative text-sm sm:text-xl text-zinc-500 dark:text-zinc-300 tracking-wide mb-8 text-left max-w-2xl antialiased leading-loose">

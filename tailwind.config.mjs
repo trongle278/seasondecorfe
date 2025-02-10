@@ -156,6 +156,15 @@ export default {
             backgroundPosition: "-200% 0",
           },
         },
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        shine: {
+          "0%": { "background-position": "100%" },
+          "100%": { "background-position": "-100%" },
+        },
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -180,6 +189,8 @@ export default {
       animation: {
         aurora: "aurora 60s linear infinite",
         shimmer: "shimmer 2s linear infinite",
+        gradient: "gradient 8s linear infinite",
+        shine: 'shine 5s linear infinite',
         "fade-in": "fadeIn 1s ease-out-sine forwards",
         "fade-out": "fadeOut 1s ease-in-sine forwards",
         "scale-in": "scaleIn 0.5s ease-in-out-cubic forwards",

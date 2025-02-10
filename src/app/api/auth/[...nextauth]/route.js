@@ -11,25 +11,28 @@ export const authOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        try {
-          const response = await BaseRequest.Post("/api/auth/login", {
+      async authorize(credentials, req) {
+        if (credentials) {
+          const response = await BaseRequest.Post("/api/Auth/login", {
             email: credentials.email,
             password: credentials.password,
           });
 
-          if (response && response.token) {
-            return { ...response, token: response.token };
-          } else {
-            throw new Error("Invalid email or password");
+          if (response?.message) {
+            throw new Error(res?.message);
           }
-        } catch (error) {
-          console.error("Login error:", error.response?.data || error.message);
-          throw new Error(error.response?.data?.message || "Invalid email or password");
+
+          if (response) {
+            return response;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
         }
       },
     }),
-
+   
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,

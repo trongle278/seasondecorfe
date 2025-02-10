@@ -28,7 +28,7 @@ const LandingEndSection = () => {
                 developed just for you! ✨
               </span>
             </p>
-            <ButtonInvert2 />
+            <ButtonInvert2 label="Book now" />
             <div className="mt-10">
               <div className="flex flex-row mb-10 lg:justify-start justify-center items-center">
                 <AnimatedTooltip items={people} />
