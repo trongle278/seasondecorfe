@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,9 +11,12 @@ import { IoMailOutline } from "react-icons/io5";
 import { TbLockPassword } from "react-icons/tb";
 import Button2 from "@/app/components/ui/Buttons/Button2";
 import { FaGoogle } from "react-icons/fa";
+import Logo from "@/app/components/Logo";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -28,32 +29,13 @@ export default function Login() {
     },
     //resolver: yupResolver(schema),
   });
-  const handleGoogleLogin = async () => {
-    await signIn("google", { callbackUrl: "/" });
-  };
+  
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    const response = await signIn("credentials", {
-      redirect: false, // Quan trọng: Không redirect khi có lỗi
-      email,
-      password,
-    });
-
-    if (response?.error) {
-      setError(response.error); // Hiển thị lỗi trên form
-      toast.error(response.error);
-    } else {
-      toast.success("Login successful!");
-      router.push("/"); // Chuyển hướng nếu thành công
-    }
-  };
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-hidden">
       <div className="container mx-auto flex h-screen w-screen flex-col items-center justify-center">
         <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
+          <Logo outsideStyle="justify-center !m-0" insideStyle="!m-0" />
           <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
             Welcome Back!
           </h2>
@@ -61,11 +43,7 @@ export default function Login() {
             Login to your account and start exploring seasonal decorations.
           </p>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col space-y-8"
-
-          >
+          <form className="flex flex-col space-y-8">
             <div className="relative">
               <Input
                 id="email"
@@ -110,7 +88,7 @@ export default function Login() {
 
           <Button2
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={async () => signIn("google", { callbackUrl: "/" })}
             label="Continue with"
             btnClass="w-full m-0"
             labelClass="justify-center p-3"
@@ -121,7 +99,7 @@ export default function Login() {
             Don't have an account ?
             <Link
               href="/authen/signup"
-              className="text-orange-500 hover:underline ml-2"
+              className="text-red hover:underline ml-2"
             >
               Sign up
             </Link>

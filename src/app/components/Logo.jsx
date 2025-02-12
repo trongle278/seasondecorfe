@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { clsx } from "clsx";
 
-const Logo = () => {
+const Logo = ({outsideStyle, insideStyle}) => {
   return (
-    <div className="center-wrapper hidden md:flex mr-4">
+    <div className={clsx("center-wrapper hidden md:flex mr-4", outsideStyle)}>
       <Link
-        className="flex items-center justify-center space-x-2 text-2xl font-bold py-6 text-center text-neutral-600 dark:text-gray-100 selection:bg-emerald-500 mr-10"
+        className={clsx("flex items-center justify-center space-x-2 text-2xl font-bold py-6 text-center text-neutral-600 dark:text-gray-100 selection:bg-emerald-500 mr-10", insideStyle)}
         href="/"
       >
         <div className="relative h-8 w-8 md:h-6 md:w-6 bg-black border border-slate-800  text-white   flex items-center justify-center rounded-md text-sm antialiased">
@@ -36,7 +37,9 @@ const Logo = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <h1 className="text-black dark:text-white font-tertiary">SeasonDecor</h1>
+          <h1 className="text-black dark:text-white font-tertiary">
+            SeasonDecor
+          </h1>
         </div>
       </Link>
     </div>

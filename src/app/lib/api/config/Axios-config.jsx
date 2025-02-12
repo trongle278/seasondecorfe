@@ -5,84 +5,93 @@ import { toast } from "sonner";
 
 const baseURL = "http://localhost:5297/";
 
-const onRequestSuccess = (config) => {
-  const token = Cookies.get("AT"); // Lấy token từ cookie
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-  config.headers["Content-Type"] = "application/json";
-  return config;
-};
+const apiClient = axios.create({
+  baseURL,
+  withCredentials: true, // Ensures cookies are sent with requests
+});
 
-const onRequestError = (error) => {
-  toast.error("Request failed! Please try again.");
-  return Promise.reject(error);
-};
-
-const onResponseSuccess = (response) => {
-  if (response && response.data) {
-    if (response.data.success && response.data.message) {
-      toast.success(response.data.message);
+// Request Interceptor: Attach token from cookies
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get("AT");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-    return response.data;
+    config.headers["Content-Type"] = "application/json";
+    return config;
+  },
+  (error) => {
+    toast.error("Request failed! Please try again.");
+    return Promise.reject(error);
   }
+);
 
-  // Handle unexpected cases where response is undefined
-  toast.error("Unexpected server response. Please try again.");
-  return Promise.reject(new Error("Invalid response from server"));
-};
-
-const onResponseError = (error) => {
-  if (error.response) {
-    const { status, data } = error.response;
-
-    if (status === 400) {
-      if (Array.isArray(data.errors)) {
-        // Case 1: errors is an array of strings
-        data.errors.forEach((message) => {
-          toast.error(message);
-        });
-      } else if (typeof data.errors === "object") {
-        // Case 2: errors is an object with field-specific messages
-        Object.entries(data.errors).forEach(([field, messages]) => {
-          if (Array.isArray(messages)) {
-            messages.forEach((message) => {
-              toast.error(`${field}: ${message}`);
-            });
-          } else {
-            toast.error(`${field}: ${messages}`);
-          }
-        });
-      } else {
-        // Default fallback
-        toast.error(data.message || "An error occurred.");
+// Response Interceptor: Handle errors and token expiration
+apiClient.interceptors.response.use(
+  (response) => {
+    if (response && response.data) {
+      if (response.data.success && response.data.message) {
+        toast.success(response.data.message);
       }
-    } else if (status === 401) {
-      toast.warning("Session expired. Redirecting to login...");
-      redirect("/authen/login");
-    } else if (status === 403) {
-      toast.error("You do not have permission to perform this action.");
-    } else if (status === 500) {
-      toast.error("Server error! Please try again later.");
-    } else {
-      toast.error(data?.message || "An error occurred.");
+      return response.data;
     }
 
-    return Promise.reject(data);
-  }
+    toast.error("Unexpected server response. Please try again.");
+    return Promise.reject(new Error("Invalid response from server"));
+  },
+  (error) => {
+    if (error.response) {
+      const { status, data } = error.response;
 
-  toast.error("Network error. Please check your internet connection.");
-  return Promise.reject(error);
+      if (status === 400) {
+        handleValidationErrors(data.errors);
+      } else if (status === 401) {
+        handleUnauthorized();
+      } else if (status === 403) {
+        toast.error("You do not have permission to perform this action.");
+      } else if (status === 500) {
+        toast.error("Server error! Please try again later.");
+      } else {
+        toast.error(data?.message || "An error occurred.");
+      }
+
+      return Promise.reject(data);
+    }
+
+    toast.error("Network error. Please check your internet connection.");
+    return Promise.reject(error);
+  }
+);
+
+// Utility: Handle validation errors
+const handleValidationErrors = (errors) => {
+  if (Array.isArray(errors)) {
+    errors.forEach((message) => toast.error(message));
+  } else if (typeof errors === "object") {
+    Object.entries(errors).forEach(([field, messages]) => {
+      if (Array.isArray(messages)) {
+        messages.forEach((message) => toast.error(`${field}: ${message}`));
+      } else {
+        toast.error(`${field}: ${messages}`);
+      }
+    });
+  } else {
+    toast.error(errors || "An error occurred.");
+  }
 };
 
-axios.interceptors.request.use(onRequestSuccess, onRequestError);
-axios.interceptors.response.use(onResponseSuccess, onResponseError);
-axios.defaults.baseURL = baseURL;
+// Utility: Handle unauthorized (401) responses
+const handleUnauthorized = () => {
+  toast.warning("Session expired. Redirecting to login...");
+  Cookies.remove("AT"); // Clear expired token
+  redirect("/authen/login"); // Redirect user to login page
+};
 
+// API request functions
 const BaseRequest = {
   Get: async (url) => {
     try {
-      return await axios.get(url);
+      return await apiClient.get(url);
     } catch (err) {
       console.error("GET request error:", err);
       throw err;
@@ -90,7 +99,7 @@ const BaseRequest = {
   },
   Post: async (url, data) => {
     try {
-      return await axios.post(url, data);
+      return await apiClient.post(url, data);
     } catch (err) {
       console.error("POST request error:", err);
       throw err;
@@ -98,7 +107,7 @@ const BaseRequest = {
   },
   Put: async (url, data) => {
     try {
-      return await axios.put(url, data);
+      return await apiClient.put(url, data);
     } catch (err) {
       console.error("PUT request error:", err);
       throw err;
@@ -106,7 +115,7 @@ const BaseRequest = {
   },
   Delete: async (url) => {
     try {
-      return await axios.delete(url);
+      return await apiClient.delete(url);
     } catch (err) {
       console.error("DELETE request error:", err);
       throw err;
