@@ -9,8 +9,8 @@ import LandingEndSection from "@/app/components/ui/landing/LandingEndSection";
 const PricingPage = () => {
   return (
     <MainWrapper>
-      <div className="relative z-40 mx-auto">
-        <div className="relative isolate bg-transparent px-6 py-0 sm:py-10 lg:px-8">
+      <div className="relative z-20 mx-auto">
+        <div className="relative isolate mx-auto max-w-7xl bg-transparent px-4 py-0 sm:py-10 lg:px-4">
           <div
             className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
             aria-hidden
@@ -24,10 +24,11 @@ const PricingPage = () => {
             From varity styles to complete your house tailored to your needs.
             Simple pricing, no hidden fees.
           </p>
-          <div className="mx-auto  grid max-w-[83rem] grid-cols-1 gap-10 items-center  md:grid-cols-3 xl:grid-cols-3">
+          <div className="mx-auto mt-20 grid grid-cols-1 items-start gap-4 max-w-[83rem] md:grid-cols-2 xl:grid-cols-3">
             <PricingCard
-              className="dark:bg-black dark:border-white bg-white  rounded-3xl px-6 py-8 ring-1 ring-gray-900/10 sm:mx-8 lg:mx-0 border border-transparent h-full flex flex-col justify-between"
-              price="50,000 VND"
+              className=""
+              pkgRank="Silver"
+              price="100.000"
               cardcontent1="Essential Home Makeover Package"
               cardcontent2="Starter Decor Delight"
               cardcontent3="Foundations of Elegance"
@@ -36,8 +37,9 @@ const PricingPage = () => {
               clickToBuy={() => toast.success("Success`")}
             />
             <PricingCard
-              className="dark:bg-black dark:border-white bg-white  rounded-3xl px-6 py-8 ring-1 ring-gray-900/10 sm:mx-8 lg:mx-0 border border-transparent h-full flex flex-col justify-between"
-              price="100,000 VND"
+              className=""
+              pkgRank="Gold"
+              price="200.000"
               cardcontent1="Enhanced Home Elegance Package"
               cardcontent2="Premium Decor Upgrade"
               cardcontent3="Style Redefined Package"
@@ -45,8 +47,9 @@ const PricingPage = () => {
               cardcontent5="Home Harmony Package"
             />
             <PricingCard
-              className="relative bg-[radial-gradient(164.75%_100%_at_50%_0%,#334155_0%,#0F172A_48.73%)]  shadow-2xl rounded-3xl px-6 py-8 ring-1 ring-gray-900/10 sm:mx-8 lg:mx-0 border border-transparent h-full flex flex-col justify-between"
-              price="200,000 VND"
+              className=""
+              pkgRank="Platinum"
+              price="500.000"
               cardcontent1="Premium Home Refinement Package"
               cardcontent2="Exclusive Decor Expertise"
               cardcontent3="Unique Style Customization"

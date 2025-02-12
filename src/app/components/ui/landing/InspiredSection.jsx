@@ -10,6 +10,7 @@ import { IoIosBed } from "react-icons/io";
 import { MdBrunchDining } from "react-icons/md";
 import { FaBath } from "react-icons/fa";
 import CompareCard from "./components/CompareCard";
+import { HeadTypo, BodyTypo } from "../Typography";
 
 const InspiredSection = () => {
   const [value, setValue] = React.useState(0);
@@ -152,12 +153,8 @@ const InspiredSection = () => {
     <section className="flex flex-col justify-center items-center w-full bg-transparent">
       <div className="max-w-[84rem] m-0 w-full overflow-hidden py-[2.75rem]">
         <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
-            Get Inspired
-          </p>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-zinc-500 dark:text-zinc-300">
-            Explore real client before & after
-          </h2>
+          <HeadTypo label=" Get Inspired" />
+          <BodyTypo bodylabel=" Explore real client before & after" />
         </div>
         <Box sx={{ width: "100%", marginTop: "40px" }}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

@@ -4,22 +4,16 @@ import { MdOutlineExplore } from "react-icons/md";
 import { CiFilter } from "react-icons/ci";
 import { TbShoppingCartCopy } from "react-icons/tb";
 import { FaRocketchat } from "react-icons/fa";
-
+import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 
 const WorkStepSection = () => {
   return (
     <div className="bg-transparent py-12 sm:py-28 lg:py-20 xl:pb-36">
       <div className="mx-auto max-w-[84rem] px-4 sm:px-6 lg:px-0">
         <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
-            How It Works
-          </p>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-zinc-500 dark:text-zinc-300">
-            Explore your favorite decorations with ease
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg font-normal text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
-            Create your own style with us and launch it with just 4 easy steps
-          </p>
+          <HeadTypo label="How it works" />
+          <BodyTypo bodylabel="Explore your favorite decorations with ease" />
+          <FootTypo footlabel="Create your own style with us and launch it with just 4 easy steps" />
         </div>
         <ul className="mx-auto mt-12 grid max-w-md grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:max-w-5xl lg:grid-cols-4">
           <li className="flex-start group relative flex lg:flex-col">
@@ -75,7 +69,7 @@ const WorkStepSection = () => {
           </li>
           <li className="flex-start group relative flex lg:flex-col">
             <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-transparent">
-            <FaRocketchat />
+              <FaRocketchat />
             </div>
             <div className="ml-6 lg:ml-0 lg:mt-10">
               <h3 className="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500 dark:text-zinc-300">

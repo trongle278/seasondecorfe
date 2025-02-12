@@ -1,6 +1,7 @@
 "use client";
 
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { IoSearchSharp } from "react-icons/io5";
+import { IconButton } from "@mui/material";
 import { TfiMoreAlt } from "react-icons/tfi";
 import ThemeSwitch from "../../ThemeSwitch";
 import Logo from "../../Logo";
@@ -9,13 +10,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DecoratorHeader from "./components/DecoratorHeader";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { UserMenu } from "./UserMenu";
 
 export default function Header() {
+  const { data } = useSession();
+  console.log(data);
   const pathname = usePathname();
   const isSellerRegistration = pathname === "/seller/registration";
+  const isLoginPage = pathname === "/authen/login";
+  const isRegisterPage = pathname === "/authen/signup";
 
   if (isSellerRegistration) {
-    return <DecoratorHeader />; 
+    return <DecoratorHeader />;
+  }
+
+  if (isLoginPage || isRegisterPage) {
+    return (
+      <div className="relative overflow-visible">
+        <div className="absolute right-0">
+          <ThemeSwitch />
+        </div>
+      </div>
+    );
   }
   return (
     <header
@@ -53,17 +71,19 @@ export default function Header() {
           </section>
 
           <div className="right-wrapper flex flex-1 items-center justify-end gap-5 sm:gap-3 md:justify-end">
-            <div className="search-container text-black">
-              <button className="flex relative justify-start items-center text-sm text-muted-foreground dark:border-white/[0.2] py-2 w-fit border border-transparent shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] px-4 rounded-xl bg-white dark:bg-brand">
-                <SearchOutlinedIcon className="text-muted-foreground dark:text-black" />
-                <span className="transition-colors hover:text-foreground/80 text-foreground/60 text-xs sm:text-sm font-medium pl-2 pr-4 dark:text-black">
-                  Search for anything
-                </span>
-              </button>
-            </div>
-            <RightWrapper />
-
-            <ThemeSwitch />
+            <ThemeSwitch />/
+            <IconButton className="dark:hover:bg-zinc-700">
+              <IoSearchSharp size={20} className="dark:text-white" />
+            </IconButton>
+            <IconButton className="dark:hover:bg-zinc-700">
+              <MdOutlineShoppingCart size={20} className="dark:text-white" />
+            </IconButton>
+            {data?.user && (
+              <>
+                <UserMenu />
+              </>
+            )}
+            {!data?.user && <RightWrapper />}
           </div>
         </div>
       </div>

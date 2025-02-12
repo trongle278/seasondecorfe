@@ -7,20 +7,15 @@ import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { people } from "@/app/people";
 import Input from "../Inputs/Input";
 import { IoIosMail } from "react-icons/io";
+import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 
 const ProviderSign = () => {
   return (
     <div className="relative z-20 sm:py-28 lg:py-52 xl:pb-36 mx-auto px-4 sm:px-6 lg:px-0">
       <div className="text-center">
-        <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
-          Become a provider now
-        </p>
-        <h2 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-zinc-500 dark:text-zinc-300">
-          Explore your benefits when become a provider
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg font-normal text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
-          Fast and Reliable
-        </p>
+        <HeadTypo label="Become a provider now" />
+        <BodyTypo bodylabel="Explore your benefits when become a provider" />
+        <FootTypo footlabel="Fast and reliable" />
       </div>
       <div className="relative">
         <div className="section1 grid grid-cols-1 md:grid-cols-6 mt-12">
@@ -51,7 +46,11 @@ const ProviderSign = () => {
               </ul>
             </h2>
             <div className="flex flex-col mb-4 max-w-xs">
-              <Input placeholder="Your email for us to contact" type="text" icon={<IoIosMail />}/>
+              <Input
+                placeholder="Your email for us to contact"
+                type="text"
+                icon={<IoIosMail />}
+              />
             </div>
 
             <ButtonInvert label="Get started" icon={<FaLongArrowAltRight />} />

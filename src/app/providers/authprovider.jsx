@@ -1,7 +1,6 @@
-"use client";
-
+"use client"
 import { SessionProvider } from "next-auth/react";
 
-export default function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   return <SessionProvider>{children}</SessionProvider>;
-}
+};

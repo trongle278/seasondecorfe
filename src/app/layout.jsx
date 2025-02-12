@@ -1,12 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers/providers";
+import { AppProviders } from "./providers/providers";
 import Header from "./components/layouts/header/Header";
 import Footer from "./components/layouts/footer/Footer";
-import { Toasterprovider } from "./providers/toasterprovider";
-import ReduxProvider from "./providers/reduxprovider";
-import AuthProvider from "./providers/authprovider"; // Import mới
 import OTPConfirmModal from "./components/ui/Modals/OTPmodal";
+import ClientOnly from "./components/ClientOnly";
+import { AuthProvider } from "./providers/authprovider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,22 +24,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="!scroll-smooth !pr-0" suppressHydrationWarning>
       <body className="antialiased dark:bg-black">
-        <ReduxProvider>
-          <AuthProvider> {/* Bọc trong AuthProvider */}
-            <Providers>
-              <Toasterprovider />
-
+        <AuthProvider>
+          <ClientOnly>
+            <AppProviders>
               <div className="flex min-h-screen flex-col">
                 <Header />
                 <OTPConfirmModal />
                 <main className="flex-1">{children}</main>
                 <Footer />
               </div>
-            </Providers>
-          </AuthProvider>
-        </ReduxProvider>
+            </AppProviders>
+          </ClientOnly>
+        </AuthProvider>
       </body>
     </html>
   );

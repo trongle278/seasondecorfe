@@ -1,42 +1,84 @@
 import LineList from "./Linelist";
 import ButtonInvert from "../Buttons/ButtonInvert";
 import clsx from "clsx";
+import { FaDongSign } from "react-icons/fa6";
+import { FaCirclePlus } from "react-icons/fa6";
+import Link from "next/link";
 
-const PricingCard = ({cardcontent1, cardcontent2, cardcontent3, cardcontent4, cardcontent5, price, description, className, contentStyle, clickToBuy }) => {
+const PricingCard = ({
+  pkgRank,
+  cardcontent1,
+  cardcontent2,
+  cardcontent3,
+  cardcontent4,
+  cardcontent5,
+  price,
+  description,
+  className,
+  contentStyle,
+  clickToBuy,
+}) => {
   return (
-    <div className={clsx(className)}>
-      <div className="inside-content">
-        <h3
-          id="tier-1"
-          className="text-emerald-600 text-base font-semibold leading-7"
-        >
-          Benefits
-        </h3>
-        <p className="mt-4 gap-x-2">
-          <span className="dark:text-white text-gray-500 text-sm block h-6">
-            Pause or cancel anytime
-          </span>
-          <span className="text-lightGrey text-4xl font-bold tracking-tight dark:text-white">
-            {price}
-          </span>
-        </p>
-        <p className="text-lightGrey mt-6 text-sm leading-7 dark:text-neutral-200 h-24 md:h-32 xl:h-24">
-          All the features that are available on the website are free
-          to use.
-        </p>
-        <ul
-          role="list"
-          className="text-lightGrey mt-8 space-y-3 text-sm leading-6 sm:mt-10 dark:text-neutral-100"
-        >
-          <LineList content={cardcontent1} />
-          <LineList content={cardcontent2} />
-          <LineList content={cardcontent3} />
-          <LineList content={cardcontent4} />
-          <LineList content={cardcontent5}  />
-        </ul>
-      </div>
-      <div className="text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-20 block w-full">
-        <ButtonInvert label="Buy now" className="w-full" onClick={clickToBuy}/>
+    <div
+      className={clsx(
+        "rounded-3xl border border-gray-100 bg-gray-50 p-4 dark:border-neutral-800 dark:bg-neutral-900 md:p-4",
+        className
+      )}
+    >
+      <div className="inside-content flex h-full flex-col justify-start gap-4">
+        <div className="flex h-full flex-col justify-start gap-4">
+          <div className="w-full rounded-2xl bg-white p-4 shadow-input dark:bg-neutral-800 dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)]">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-2">
+                <p className="text-lg font-medium text-black dark:text-white">
+                  {pkgRank}
+                </p>
+                <span className="inline-block rounded-md text-xs tracking-tight text-neutral-600 dark:text-neutral-200">
+                  One-time Purchase
+                </span>
+              </div>
+            </div>
+            <div className="mt-8">
+              <div className="flex items-end">
+                <span className="flex items-end">
+                  <FaDongSign />
+                </span>
+                <div className="flex items-start gap-2">
+                  <span className="text-4xl font-bold text-neutral-800 dark:text-neutral-200 md:text-7xl">
+                    {price}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <ButtonInvert
+              label="Buy now"
+              className="space-x-2 cursor-pointer transition duration-200 p-px font-semibold px-4 py-2 sm:w-44 rounded-lg text-sm text-center items-center justify-center z-20  text-white mb-4 mt-10 w-full md:w-full"
+              onClick={clickToBuy}
+            />
+          </div>
+          <ul
+            role="list"
+            className="text-lightGrey  space-y-3 text-sm leading-6 sm:mt-10 dark:text-neutral-100 mt-1 p-4"
+          >
+            <LineList content={cardcontent1} />
+            <LineList content={cardcontent2} />
+            <LineList content={cardcontent3} />
+            <LineList content={cardcontent4} />
+            <LineList content={cardcontent5} />
+          </ul>
+        </div>
+        <div className="relative">
+          <div className="h-px w-full bg-white dark:bg-neutral-950"></div>
+          <div className="h-px w-full bg-neutral-200 dark:bg-neutral-800"></div>
+          <div className="absolute inset-0 m-auto flex h-5 w-5 items-center justify-center rounded-xl bg-white shadow-[0px_-1px_0px_0px_var(--neutral-200)] dark:bg-neutral-800 dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)]">
+            <FaCirclePlus />
+          </div>
+        </div>
+        <div className="py-4">
+          <Link className="w-full px-4 text-left text-sm text-neutral-500 hover:underline dark:text-neutral-200" href="#">
+            Questions? Chat with us.
+          </Link>
+        </div>
       </div>
     </div>
   );

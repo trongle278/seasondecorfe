@@ -9,19 +9,18 @@ import {
   IconRouteAltLeft,
   IconTerminal2,
 } from "@tabler/icons-react";
+import { HeadTypo, BodyTypo } from "../Typography";
 
 export function FeaturesSection() {
   const features = [
     {
       title: "Advanced Search & Matching",
-      description:
-        "Filter by style, budget, location, and availability.",
+      description: "Filter by style, budget, location, and availability.",
       icon: <IconTerminal2 />,
     },
     {
       title: "Professional Profiles",
-      description:
-        "Verified portfolios with before/after images.",
+      description: "Verified portfolios with before/after images.",
       icon: <IconUserScan />,
     },
     {
@@ -61,12 +60,8 @@ export function FeaturesSection() {
   return (
     <div className="mt-40">
       <div className="text-center">
-        <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">
-          Features
-        </p>
-        <h2 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-zinc-500 dark:text-zinc-300">
-          How we trusted by our users
-        </h2>
+        <HeadTypo label="Features" />
+        <BodyTypo bodylabel="How we trusted by our users" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-40 max-w-7xl mx-auto">
         {features.map((feature, index) => (

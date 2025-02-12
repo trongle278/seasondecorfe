@@ -11,7 +11,7 @@ export const authOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (credentials) {
           const response = await BaseRequest.Post("/api/Auth/login", {
             email: credentials.email,
@@ -19,57 +19,47 @@ export const authOptions = {
           });
 
           if (response?.message) {
-            throw new Error(res?.message);
+            throw new Error(response.message);
           }
 
-          if (response) {
-            return response;
-          } else {
-            return null;
-          }
-        } else {
-          return null;
+          return response || null;
         }
+        return null;
       },
     }),
-   
+
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      async profile(profile) {
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
+  ],
+
+  callbacks: {
+    async jwt({ token, account, user }) {
+      if (account?.id_token) {
         try {
           const response = await BaseRequest.Post("/api/Auth/google-login", {
-            credential: profile.sub, // Google User ID
-            roleId: 0, // Mặc định gửi roleId nếu backend yêu cầu
+            idToken: account.id_token,
           });
 
-          if (response && response.token) {
-            return { ...response, token: response.token };
+          if (response?.success && response.token) {
+            token.accessToken = response.token; // Store backend's token
           } else {
-            throw new Error("Google login failed");
+            throw new Error(response?.message || "Google login failed.");
           }
         } catch (error) {
           console.error("Google Login Error:", error);
-          throw new Error("Google authentication failed");
         }
-      },
-    }),
-  ],
-  pages: {
-    signIn: "/authen/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.accessToken = user.token;
       }
       return token;
     },
+
     async session({ session, token }) {
-      session.accessToken = token.accessToken;
+      session.accessToken = token.accessToken || null; // Store accessToken in session
       return session;
     },
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
