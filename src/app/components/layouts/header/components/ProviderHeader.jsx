@@ -5,10 +5,10 @@ import Logo from "@/app/components/Logo";
 import ShinyText from "@/app/components/ui/ShinyText";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
 
-const DecoratorHeader = () => {
+const ProviderHeader = () => {
   return (
     <header
-      className="DecoratorNav z-[50] sticky top-0 w-full border-b bg-white dark:bg-black border-neutral-200 dark:border-white/[0.1]"
+      className="ProviderNav z-[50] sticky top-0 w-full bg-transparent dark:bg-black"
       tabIndex="-1"
     >
       <div className="hidden lg:block">
@@ -17,7 +17,7 @@ const DecoratorHeader = () => {
             <Logo />
             <span className="absolute right-[-15px] top-[14px]">
               <ShinyText
-                text="Decorator"
+                text="Provider"
                 disabled={false}
                 speed={3}
                 className="text-sm font-semibold font-tertiary"
@@ -39,4 +39,4 @@ const DecoratorHeader = () => {
   );
 };
 
-export default DecoratorHeader;
+export default ProviderHeader;

@@ -11,7 +11,7 @@ const HighlightSection = () => {
     <div className="relative mt-10">
       <div className="block sm:hidden absolute h-full w-20 bg-white dark:bg-black right-0 [mask-image:linear-gradient(to_left,white,transparent)] z-40"></div>
       <div
-        className="flex  justify-start items-center mb-4 overflow-x-auto relative z-20 no-visible-scrollbar "
+        className="flex  justify-start items-center mb-4 overflow-x-auto relative z-20 no-visible-scrollbar gap-5 "
         style={{ scrollbarWidth: "none" }}
       >
         <div className="flex items-center space-x-2 mr-4">

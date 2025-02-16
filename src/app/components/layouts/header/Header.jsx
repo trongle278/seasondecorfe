@@ -9,21 +9,23 @@ import RightWrapper from "./RightWrapper";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import DecoratorHeader from "./components/DecoratorHeader";
-import { MdOutlineShoppingCart } from "react-icons/md";
-import { signIn, signOut, useSession } from "next-auth/react";
+import ProviderHeader from "./components/ProviderHeader";
+import { useSession } from "next-auth/react";
 import { UserMenu } from "./UserMenu";
+import { CartBtn, NotificationBtn } from "./components/indexBtn";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { data } = useSession();
   console.log(data);
+  const router = useRouter();
   const pathname = usePathname();
   const isSellerRegistration = pathname === "/seller/registration";
   const isLoginPage = pathname === "/authen/login";
   const isRegisterPage = pathname === "/authen/signup";
 
   if (isSellerRegistration) {
-    return <DecoratorHeader />;
+    return null;
   }
 
   if (isLoginPage || isRegisterPage) {
@@ -75,9 +77,8 @@ export default function Header() {
             <IconButton className="dark:hover:bg-zinc-700">
               <IoSearchSharp size={20} className="dark:text-white" />
             </IconButton>
-            <IconButton className="dark:hover:bg-zinc-700">
-              <MdOutlineShoppingCart size={20} className="dark:text-white" />
-            </IconButton>
+            <CartBtn cartClick={()=> router.push('/cart')}/>
+            <NotificationBtn />
             {data?.user && (
               <>
                 <UserMenu />

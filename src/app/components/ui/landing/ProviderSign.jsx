@@ -1,15 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import ButtonInvert from "../Buttons/ButtonInvert";
+import ButtonInvert from "../buttons/ButtonInvert";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { people } from "@/app/people";
-import Input from "../Inputs/Input";
+import Input from "../inputs/Input";
 import { IoIosMail } from "react-icons/io";
-import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
+import { HeadTypo, BodyTypo, FootTypo } from "../typography";
+import { useSession } from "next-auth/react";
 
 const ProviderSign = () => {
+  const { data } = useSession();
+
   return (
     <div className="relative z-20 sm:py-28 lg:py-52 xl:pb-36 mx-auto px-4 sm:px-6 lg:px-0">
       <div className="text-center">
@@ -45,15 +48,26 @@ const ProviderSign = () => {
                 </li>
               </ul>
             </h2>
-            <div className="flex flex-col mb-4 max-w-xs">
-              <Input
-                placeholder="Your email for us to contact"
-                type="text"
-                icon={<IoIosMail />}
-              />
-            </div>
+            {data?.user && (
+              <>
+                <div className="flex flex-col mb-4 max-w-xs">
+                  <Input
+                    placeholder="Your email for us to contact"
+                    type="text"
+                    icon={<IoIosMail />}
+                  />
+                </div>
+                <ButtonInvert
+                  label="Get started"
+                  icon={<FaLongArrowAltRight />}
+                />
+              </>
+            )}
 
-            <ButtonInvert label="Get started" icon={<FaLongArrowAltRight />} />
+            {!data?.user && <>
+              <div>Login and contact with us </div>
+            </>}
+
           </div>
           <div className="section2 p-4 sm:p-8 relative overflow-hidden col-span-1 md:col-span-3">
             <div className="flex flex-col items-center mt-10 mb-3">

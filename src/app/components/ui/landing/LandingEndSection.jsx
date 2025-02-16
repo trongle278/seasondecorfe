@@ -1,6 +1,6 @@
 import Logo from "../../Logo";
 import { people } from "@/app/people";
-import { ButtonInvert2 } from "../Buttons/ButtonInvert";
+import { ButtonInvert2 } from "../buttons/ButtonInvert";
 import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { FaStar } from "react-icons/fa";
 import { ColourfulTextSection } from "../ColorfulText";

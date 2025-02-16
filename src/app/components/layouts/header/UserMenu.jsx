@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
-import Avatar from "../../ui/Avatar/Avatar";
+import Avatar from "../../ui/avatar/Avatar";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import MenuItem from "./components/MenuItem";
@@ -28,7 +28,7 @@ export const UserMenu = () => {
       >
         <AiOutlineMenu />
         <div className="hidden md:block">
-          <Avatar userImg={session?.user?.image}/>
+          <Avatar userImg={session?.user?.image} h={30} w={30}/>
         </div>
       </div>
 

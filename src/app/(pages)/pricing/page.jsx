@@ -1,6 +1,6 @@
 "use client";
 import MainWrapper from "@/app/components/MainWrapper";
-import PricingCard from "@/app/components/ui/PricingCard/PricingCard";
+import PricingCard from "@/app/components/ui/pricingCard/PricingCard";
 import { toast } from "sonner";
 import { FeaturesSection } from "@/app/components/ui/landing/FeatureSection";
 import ScrollAnimationWrapper from "@/app/components/ScrollAnimation";

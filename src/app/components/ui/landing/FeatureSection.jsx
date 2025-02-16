@@ -9,7 +9,7 @@ import {
   IconRouteAltLeft,
   IconTerminal2,
 } from "@tabler/icons-react";
-import { HeadTypo, BodyTypo } from "../Typography";
+import { HeadTypo, BodyTypo } from "../typography";
 
 export function FeaturesSection() {
   const features = [

@@ -2,7 +2,7 @@ import * as React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import { FaCalendar } from "react-icons/fa";
-import { Label } from "../Inputs/Label";
+import { Label } from "../inputs/Label";
 
 export default function BasicDatePicker({ label, selectedDate, onChange, required }) {
   const [startDate, setStartDate] = React.useState();

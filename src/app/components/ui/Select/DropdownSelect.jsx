@@ -7,7 +7,7 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { Label } from "../Inputs/Label";
+import { Label } from "../inputs/Label";
 
 const people = [
   { id: 0, name: "Female" },
