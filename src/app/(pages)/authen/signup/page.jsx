@@ -1,12 +1,12 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import Input from "@/app/components/ui/Inputs/Input";
+import Input from "@/app/components/ui/inputs/Input";
 import { useForm } from "react-hook-form";
-import { Label } from "@/app/components/ui/Inputs/Label";
-import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
-import Button2 from "@/app/components/ui/Buttons/Button2";
-import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
+import { Label } from "@/app/components/ui/inputs/Label";
+import DropdownSelect from "@/app/components/ui/select/DropdownSelect";
+import Button2 from "@/app/components/ui/buttons/Button2";
+import BasicDatePicker from "@/app/components/ui/select/DatePicker";
 import { RegisterCustomer } from "@/app/api/register/Register";
 import { ClipLoader } from "react-spinners";
 import * as yup from "yup";

@@ -17,7 +17,7 @@ export const EffectBackground = ({
           className
         )}
         {...props}>
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-1/3 overflow-hidden">
           <div
             //   I'm sorry but this is what peak developer performance looks like // trigger warning
             className={cn(`

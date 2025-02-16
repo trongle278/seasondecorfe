@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Button2 from "./Buttons/Button2";
+import Button2 from "./buttons/Button2";
 import { IoMdClose } from "react-icons/io";
 
 const Modal = ({

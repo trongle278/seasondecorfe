@@ -1,9 +1,10 @@
 import LineList from "./Linelist";
-import ButtonInvert from "../Buttons/ButtonInvert";
+import ButtonInvert from "../buttons/ButtonInvert";
 import clsx from "clsx";
 import { FaDongSign } from "react-icons/fa6";
 import { FaCirclePlus } from "react-icons/fa6";
 import Link from "next/link";
+import { BorderBox } from "../BorderBox";
 
 const PricingCard = ({
   pkgRank,
@@ -27,7 +28,7 @@ const PricingCard = ({
     >
       <div className="inside-content flex h-full flex-col justify-start gap-4">
         <div className="flex h-full flex-col justify-start gap-4">
-          <div className="w-full rounded-2xl bg-white p-4 shadow-input dark:bg-neutral-800 dark:shadow-[0px_-1px_0px_0px_var(--neutral-700)]">
+          <BorderBox>
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-2">
                 <p className="text-lg font-medium text-black dark:text-white">
@@ -55,7 +56,7 @@ const PricingCard = ({
               className="space-x-2 cursor-pointer transition duration-200 p-px font-semibold px-4 py-2 sm:w-44 rounded-lg text-sm text-center items-center justify-center z-20  text-white mb-4 mt-10 w-full md:w-full"
               onClick={clickToBuy}
             />
-          </div>
+          </BorderBox>
           <ul
             role="list"
             className="text-lightGrey  space-y-3 text-sm leading-6 sm:mt-10 dark:text-neutral-100 mt-1 p-4"

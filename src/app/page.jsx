@@ -1,14 +1,13 @@
 "use client";
 
-import Button2 from "./components/ui/Buttons/Button2";
+import Button2 from "./components/ui/buttons/Button2";
 import { FaAngleRight } from "react-icons/fa6";
 import RotatingText from "./components/ui/Flipword";
-import { BannerCarousel } from "./components/BannerCarousel";
 import {
   WhiteBgButon,
   BlackBgButton,
-} from "./components/ui/Buttons/Button2colors";
-import WorkStepSection from "./components/ui/landing/WorkStepSection";
+} from "./components/ui/buttons/Button2colors";
+import ProductSection from "./components/ui/landing/ProductSection";
 import HighlightSection from "./components/ui/landing/HighlightSection";
 import InspiredSection from "./components/ui/landing/InspiredSection";
 import ScrollAnimationWrapper from "./components/ScrollAnimation";
@@ -89,12 +88,13 @@ export default function Main() {
             </div>
           </div>
         </div>
-        <ScrollAnimationWrapper>
-          <WorkStepSection />
-        </ScrollAnimationWrapper>
 
         <ScrollAnimationWrapper>
           <InspiredSection />
+        </ScrollAnimationWrapper>
+
+        <ScrollAnimationWrapper>
+          <ProductSection />
         </ScrollAnimationWrapper>
 
         <ScrollAnimationWrapper>
@@ -107,7 +107,7 @@ export default function Main() {
         </ScrollAnimationWrapper>
 
         <ScrollAnimationWrapper>
-          <DisclosureSection/>
+          <DisclosureSection />
         </ScrollAnimationWrapper>
 
         <ScrollAnimationWrapper>

@@ -156,14 +156,13 @@ export default {
             backgroundPosition: "-200% 0",
           },
         },
-        gradient: {
-          "0%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-          "100%": { backgroundPosition: "0% 50%" },
+        "star-movement-bottom": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(-100%, 0%)", opacity: "0" },
         },
-        shine: {
-          "0%": { "background-position": "100%" },
-          "100%": { "background-position": "-100%" },
+        "star-movement-top": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(100%, 0%)", opacity: "0" },
         },
         fadeIn: {
           "0%": { opacity: "0" },
@@ -190,12 +189,15 @@ export default {
         aurora: "aurora 60s linear infinite",
         shimmer: "shimmer 2s linear infinite",
         gradient: "gradient 8s linear infinite",
-        shine: 'shine 5s linear infinite',
+        shine: "shine 5s linear infinite",
         "fade-in": "fadeIn 1s ease-out-sine forwards",
         "fade-out": "fadeOut 1s ease-in-sine forwards",
         "scale-in": "scaleIn 0.5s ease-in-out-cubic forwards",
         "scale-out": "scaleOut 0.5s ease-in-out-cubic forwards",
         rotate: "rotate360 1s ease-out-quint infinite linear",
+        "star-movement-bottom":
+          "star-movement-bottom linear infinite alternate",
+        "star-movement-top": "star-movement-top linear infinite alternate",
       },
       // Custom timing functions (you can use them with Tailwind utilities)
       transitionTimingFunction: {

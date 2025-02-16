@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "../../ui/Buttons/Button";
+import Button from "../../ui/buttons/Button";
 import { MdOutlineLogin } from "react-icons/md";
 
 const RightWrapper = () => {
