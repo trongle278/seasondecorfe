@@ -9,53 +9,53 @@ import clsx from "clsx";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { Label } from "../inputs/Label";
 
-const people = [
-  { id: 0, name: "Female" },
-  { id: 1, name: "Male" },
-];
-export default function DropdownSelect({ label, gender, onChange }) {
-  const [selectedGender, setSelectedGender] = React.useState(gender || "None");
+export default function DropdownSelect({
+  label,
+  options = [],
+  value,
+  onChange,
+  labelKey = "name", // Default key for displaying labels
+}) {
+  const [selected, setSelected] = React.useState(value || options[0]?.[labelKey] || "Select");
+
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="gender">{label}</Label>
+      {label && <Label htmlFor="dropdown">{label}</Label>}
 
       <Listbox
-        value={selectedGender}
-        onChange={(value) => {
-          setSelectedGender(value);
-          onChange(value); // Notify parent component
+        value={selected}
+        onChange={(selectedValue) => {
+          setSelected(selectedValue);
+          onChange?.(selectedValue); // Notify parent component
         }}
       >
         <ListboxButton
           className={clsx(
-            "relative block w-full rounded-lg bg-gray-100 py-1.5 pl-3 pr-8 text-left text-sm/6 text-black",
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
+            "relative block w-full rounded-lg bg-gray-100 py-1.5 pl-3 pr-8 text-left text-sm text-black",
+            "focus:outline-none focus:ring-2 focus:ring-gray-400"
           )}
         >
-          {selectedGender}
+          {selected}
           <RiArrowDropDownLine
             size={20}
-            className="group pointer-events-none absolute right-2.5 top-2.5 size-4 fill-black"
+            className="absolute right-2.5 top-2.5 size-4 fill-black"
             aria-hidden="true"
           />
         </ListboxButton>
+
         <ListboxOptions
-          anchor="bottom"
-          transition
           className={clsx(
-            "mt-1 w-[var(--button-width)] rounded-xl border border-black bg-black p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none",
-            "z-50 transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 dark:bg-white"
+            "absolute mt-9 w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
+            "z-50 transition-opacity duration-100 ease-in"
           )}
         >
-          {people.map((person) => (
+          {options.map((option) => (
             <ListboxOption
-              key={person.name}
-              value={person.name}
-              className="group flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10"
+              key={option.id}
+              value={option[labelKey]}
+              className="group flex cursor-pointer select-none items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-gray-200"
             >
-              <div className="text-sm/6 text-white dark:text-black cursor-pointer">
-                {person.name}
-              </div>
+              <div className="text-sm text-black">{option[labelKey]}</div>
             </ListboxOption>
           ))}
         </ListboxOptions>

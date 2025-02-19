@@ -96,7 +96,7 @@ const Modal = ({
                     label={actionLabel}
                     onClick={handleSubmit}
                     btnClass="w-[200px]"
-                    labelClass="justify-center p-3"
+                    labelClass="justify-center p-3 w-[100px]"
 
                   />
                 </div>

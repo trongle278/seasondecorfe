@@ -7,7 +7,7 @@ import Link from "next/link";
 import { LuBox } from "react-icons/lu";
 import StatusChip from "../StatusChip/StatusChip";
 import { FaTrashAlt } from "react-icons/fa";
-import NumberInputField from "../select/NumberField";
+import ExampleNumberField from "../select/NumberField";
 import { FaDongSign } from "react-icons/fa6";
 
 const CartItem = () => {
@@ -43,14 +43,17 @@ const CartItem = () => {
                 <LuBox size={20} /> Status:
                 <StatusChip status={1} className="text-sm" />
               </span>
-              <FaTrashAlt size={20} className="cursor-pointer" color="red"/>
+              <FaTrashAlt size={20} className="cursor-pointer" color="red" />
             </div>
           </div>
 
           {/* Quantity and Price */}
           <div className="flex flex-col gap-2 items-center justify-center md:flex-row md:gap-4 mt-3 md:order-3">
-            <NumberInputField />
-            <p className="text-xl font-bold text-gray-900 dark:text-white inline-flex items-center">100.000 <FaDongSign /></p>
+            <ExampleNumberField />
+
+            <p className="text-xl font-bold text-gray-900 dark:text-white inline-flex items-center">
+              100.000 <FaDongSign />
+            </p>
           </div>
         </div>
       </div>

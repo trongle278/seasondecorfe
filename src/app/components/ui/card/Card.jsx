@@ -4,10 +4,12 @@ import Image from "next/image";
 import React from "react";
 import { CardContainer, CardBody, CardItem } from "./components/3dCard";
 import Link from "next/link";
+import { TbCurrencyDong } from "react-icons/tb";
+import { FavouriteBtn } from "../../layouts/header/components/indexBtn";
 
 const Card = () => {
   return (
-    <CardContainer className="inter-var">
+    <CardContainer className="inter-var flex">
       <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] max-w-[300px] sm:w-[30rem] h-auto rounded-xl p-2 border  ">
         <CardItem translateZ="100" className="w-full">
           <Image
@@ -18,18 +20,22 @@ const Card = () => {
             alt="thumbnail"
           />
         </CardItem>
-        <div className="flex flex-col items-start mt-5">
+        <div className="flex flex-col items-start mt-5 flex-grow gap-3">
           <CardItem
             translateZ="50"
-            className="text-xl font-bold text-neutral-600 dark:text-white"
+            className="text-xl font-bold text-neutral-600 dark:text-white flex-grow break-words w-full"
           >
-            dasdasda
+            dasdasdafdsssssssssssssssssssssss
           </CardItem>
           <CardItem
             translateZ="50"
-            className="text-xl font-bold text-neutral-600 dark:text-white"
+            className="flex flex-row items-center justify-between text-xl font-primary text-neutral-600 dark:text-white w-full"
           >
-            123
+            <span className="inline-flex items-center">
+              <TbCurrencyDong /> 123
+            </span>
+
+            <FavouriteBtn favClick={() => {}} />
           </CardItem>
         </div>
       </CardBody>
