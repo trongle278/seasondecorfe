@@ -148,6 +148,10 @@ export default {
             backgroundPosition: "350% 50%, 350% 50%",
           },
         },
+        shine: {
+          '0%': { 'background-position': '100%' },
+          '100%': { 'background-position': '-100%' },
+         },
         shimmer: {
           from: {
             backgroundPosition: "0 0",

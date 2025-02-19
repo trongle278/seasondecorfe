@@ -18,7 +18,7 @@ const ProviderSign = () => {
       <div className="text-center">
         <HeadTypo label="Become a provider now" />
         <BodyTypo bodylabel="Explore your benefits when become a provider" />
-        <FootTypo footlabel="Fast and reliable" />
+        <FootTypo footlabel="Fast and reliable" className="mt-4 lg:text-xl lg:leading-8 text-lg font-normal text-zinc-500 dark:text-zinc-300 max-w-2xl" />
       </div>
       <div className="relative">
         <div className="section1 grid grid-cols-1 md:grid-cols-6 mt-12">

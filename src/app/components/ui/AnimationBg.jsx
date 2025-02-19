@@ -10,17 +10,19 @@ export const EffectBackground = ({
   ...props
 }) => {
   return (
-    (<main>
+    <main>
       <div
         className={cn(
           "relative h-full items-center justify-center bg-zinc-50 dark:bg-zinc-900  text-slate-950 transition-bg",
           className
         )}
-        {...props}>
+        {...props}
+      >
         <div className="absolute inset-x-0 top-0 h-1/3 overflow-hidden">
           <div
             //   I'm sorry but this is what peak developer performance looks like // trigger warning
-            className={cn(`
+            className={cn(
+              `
           [--white-gradient:repeating-linear-gradient(100deg,var(--white)_0%,var(--white)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--white)_16%)]
           [--dark-gradient:repeating-linear-gradient(100deg,var(--black)_0%,var(--black)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--black)_16%)]
           [--aurora:repeating-linear-gradient(100deg,var(--blue-500)_10%,var(--indigo-300)_15%,var(--blue-300)_20%,var(--violet-200)_25%,var(--blue-400)_30%)]
@@ -34,32 +36,22 @@ export const EffectBackground = ({
           after:[background-size:200%,_100%] 
           after:animate-aurora after:[background-attachment:fixed] after:mix-blend-difference
           pointer-events-none
-          absolute -inset-[10px] opacity-50 will-change-transform`, showRadialGradient &&
-              `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`)}></div>
+          absolute -inset-[10px] opacity-50 will-change-transform`,
+              showRadialGradient &&
+                `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`
+            )}
+          ></div>
         </div>
         {children}
       </div>
-    </main>)
+    </main>
   );
 };
 
-
-export const AnimationBackground = ({children}) => {
-  return(
+export const AnimationBackground = ({ children }) => {
+  return (
     <EffectBackground>
-      <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="dark:text-white"
-      >
-      {children}
-      </motion.div>
+      <div className="dark:text-white">{children}</div>
     </EffectBackground>
-
-  )
-}
+  );
+};

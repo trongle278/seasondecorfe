@@ -322,38 +322,6 @@ body,
   padding: 0;
 }
 
-.slick-dots {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
-.slick-dots li {
-  margin: 0 5px;
-}
-
-/* Default dots */
-.slick-dots li button:before {
-  color: gray; /* Màu sắc khi chế độ sáng */
-  opacity: 0.5;
-}
-
-.slick-dots li.slick-active button:before {
-  color: black; /* Màu sắc khi được chọn */
-  opacity: 1;
-}
-
-/* Dots trong chế độ tối */
-.dark .slick-dots li button:before {
-  color: white; /* Màu sắc khi chế độ tối */
-  opacity: 0.5;
-}
-
-.dark .slick-dots li.slick-active button:before {
-  color: #ffffff; /* Màu vàng nổi bật cho chế độ tối */
-  opacity: 1;
-}
-
 
 @layer base {
   :root {

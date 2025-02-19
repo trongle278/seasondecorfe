@@ -1,5 +1,7 @@
 "use client"
 
+import clsx from "clsx";
+
 
 export const HeadTypo = ({label}) => {
     return(
@@ -17,9 +19,9 @@ export const BodyTypo = ({ bodylabel }) => {
     );
   };
 
-  export const FootTypo = ({footlabel}) => {
+  export const FootTypo = ({footlabel, className}) => {
     return (
-      <p className="mx-auto mt-4 max-w-2xl text-lg font-normal text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
+      <p className={clsx("mx-auto", className)}>
         {footlabel}
       </p>
     );

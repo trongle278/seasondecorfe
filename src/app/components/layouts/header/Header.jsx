@@ -9,7 +9,6 @@ import RightWrapper from "./RightWrapper";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ProviderHeader from "./components/ProviderHeader";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "./UserMenu";
 import { CartBtn, NotificationBtn } from "./components/indexBtn";

@@ -3,9 +3,7 @@
 import * as React from "react";
 import { Label } from "@/app/components/ui/inputs/Label";
 import Input from "@/app/components/ui/inputs/Input";
-import Avatar from "@/app/components/ui/avatar/Avatar";
 import { useSession } from "next-auth/react";
-import { MdEdit } from "react-icons/md";
 import ShinyText from "@/app/components/ui/ShinyText";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
 import Logo from "@/app/components/Logo";
@@ -14,6 +12,7 @@ import Button2 from "@/app/components/ui/buttons/Button2";
 import { ClipLoader } from "react-spinners";
 import InfiniteScroll from "@/app/components/ui/InfiniteScroll";
 import { items } from "@/app/items";
+import { EditAvatar } from "@/app/components/logic/EditAvatar";
 
 export default function RegistrationPage() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -29,7 +28,7 @@ export default function RegistrationPage() {
           <div className="mx-auto flex w-full flex-col justify-center gap-6 items-center">
             <div>
               <div className="logo-wrapper flex justify-center items-center relative">
-                <Logo outsideStyle="!m-0" insideStyle="!m-0"/>
+                <Logo outsideStyle="!m-0" insideStyle="!m-0" />
               </div>
             </div>
             <h2 className="text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
@@ -37,18 +36,7 @@ export default function RegistrationPage() {
             </h2>
             <div className="mt-10">
               <form className="space-y-6">
-                <div className="relative flex justify-center">
-                  <Avatar
-                    userImg={data?.user?.image}
-                    h={120}
-                    w={120}
-                    className={"cursor-pointer"}
-                  />
-                  <div className="absolute bottom-0 left-40 inline-flex items-center gap-1 rounded bg-black bg-opacity-50 p-1 text-sm text-white dark:bg-white dark:text-black">
-                    <MdEdit />
-                    Edit
-                  </div>
-                </div>
+                <EditAvatar userImg={data?.user?.image} className="justify-center" childStyle="left-40"/>
 
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
                   <div className="flex flex-col space-y-2 w-full">
