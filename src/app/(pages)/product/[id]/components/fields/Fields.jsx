@@ -1,5 +1,5 @@
 "use client";
-import { FootTypo } from "@/app/components/ui/typography";
+import { FootTypo } from "@/app/components/ui/Typography";
 
 export const Fields = ({ label, detail }) => {
   return (

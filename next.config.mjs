@@ -3,6 +3,7 @@ const nextConfig = {
     images: {
     domains: ['s3.amazonaws.com', 'images.unsplash.com', 'assets.aceternity.com', 'hespruce.com', 'lh3.googleusercontent.com'],
   },
+
   async headers() {
     return [
       {

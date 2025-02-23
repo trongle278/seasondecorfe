@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
-import Avatar from "../../ui/avatar/Avatar";
+import Avatar from "../../ui/Avatar/Avatar";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import MenuItem from "./components/MenuItem";
@@ -11,14 +11,25 @@ import { MdSubscriptions } from "react-icons/md";
 import { RiListUnordered } from "react-icons/ri";
 import { PiSignOutBold } from "react-icons/pi";
 import { FaRegSmileBeam } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useGetAccountDetails } from "@/app/queries/user/user.query";
 
 export const UserMenu = () => {
   const { data: session } = useSession();
+
+  const accountId = session?.accountId;
+
+  const { data: account, isLoading: isFetchingAccount } =
+    useGetAccountDetails(accountId);
+
   const [isOpen, setIsOpen] = React.useState(false);
+  const router = useRouter();
 
   const ToggleOpen = React.useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
+
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <div className="relative">
@@ -28,7 +39,7 @@ export const UserMenu = () => {
       >
         <AiOutlineMenu />
         <div className="hidden md:block">
-          <Avatar userImg={session?.user?.image} h={30} w={30}/>
+          <Avatar userImg={account?.avatar} h={30} w={30} />
         </div>
       </div>
 
@@ -41,25 +52,29 @@ export const UserMenu = () => {
                   Hello <FaRegSmileBeam />
                 </span>
 
-                {session?.user?.name}
+                {account?.lastName}
               </div>
               <MenuItem
-                onClick={() => {}}
+                onClick={() => router.push("/user/account/profile")}
+                closeMenu={closeMenu}
                 label="Profile"
                 icon={<FaRegUser />}
               />
               <MenuItem
                 onClick={() => {}}
+                closeMenu={closeMenu}
                 label="Followed"
                 icon={<MdSubscriptions />}
               />
               <MenuItem
                 onClick={() => {}}
+                closeMenu={closeMenu}
                 label="Orders"
                 icon={<RiListUnordered />}
               />
               <MenuItem
-                onClick={signOut}
+                onClick={() => signOut({ callbackUrl: "/authen/login" })}
+                closeMenu={closeMenu}
                 label="Sign Out"
                 icon={<PiSignOutBold />}
               />

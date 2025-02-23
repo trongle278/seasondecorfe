@@ -10,7 +10,7 @@ import { IoIosBed } from "react-icons/io";
 import { MdBrunchDining } from "react-icons/md";
 import { FaBath } from "react-icons/fa";
 import CompareCard from "./components/CompareCard";
-import { HeadTypo, BodyTypo } from "../typography";
+import { HeadTypo, BodyTypo } from "../Typography";
 
 const InspiredSection = () => {
   const [value, setValue] = React.useState(0);

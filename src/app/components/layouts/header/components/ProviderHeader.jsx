@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
-import ShinyText from "@/app/components/ui/ShinyText";
+import ShinyText from "@/app/components/ui/animated/ShinyText";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
 
 const ProviderHeader = () => {

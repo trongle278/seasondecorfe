@@ -1,5 +1,5 @@
 import LineList from "./Linelist";
-import ButtonInvert from "../buttons/ButtonInvert";
+import ButtonInvert from "../Buttons/ButtonInvert";
 import clsx from "clsx";
 import { FaDongSign } from "react-icons/fa6";
 import { FaCirclePlus } from "react-icons/fa6";

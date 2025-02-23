@@ -11,7 +11,7 @@ import { PiShoppingBag } from "react-icons/pi";
 const Sidebar = ({ selectedPath, userId, userRole }) => {
   return (
     <div className="w-full md:w-1/4 mb-6 md:mb-0 dark:text-white">
-      <ul className="space-y-4">
+      <ul className="space-y-6">
         <li>
           <Link
             //href={`/accounts/settings/account/${userId}`}

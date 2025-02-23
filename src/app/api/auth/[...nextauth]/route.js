@@ -36,14 +36,21 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, account, user }) {
+      //console.log("Google data:", account )
       if (account?.id_token) {
         try {
+          console.log("Google Login Token:", account.id_token);
+
           const response = await BaseRequest.Post("/api/Auth/google-login", {
             idToken: account.id_token,
           });
 
           if (response?.success && response.token) {
-            token.accessToken = response.token; // Store backend's token
+            token.accessToken = response.token;// Store backend's token
+            token.roleId = response.roleId; // Store roleId in token
+            token.accountId = response.accountId; // Store accountId in token
+
+
           } else {
             throw new Error(response?.message || "Google login failed.");
           }
@@ -56,6 +63,9 @@ export const authOptions = {
 
     async session({ session, token }) {
       session.accessToken = token.accessToken || null; // Store accessToken in session
+      session.roleId = token.roleId || null; // Store roleId in session
+      session.accountId = token.accountId || null; // Store accountId in session
+
       return session;
     },
   },

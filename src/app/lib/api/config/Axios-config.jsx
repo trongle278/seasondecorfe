@@ -7,7 +7,7 @@ const baseURL = "http://localhost:5297/";
 
 const apiClient = axios.create({
   baseURL,
-  withCredentials: true, // Ensures cookies are sent with requests
+  //withCredentials: true, // Ensures cookies are sent with requests
 });
 
 // Request Interceptor: Attach token from cookies

@@ -3,16 +3,18 @@
 import Container from "@/app/components/layouts/Container";
 import ImageSlider from "@/app/components/ui/slider/ImageSlider";
 import { FavouriteBtn } from "@/app/components/layouts/header/components/indexBtn";
-import Avatar from "@/app/components/ui/avatar/Avatar";
-import { FootTypo } from "@/app/components/ui/typography";
-import Button from "@/app/components/ui/buttons/Button";
+import Avatar from "@/app/components/ui/Avatar/Avatar";
+import { FootTypo } from "@/app/components/ui/Typography";
+import Button from "@/app/components/ui/Buttons/Button";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { AiOutlineShop } from "react-icons/ai";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import DetailSection from "./components/sections/DetailSection";
 import DescrriptionSection from "./components/sections/DescriptionSection";
-import ExampleNumberField from "@/app/components/ui/select/NumberField";
+import ExampleNumberField from "@/app/components/ui/Select/NumberField";
 import CommentSection from "./components/sections/CommentSection";
+import { FaDongSign } from "react-icons/fa6";
+import { BsCartPlus } from "react-icons/bs";
 
 const ProductDetail = () => {
   return (
@@ -28,32 +30,64 @@ const ProductDetail = () => {
           </div>
           {/* INFO */}
           <div className="flex-flex-col w-full p-10 dark:text-white">
-            <div className="">
-              <div className="text-3xl font-bold my-5">xczzx</div>
-              <div className=" font-semibold my-10">Created Date : czxcz</div>
-              {/*<div className="text-black font-semibold my-5">
-              Updated Date : {formattedUpdatedDate}
-            </div> */}
-              <div className=" font-semibold my-10">Description : zcx</div>
-              <div className=" font-semibold my-10">Color : dad</div>
-              <div className=" font-semibold my-10">
-                Material : {"adsa" || "N/A"}
-              </div>
-              <div className=" font-semibold my-10">
-                Type : {"dsasd" || "N/A"}
-              </div>
-              <div className=" font-semibold my-10">
-                Brand : {"asdsa" || "N/A"}
-              </div>
-              <div className="font-semibold my-10">Created By : adsad</div>
-              <div className="my-7 font-semibold">
-                Expected Starting Price :
-              </div>
-              <div className="text-3xl font-semibold">dasda</div>
-              <div className="my-20 max-w-[500px]">
+            <div className="flex flex-col justify-start">
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="A Lamp for your home"
+                  className="text-3xl !mx-0 font-primary"
+                />
+              </span>
+
+              <span className="bg-gray-50 w-full dark:bg-zinc-800 inline-flex text-3xl p-5 text-red">
+                <FaDongSign />
+                123.123
+              </span>
+
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="Color"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />{" "}
+                asdad
+              </span>
+
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="Color"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />{" "}
+                asdad
+              </span>
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="Color"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />{" "}
+                asdad
+              </span>
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="Color"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />{" "}
+                asdad
+              </span>
+              <span className="inline-flex items-center gap-5 my-3">
+                <FootTypo
+                  footlabel="Color"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />
+                asdad
+              </span>
+              <span className="my-20 max-w-[500px] inline-flex items-center gap-2">
+                <FootTypo
+                  footlabel="Quantity"
+                  className="text-lg !mx-0 font-semibold w-40"
+                />
                 <ExampleNumberField />
-              </div>
+              </span>
             </div>
+            <Button label="Add to cart" className="bg-primary !p-3" icon={<BsCartPlus size={20}/>}/>
           </div>
         </div>
       </BorderBox>
@@ -72,10 +106,11 @@ const ProductDetail = () => {
               </div>
               <div className="items-center flex justify-between gap-2">
                 <Button
-                  label="Contact Seller"
+                  label="Chat Now"
                   icon={<IoChatboxEllipsesOutline />}
+                  className="bg-primary"
                 />
-                <Button label="Browse shop" icon={<AiOutlineShop />} />
+                <Button label="Browse Shop" icon={<AiOutlineShop />} />
               </div>
             </div>
           </div>
@@ -115,7 +150,7 @@ const ProductDetail = () => {
       </BorderBox>
       <DetailSection />
       <DescrriptionSection />
-      <CommentSection/>
+      <CommentSection />
     </Container>
   );
 };

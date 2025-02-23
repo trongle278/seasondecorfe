@@ -1,4 +1,4 @@
-import { AnimationBackground } from "./ui/AnimationBg";
+import { AnimationBackground } from "./ui/animated/AnimationBg";
 
 const MainWrapper = ({ children }) => {
   return (

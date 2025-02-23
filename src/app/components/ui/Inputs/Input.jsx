@@ -8,6 +8,7 @@ const Input = ({
   className,
   label,
   type,
+  defaultValue,
   icon,
   placeholder,
   register = () => {},
@@ -52,6 +53,7 @@ const Input = ({
         )}
         <input
           id={id}
+          defaultValue={defaultValue}
           placeholder={placeholder}
           disabled={disabled}
           required={required}

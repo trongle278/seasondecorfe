@@ -3,39 +3,28 @@
 import { IoSearchSharp } from "react-icons/io5";
 import { IconButton } from "@mui/material";
 import { TfiMoreAlt } from "react-icons/tfi";
-import ThemeSwitch from "../../ThemeSwitch";
-import Logo from "../../Logo";
-import RightWrapper from "./RightWrapper";
+import ThemeSwitch from "../../../ThemeSwitch";
+import Logo from "../../../Logo";
+import RightWrapper from "../RightWrapper";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { UserMenu } from "./UserMenu";
-import { CartBtn, NotificationBtn } from "./components/indexBtn";
+import { UserMenu } from "../UserMenu";
+import { CartBtn, NotificationBtn } from "../components/indexBtn";
 import { useRouter } from "next/navigation";
+import { useGetAccountDetails } from "@/app/queries/user/user.query";
 
 export default function Header() {
-  const { data } = useSession();
-  console.log(data);
+  const { data: session } = useSession();
+  const accountId = session?.accountId;
+
+  const { data: account, isLoading: isFetchingAccount } =
+    useGetAccountDetails(accountId);
+
+  console.log(session);
+
   const router = useRouter();
-  const pathname = usePathname();
-  const isSellerRegistration = pathname === "/seller/registration";
-  const isLoginPage = pathname === "/authen/login";
-  const isRegisterPage = pathname === "/authen/signup";
 
-  if (isSellerRegistration) {
-    return null;
-  }
-
-  if (isLoginPage || isRegisterPage) {
-    return (
-      <div className="relative overflow-visible">
-        <div className="absolute right-0">
-          <ThemeSwitch />
-        </div>
-      </div>
-    );
-  }
   return (
     <header
       className="z-[50] sticky top-0 w-full border-b bg-white dark:bg-black border-neutral-200 dark:border-white/[0.1]"
@@ -76,14 +65,14 @@ export default function Header() {
             <IconButton className="dark:hover:bg-zinc-700">
               <IoSearchSharp size={20} className="dark:text-white" />
             </IconButton>
-            <CartBtn cartClick={()=> router.push('/cart')}/>
+            <CartBtn cartClick={() => router.push("/cart")} />
             <NotificationBtn />
-            {data?.user && (
+            {account && (
               <>
                 <UserMenu />
               </>
             )}
-            {!data?.user && <RightWrapper />}
+            {!account && <RightWrapper />}
           </div>
         </div>
       </div>
