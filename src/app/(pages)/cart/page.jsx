@@ -3,8 +3,8 @@
 import * as React from "react";
 import { useSession } from "next-auth/react";
 import Container from "@/app/components/layouts/Container";
-import { HeadTypo, BodyTypo, FootTypo } from "@/app/components/ui/typography";
-import Button2 from "@/app/components/ui/buttons/Button2";
+import { HeadTypo, BodyTypo, FootTypo } from "@/app/components/ui/Typography";
+import Button2 from "@/app/components/ui/Buttons/Button2";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { ClipLoader } from "react-spinners";
 import Link from "next/link";

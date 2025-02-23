@@ -1,9 +1,9 @@
 import Logo from "../../Logo";
 import { people } from "@/app/people";
-import { ButtonInvert2 } from "../buttons/ButtonInvert";
+import { ButtonInvert2 } from "../Buttons/ButtonInvert";
 import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { FaStar } from "react-icons/fa";
-import { ColourfulTextSection } from "../ColorfulText";
+import { ColourfulTextSection } from "../animated/ColorfulText";
 
 const LandingEndSection = () => {
   return (

@@ -1,0 +1,26 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Header from "./generalHeader/Header";
+import SellerHeader from "./sellerHeader/SellerHeader";
+import MinimalHeader from "./minimalHeader/MinimalHeader";
+
+const HeaderWrapper = () => {
+  const pathname = usePathname();
+
+  if(pathname === ("/seller/registration")){
+    return null;
+  }
+
+  if (pathname.startsWith("/seller/")) {
+    return <SellerHeader />;
+  }
+
+  if (pathname === "/authen/login" || pathname === "/authen/signup") {
+    return <MinimalHeader />;
+  }
+
+  return <Header />;
+};
+
+export default HeaderWrapper;

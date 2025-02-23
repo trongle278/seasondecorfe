@@ -1,12 +1,12 @@
 "use client";
 
-import Button2 from "./components/ui/buttons/Button2";
+import Button2 from "./components/ui/Buttons/Button2";
 import { FaAngleRight } from "react-icons/fa6";
-import RotatingText from "./components/ui/Flipword";
+import RotatingText from "./components/ui/animated/Flipword";
 import {
   WhiteBgButon,
   BlackBgButton,
-} from "./components/ui/buttons/Button2colors";
+} from "./components/ui/Buttons/Button2colors";
 import ProductSection from "./components/ui/landing/ProductSection";
 import HighlightSection from "./components/ui/landing/HighlightSection";
 import InspiredSection from "./components/ui/landing/InspiredSection";

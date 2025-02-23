@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import "slick-carousel/slick/slick.css";
@@ -9,7 +11,7 @@ import Input from "@/app/components/ui/inputs/Input";
 import { useForm } from "react-hook-form";
 import { IoMailOutline } from "react-icons/io5";
 import { TbLockPassword } from "react-icons/tb";
-import Button2 from "@/app/components/ui/buttons/Button2";
+import Button2 from "@/app/components/ui/Buttons/Button2";
 import { FaGoogle } from "react-icons/fa";
 import Logo from "@/app/components/Logo";
 import { signIn } from "next-auth/react";
@@ -17,6 +19,7 @@ import { signIn } from "next-auth/react";
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
+   const [isLoading, setIsLoading] = React.useState(false);
 
   const {
     register,
@@ -71,6 +74,7 @@ export default function Login() {
             <Button2
               type="submit"
               label="Continue with email"
+              loading={isLoading}
               btnClass="w-full mt-3 mb-1"
               labelClass="justify-center p-3"
             />
@@ -89,6 +93,7 @@ export default function Login() {
           <Button2
             type="button"
             onClick={async () => signIn("google", { callbackUrl: "/" })}
+            loading={isLoading}
             label="Continue with"
             btnClass="w-full m-0"
             labelClass="justify-center p-3"

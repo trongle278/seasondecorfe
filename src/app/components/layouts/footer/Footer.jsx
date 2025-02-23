@@ -8,9 +8,9 @@ import { usePathname } from "next/navigation";
 
 const Footer = () => {
   const pathname = usePathname();
-  const isSellerRegistration = pathname === "/seller/registration";
+  const isSeller= pathname.startsWith("/seller/");
 
-  if (isSellerRegistration) {
+  if (isSeller) {
     return null;
   }
   return (

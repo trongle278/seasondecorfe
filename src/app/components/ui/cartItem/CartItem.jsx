@@ -7,7 +7,7 @@ import Link from "next/link";
 import { LuBox } from "react-icons/lu";
 import StatusChip from "../StatusChip/StatusChip";
 import { FaTrashAlt } from "react-icons/fa";
-import ExampleNumberField from "../select/NumberField";
+import ExampleNumberField from "../Select/NumberField";
 import { FaDongSign } from "react-icons/fa6";
 
 const CartItem = () => {

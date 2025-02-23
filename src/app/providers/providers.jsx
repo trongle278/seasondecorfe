@@ -8,7 +8,6 @@ import { ThemeProvider } from "next-themes";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 
-
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -33,14 +32,12 @@ export function AppProviders({ children }) {
     <>
       <Suspense>
         <QueryClientProvider client={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools />
+          <ReactQueryDevtools />
 
-            <Toaster richColors position="top-right" />
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
-            </ThemeProvider>
-          </QueryClientProvider>
+          <Toaster richColors position="top-right" />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
         </QueryClientProvider>
       </Suspense>
     </>

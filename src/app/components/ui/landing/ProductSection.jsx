@@ -4,7 +4,7 @@ import { MdOutlineExplore } from "react-icons/md";
 import { CiFilter } from "react-icons/ci";
 import { TbShoppingCartCopy } from "react-icons/tb";
 import { FaRocketchat } from "react-icons/fa";
-import { HeadTypo, BodyTypo, FootTypo } from "../typography";
+import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 import { GrFormPrevious } from "react-icons/gr";
 import Categories from "./components/Categories";
 import Card from "../card/Card";

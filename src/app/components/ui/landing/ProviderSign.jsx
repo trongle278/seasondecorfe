@@ -1,24 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import ButtonInvert from "../buttons/ButtonInvert";
+import ButtonInvert from "../Buttons/ButtonInvert";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { AnimatedTooltip } from "./components/AnimatedTooltip";
 import { people } from "@/app/people";
 import Input from "../inputs/Input";
 import { IoIosMail } from "react-icons/io";
-import { HeadTypo, BodyTypo, FootTypo } from "../typography";
+import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 import { useSession } from "next-auth/react";
+import { useGetAccountDetails } from "@/app/queries/user/user.query";
 
 const ProviderSign = () => {
-  const { data } = useSession();
+  const { data: session } = useSession();
+  const accountId = session?.accountId;
+
+  const { data: account, isLoading: isFetchingAccount } =
+    useGetAccountDetails(accountId);
 
   return (
     <div className="relative z-20 sm:py-28 lg:py-52 xl:pb-36 mx-auto px-4 sm:px-6 lg:px-0">
       <div className="text-center">
         <HeadTypo label="Become a provider now" />
         <BodyTypo bodylabel="Explore your benefits when become a provider" />
-        <FootTypo footlabel="Fast and reliable" className="mt-4 lg:text-xl lg:leading-8 text-lg font-normal text-zinc-500 dark:text-zinc-300 max-w-2xl" />
+        <FootTypo
+          footlabel="Fast and reliable"
+          className="mt-4 lg:text-xl lg:leading-8 text-lg font-normal text-zinc-500 dark:text-zinc-300 max-w-2xl"
+        />
       </div>
       <div className="relative">
         <div className="section1 grid grid-cols-1 md:grid-cols-6 mt-12">
@@ -48,7 +56,7 @@ const ProviderSign = () => {
                 </li>
               </ul>
             </h2>
-            {data?.user && (
+            {account && (
               <>
                 <div className="flex flex-col mb-4 max-w-xs">
                   <Input
@@ -64,10 +72,11 @@ const ProviderSign = () => {
               </>
             )}
 
-            {!data?.user && <>
-              <div>Login and contact with us </div>
-            </>}
-
+            {!account && (
+              <>
+                <div>Login and contact with us </div>
+              </>
+            )}
           </div>
           <div className="section2 p-4 sm:p-8 relative overflow-hidden col-span-1 md:col-span-3">
             <div className="flex flex-col items-center mt-10 mb-3">

@@ -6,7 +6,7 @@ import Heading from "./components/Heading";
 import { useForm } from "react-hook-form";
 import { ClipLoader } from "react-spinners";
 import useOTPModal from "@/app/hooks/useOTPModel";
-import { VerifyEmail } from "@/app/api/register/Register";
+import { VerifyEmail } from "@/app/api/register";
 import { OutputOutlined } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
@@ -27,20 +27,16 @@ const OTPConfirmModal = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      first: "",
-      second: "",
-      third: "",
-      fourth: "",
-      fitht: "",
-      sixth: "",
-    },
     //resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
+  const isOTPComplete = Object.values(otp).every((digit) => digit !== "");
+
+  const onSubmit = async () => {
+    if (!isOTPComplete) return;
     setIsLoading(true);
     try {
       const userOTP = {
@@ -56,6 +52,8 @@ const OTPConfirmModal = () => {
       console.error("Error verify user:", error);
     } finally {
       setIsLoading(false);
+      reset();
+
     }
   };
 
@@ -119,6 +117,7 @@ const OTPConfirmModal = () => {
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
                   autoFocus
+                  required
                 />
                 <input
                   className="m-2 border h-10 w-10 text-center form-control rounded dark:text-white"
@@ -127,6 +126,9 @@ const OTPConfirmModal = () => {
                   maxLength="1"
                   value={otp.second}
                   onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  required
                 />
                 <input
                   className="m-2 border h-10 w-10 text-center form-control rounded dark:text-white"
@@ -136,6 +138,8 @@ const OTPConfirmModal = () => {
                   value={otp.third}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
+                  autoFocus
+                  required
                 />
                 <input
                   className="m-2 border h-10 w-10 text-center form-control rounded dark:text-white"
@@ -145,6 +149,8 @@ const OTPConfirmModal = () => {
                   value={otp.fourth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
+                  autoFocus
+                  required
                 />
                 <input
                   className="m-2 border h-10 w-10 text-center form-control rounded dark:text-white"
@@ -154,6 +160,8 @@ const OTPConfirmModal = () => {
                   value={otp.fifth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
+                  autoFocus
+                  required
                 />
                 <input
                   className="m-2 border h-10 w-10 text-center form-control rounded dark:text-white"
@@ -163,6 +171,8 @@ const OTPConfirmModal = () => {
                   value={otp.sixth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
+                  autoFocus
+                  required
                 />
               </div>
               <div className="flex justify-center text-center mt-5">
@@ -183,7 +193,7 @@ const OTPConfirmModal = () => {
 
   return (
     <Modal
-      disabled={isLoading}
+      disabled={isLoading || !isOTPComplete}
       isOpen={OTPModal.isOpen}
       title="Verify"
       actionLabel={

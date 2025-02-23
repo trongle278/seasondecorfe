@@ -4,13 +4,13 @@ import * as React from "react";
 import { Label } from "@/app/components/ui/inputs/Label";
 import Input from "@/app/components/ui/inputs/Input";
 import { useSession } from "next-auth/react";
-import ShinyText from "@/app/components/ui/ShinyText";
+import ShinyText from "@/app/components/ui/animated/ShinyText";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
 import Logo from "@/app/components/Logo";
 import Link from "next/link";
-import Button2 from "@/app/components/ui/buttons/Button2";
+import Button2 from "@/app/components/ui/Buttons/Button2";
 import { ClipLoader } from "react-spinners";
-import InfiniteScroll from "@/app/components/ui/InfiniteScroll";
+import InfiniteScroll from "@/app/components/ui/animated/InfiniteScroll";
 import { items } from "@/app/items";
 import { EditAvatar } from "@/app/components/logic/EditAvatar";
 
@@ -36,7 +36,11 @@ export default function RegistrationPage() {
             </h2>
             <div className="mt-10">
               <form className="space-y-6">
-                <EditAvatar userImg={data?.user?.image} className="justify-center" childStyle="left-40"/>
+                <EditAvatar
+                  userImg={data?.user?.image}
+                  className="justify-center"
+                  childStyle="left-40"
+                />
 
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
                   <div className="flex flex-col space-y-2 w-full">
@@ -90,14 +94,8 @@ export default function RegistrationPage() {
                 {/* Submit Button */}
                 <Button2
                   onClick={() => {}}
-                  disabled={isLoading}
-                  label={
-                    isLoading ? (
-                      <ClipLoader size={20} color={"#fff"} />
-                    ) : (
-                      "Continue"
-                    )
-                  }
+                  loading={isLoading}
+                  label="Continue"
                   btnClass="w-full"
                   labelClass="justify-center p-3 z-0"
                 />
@@ -107,7 +105,7 @@ export default function RegistrationPage() {
         </div>
       </main>
 
-      <div className="relative w-full h-screen z-20 hidden md:flex border-l border-neutral-100 dark:border-neutral-800 overflow-hidden bg-gray-50 dark:bg-neutral-900 items-center justify-center">
+      <div className="relative w-full z-20 h-full max-h-[120vh] hidden md:flex border-l border-neutral-100 dark:border-neutral-800 overflow-hidden bg-gray-50 dark:bg-neutral-900 items-center justify-center">
         <InfiniteScroll
           items={items}
           isTilted={true}

@@ -4,10 +4,10 @@ import Link from "next/link";
 import Input from "@/app/components/ui/inputs/Input";
 import { useForm } from "react-hook-form";
 import { Label } from "@/app/components/ui/inputs/Label";
-import DropdownSelect from "@/app/components/ui/select/DropdownSelect";
-import Button2 from "@/app/components/ui/buttons/Button2";
-import BasicDatePicker from "@/app/components/ui/select/DatePicker";
-import { RegisterCustomer } from "@/app/api/register/Register";
+import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
+import Button2 from "@/app/components/ui/Buttons/Button2";
+import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
+import { RegisterCustomer } from "@/app/api/register";
 import { ClipLoader } from "react-spinners";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -215,10 +215,8 @@ export default function SignUp() {
             {/* Submit Button */}
             <Button2
               onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-              label={
-                isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Continue"
-              }
+              loading={isLoading}
+              label="Continue"
               btnClass="w-full"
               labelClass="justify-center p-3 z-0"
             />

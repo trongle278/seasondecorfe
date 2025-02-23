@@ -1,7 +1,7 @@
 "use client";
 
 import { BorderBox } from "@/app/components/ui/BorderBox";
-import { FootTypo } from "@/app/components/ui/typography";
+import { FootTypo } from "@/app/components/ui/Typography";
 import { Fields } from "../fields/Fields";
 
 const CommentSection = () => {

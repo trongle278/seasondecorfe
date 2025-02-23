@@ -5,7 +5,7 @@ import {
 } from "@headlessui/react";
 import Link from "next/link";
 import { FaAngleDown } from "react-icons/fa";
-import { HeadTypo, BodyTypo } from "../typography";
+import { HeadTypo, BodyTypo } from "../Typography";
 
 export default function DisclosureSection() {
   return (

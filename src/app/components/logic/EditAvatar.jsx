@@ -1,5 +1,5 @@
 "use client";
-import Avatar from "../ui/avatar/Avatar";
+import Avatar from "../ui/Avatar/Avatar";
 import { MdEdit } from "react-icons/md";
 import clsx from "clsx";
 

@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import Button from "@/app/components/ui/buttons/Button";
-import { FootTypo } from "@/app/components/ui/typography";
+import Button from "@/app/components/ui/Buttons/Button";
+import { FootTypo } from "@/app/components/ui/Typography";
 import { UserWrapper } from "../../components/UserWrapper";
 import { useSession } from "next-auth/react";
 import { FaRegSave } from "react-icons/fa";

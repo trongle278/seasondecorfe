@@ -19,7 +19,7 @@ import { FaCouch, FaBath, FaChair, FaUtensils } from "react-icons/fa";
 import { RiComputerLine, RiSheoLine } from "react-icons/ri";
 import CategoryBox from "./CategoryBox";
 import { useSearchParams } from "next/navigation";
-import { HeadTypo, BodyTypo } from "../../typography";
+import { HeadTypo, BodyTypo } from "../../Typography";
 
 export const categories = [
   {
