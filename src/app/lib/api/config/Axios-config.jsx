@@ -2,6 +2,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
+import { getSession } from "next-auth/react";
+import nProgress from "nprogress";
+import "nprogress/nprogress.css";
 
 const baseURL = "http://localhost:5297/";
 
@@ -12,12 +15,14 @@ const apiClient = axios.create({
 
 // Request Interceptor: Attach token from cookies
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("AT");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+  async (config) => {
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers["Authorization"] = `Bearer ${session?.accessToken}`;
     }
-    config.headers["Content-Type"] = "application/json";
+    if (!(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
+    }
     return config;
   },
   (error) => {
@@ -30,8 +35,10 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     if (response && response.data) {
-      if (response.data.success && response.data.message) {
-        toast.success(response.data.message);
+      const { success, message } = response.data;
+
+      if (success && message && response.config.showToast !== false) {
+        toast.success(message);
       }
       return response.data;
     }
@@ -83,42 +90,57 @@ const handleValidationErrors = (errors) => {
 // Utility: Handle unauthorized (401) responses
 const handleUnauthorized = () => {
   toast.warning("Session expired. Redirecting to login...");
-  Cookies.remove("AT"); // Clear expired token
   redirect("/authen/login"); // Redirect user to login page
 };
 
 // API request functions
 const BaseRequest = {
-  Get: async (url) => {
+  Get: async (url, showToast = true) => {
     try {
-      return await apiClient.get(url);
+      nProgress.start(); 
+      const response = await apiClient.get(url, { showToast });
+      return response;
     } catch (err) {
       console.error("GET request error:", err);
       throw err;
+    } finally {
+      nProgress.done(); 
     }
   },
-  Post: async (url, data) => {
+  Post: async (url, data, showToast = true) => {
     try {
-      return await apiClient.post(url, data);
+      nProgress.start(); 
+      const response = await apiClient.post(url, data, { showToast });
+      return response;
     } catch (err) {
       console.error("POST request error:", err);
       throw err;
+    } finally {
+      nProgress.done();
     }
   },
-  Put: async (url, data) => {
+  Put: async (url, data, showToast = true) => {
     try {
-      return await apiClient.put(url, data);
+      nProgress.start();
+      const response = await apiClient.put(url, data, { showToast });
+      return response;
     } catch (err) {
       console.error("PUT request error:", err);
       throw err;
+    } finally {
+      nProgress.done();
     }
   },
-  Delete: async (url) => {
+  Delete: async (url, showToast = true) => {
     try {
-      return await apiClient.delete(url);
+      nProgress.start();
+      const response = await apiClient.delete(url, { showToast });
+      return response;
     } catch (err) {
       console.error("DELETE request error:", err);
       throw err;
+    } finally {
+      nProgress.done();
     }
   },
 };

@@ -3,6 +3,7 @@
 import * as React from "react";
 import Button2 from "./Buttons/Button2";
 import { IoMdClose } from "react-icons/io";
+import { ClipLoader } from "react-spinners";
 
 const Modal = ({
   isOpen,
@@ -15,6 +16,9 @@ const Modal = ({
   disabled,
   secondaryAction,
   secondaryActionLabel,
+  secondaryIcon,
+  icon,
+  loading = false,
 }) => {
   const [showModal, setShowModal] = React.useState(isOpen);
 
@@ -54,21 +58,22 @@ const Modal = ({
 
   return (
     <>
-      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70 text-black">
-        <div className="relative w-full md:w-4/5 lg:w-3/6 xl:w-2/5 my-6 mx-auto h-full lg:h-auto md:h-auto">
+      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70">
+        <div className="relative w-full md:w-4/5 lg:w-3/6 xl:w-2/5 my-6 mx-auto h-full lg:h-auto md:h-auto ">
           {/*----------------------MODAL CONTENT HERE-------------------*/}
           <div
-            className={`translate duration-300 h-full 
+            className={`translate duration-300 h-full  
            ${showModal ? "translate-y-0" : "translate-y-full"}
            ${showModal ? "opacity-100" : "opacity-0"}
            `}
           >
-            <div className="translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none ">
+            <div className="translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white dark:bg-neutral-800 outline-none focus:outline-none ">
               {/*----------MODAL HEADER HERE----------------------*/}
               <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px]">
                 <button
                   onClick={handleClose}
                   className="p-1 border-0 hover:opacity-70 transition absolute left-9"
+                  disabled={loading}
                 >
                   <IoMdClose size={18} />
                 </button>
@@ -84,20 +89,22 @@ const Modal = ({
                   {secondaryAction && secondaryActionLabel && (
                     <Button2
                       outline
-                      disable={disabled}
+                      disable={disabled || loading}
                       label={secondaryActionLabel}
                       onClick={handleSecondaryAction}
-                      btnClass="w-full"
+                      btnClass="w-[200px]"
+                      labelClass="justify-center p-3 w-[100px] bg-zinc-200"
+                      icon={secondaryIcon}
                     />
                   )}
 
                   <Button2
-                    disable={disabled}
-                    label={actionLabel}
+                    disable={disabled || loading}
+                    label={loading ? "" : actionLabel}
                     onClick={handleSubmit}
                     btnClass="w-[200px]"
                     labelClass="justify-center p-3 w-[100px]"
-
+                    icon={loading ? <ClipLoader size={20} /> : icon}
                   />
                 </div>
                 {footer}

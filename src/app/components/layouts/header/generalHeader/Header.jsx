@@ -13,15 +13,20 @@ import { UserMenu } from "../UserMenu";
 import { CartBtn, NotificationBtn } from "../components/indexBtn";
 import { useRouter } from "next/navigation";
 import { useGetAccountDetails } from "@/app/queries/user/user.query";
+import {
+  MovingBorder,
+  MovingBorderButton,
+} from "@/app/components/ui/animated/MovingBorder";
+
+import { UserProvider, useUser } from "@/app/providers/userprovider";
 
 export default function Header() {
+  const { user } = useUser();
   const { data: session } = useSession();
-  const accountId = session?.accountId;
-
-  const { data: account, isLoading: isFetchingAccount } =
-    useGetAccountDetails(accountId);
 
   console.log(session);
+
+  //console.log(user);
 
   const router = useRouter();
 
@@ -37,6 +42,20 @@ export default function Header() {
           </div>
           <section className="left-wrapper desktop-only flex items-center space-x-6 text-sm font-medium xl:flex">
             <div className="flex items-center gap-4 transition-all">
+            {user?.roleId === 3 && (
+                <div className="relative">
+                  <p className="">
+                    <Link href="/seller/dashboard">
+                      <MovingBorderButton
+                        borderRadius="1.75rem"
+                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                      >
+                        Provider Centre
+                      </MovingBorderButton>
+                    </Link>
+                  </p>
+                </div>
+              )}
               <div className="relative">
                 <p className="flex cursor-pointer items-center gap-2 hover:text-red">
                   <Link href="/provider">Providers</Link>
@@ -67,12 +86,12 @@ export default function Header() {
             </IconButton>
             <CartBtn cartClick={() => router.push("/cart")} />
             <NotificationBtn />
-            {account && (
+            {user && (
               <>
                 <UserMenu />
               </>
             )}
-            {!account && <RightWrapper />}
+            {!user && <RightWrapper />}
           </div>
         </div>
       </div>

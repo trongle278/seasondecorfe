@@ -4,15 +4,9 @@ import "react-datepicker/dist/react-datepicker.css"
 import { FaCalendar } from "react-icons/fa";
 import { Label } from "../inputs/Label";
 
-export default function BasicDatePicker({ label, selectedDate, onChange, required }) {
+export default function BasicDatePicker({ label, selectedDate, onChange, required, value }) {
   const [startDate, setStartDate] = React.useState();
-
-  // Utility function to convert "DD/MM/YYYY" string to a Date object
-  const formatDate = (date) => {
-    const offset = date.getTimezoneOffset();
-    const adjustedDate = new Date(date.getTime() - offset * 60 * 1000); // Adjust for time zone
-    return adjustedDate.toISOString().split("T")[0]; // Return "YYYY-MM-DD" only
-  };
+  
 
   return (
     <div className="flex flex-col gap-1">
@@ -25,12 +19,12 @@ export default function BasicDatePicker({ label, selectedDate, onChange, require
           icon={<FaCalendar />}
           selected={selectedDate}
           onChange={onChange}
-          required={required}
-
+          required={required}        
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           placeholderText="Select date"
           dateFormat="dd/MM/yyyy"
           isClearable
+          
         />
       </div>
     </div>

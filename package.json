@@ -60,6 +60,7 @@
     "sonner": "^1.7.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "vn-provinces": "^1.0.4",
     "yup": "^1.6.1",
     "zustand": "^5.0.3"
   },

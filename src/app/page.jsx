@@ -89,9 +89,9 @@ export default function Main() {
           </div>
         </div>
 
-        <ScrollAnimationWrapper>
+        {/* <ScrollAnimationWrapper>
           <InspiredSection />
-        </ScrollAnimationWrapper>
+        </ScrollAnimationWrapper> */}
 
         <ScrollAnimationWrapper>
           <ProductSection />

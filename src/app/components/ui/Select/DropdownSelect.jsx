@@ -46,12 +46,12 @@ export default function DropdownSelect({
         <ListboxOptions
           className={clsx(
             "absolute mt-9 w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
-            "z-50 transition-opacity duration-100 ease-in"
+            "z-50 transition-opacity duration-100 ease-i max-h-60 overflow-y-auto "
           )}
         >
-          {options.map((option) => (
+          {options.map((option, index) => (
             <ListboxOption
-              key={option.id}
+              key={option.id || `${option[labelKey]}-${index}`}
               value={option[labelKey]}
               className="group flex cursor-pointer select-none items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-gray-200"
             >

@@ -9,19 +9,16 @@ import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
 import { useForm } from "react-hook-form";
 import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
 import Button from "@/app/components/ui/Buttons/Button";
-import { ClipLoader } from "react-spinners";
 import { FaRegSave } from "react-icons/fa";
 import { EditAvatar } from "@/app/components/logic/EditAvatar";
-import { useSession } from "next-auth/react";
-import { useGetAccountDetails } from "@/app/queries/user/user.query";
+import { useUser } from "@/app/providers/userprovider";
+import { UserProfileUpdate } from "@/app/api/upload";
 
 const UserProfile = () => {
-  const { data: session } = useSession();
-  const accountId = session?.accountId;
-
-  const { data: account, isLoading: isFetchingAccount } = useGetAccountDetails(accountId);
+  const { user, isError } = useUser();
 
   const [isLoading, setIsLoading] = React.useState(false);
+  const { updateProfile } = UserProfileUpdate();
 
   const genderOptions = [
     { id: 0, name: "Female" },
@@ -37,25 +34,39 @@ const UserProfile = () => {
   } = useForm({
     //resolver: yupResolver(schema),
     defaultValues: {
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      gender: "",
-      phone: "",
-      address: "",
-      dob: "",
+      dob: user?.dateOfBirth,
     },
     //resolver: yupResolver(schema),
   });
 
   const handleGenderChange = (selectedGender) => {
-    setValue("gender", selectedGender); // Update form value
+    setValue("gender", selectedGender);
   };
 
-  if (isFetchingAccount) {
-    return <p>Loading account details...</p>;
-  }
+  const handleDateChange = (date) => {
+    setValue("dob", date); //
+  };
+
+  const onSubmit = React.useCallback(async (data) => {
+    const id = user?.id;
+
+    const userData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      dateOfBirth: data.dob,
+      gender: data.gender === "true",
+      phone: data.phone,
+    };
+    try {
+      setIsLoading(true);
+      console.log(userData);
+      await updateProfile(id, userData);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  }, []);
 
   return (
     <UserWrapper>
@@ -74,15 +85,14 @@ const UserProfile = () => {
           <div className="pt-7">
             <div className="flex-1 pr-12">
               <form className="flex flex-col gap-7 mb-10">
-                <EditAvatar userImg={account?.avatar} childStyle="left-14"/>
+                <EditAvatar userImg={user?.avatar} childStyle="left-14" />
 
                 <div className="inline-flex gap-5">
                   <FootTypo
                     footlabel="Email :"
                     className="!m-0 font-semibold w-40"
                   />
-                  {account?.email || "email"}
-
+                  {user?.email || "email"}
                 </div>
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 mb-4 items-center gap-5">
                   <FootTypo
@@ -90,22 +100,26 @@ const UserProfile = () => {
                     className="!m-0 font-semibold w-40"
                   />
                   <Input
-                    id="Firstname"
-                    defaultValue={account?.firstName || "first name"}
+                    id="firstName"
                     type="text"
                     placeholder="Abc"
                     className="pl-3"
+                    register={register}
+                    errors={errors}
+                    defaultValue={user?.firstName || ""}
                   />
                   <FootTypo
                     footlabel="Last name :"
                     className="!m-0 font-semibold w-40"
                   />
                   <Input
-                    id="Lastname"
-                    defaultValue={account?.lastName || "last name"}
+                    id="lastName"
                     type="text"
                     placeholder="edff"
                     className="pl-3"
+                    register={register}
+                    errors={errors}
+                    defaultValue={user?.lastName || ""}
                   />
                 </div>
                 <div className="inline-flex gap-5 items-center">
@@ -116,10 +130,11 @@ const UserProfile = () => {
                   <Input
                     id="phone"
                     type="text"
-                    placeholder="Update phone number"
-
-
+                    placeholder="Your phone number"
                     className="pl-3"
+                    register={register}
+                    errors={errors}
+                    defaultValue={user?.phone || ""}
                   />
                 </div>
                 <div className="inline-flex gap-5">
@@ -138,20 +153,18 @@ const UserProfile = () => {
                     footlabel="Date of birth :"
                     className="!m-0 font-semibold w-40"
                   />
-                  <BasicDatePicker />
+                  <BasicDatePicker
+                    selectedDate={watch("dob")}
+                    onChange={handleDateChange}
+                    required={true}
+                  />
                 </div>
               </form>
               <Button
-                onClick={() => {}}
-                disabled={isLoading}
+                onClick={handleSubmit(onSubmit)}
+                isLoading={isLoading}
                 icon={<FaRegSave size={20} />}
-                label={
-                  isLoading ? (
-                    <ClipLoader size={20} color={"#fff"} />
-                  ) : (
-                    "Update profile"
-                  )
-                }
+                label={"Save"}
               />
             </div>
           </div>
