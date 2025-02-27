@@ -7,6 +7,8 @@ import { Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
+import { AuthProvider } from "./authprovider";
+import { UserProvider } from "./userprovider";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,11 +35,18 @@ export function AppProviders({ children }) {
       <Suspense>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools />
-
-          <Toaster richColors position="top-right" />
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-          </ThemeProvider>
+          <AuthProvider>
+            <UserProvider>
+              <Toaster richColors position="top-right" />
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+              >
+                {children}
+              </ThemeProvider>
+            </UserProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </Suspense>
     </>

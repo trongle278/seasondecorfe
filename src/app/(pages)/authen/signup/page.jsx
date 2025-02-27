@@ -8,7 +8,6 @@ import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
 import Button2 from "@/app/components/ui/Buttons/Button2";
 import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
 import { RegisterCustomer } from "@/app/api/register";
-import { ClipLoader } from "react-spinners";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useOTPModal from "@/app/hooks/useOTPModel";

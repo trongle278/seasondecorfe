@@ -1,20 +1,33 @@
 "use client";
 import clsx from "clsx";
+import { ClipLoader } from "react-spinners";
 
-const ButtonInvert = ({ label, icon, className, onClick }) => {
+const ButtonInvert = ({ label, icon, className, onClick, loading = false }) => {
   return (
     <button
       onClick={onClick}
+      disabled={loading}
       className={clsx(
         "inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50",
+        {
+          "opacity-50 cursor-not-allowed": loading,
+        },
         className
       )}
     >
-      <span className="mr-3">{label}</span>
-      {icon}
+      {loading ? (
+        <>
+          <span className="mr-3">{label}</span>{" "}
+          <ClipLoader size={20} color="#fff" />
+        </>
+      ) : (
+        <span className="mr-3">{label}</span>
+      )}
+      {!loading && icon}
     </button>
   );
 };
+
 export default ButtonInvert;
 
 export const ButtonInvert2 = ({ label, icon, className, onClick }) => {

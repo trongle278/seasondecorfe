@@ -5,9 +5,9 @@ import HeaderWrapper from "./components/layouts/header/HeaderWrapper";
 import Footer from "./components/layouts/footer/Footer";
 import OTPConfirmModal from "./components/ui/Modals/OTPmodal";
 import ClientOnly from "./components/ClientOnly";
-import { AuthProvider } from "./providers/authprovider";
 import AdressModal from "./components/ui/Modals/AddressModal";
 import { FloatBtn } from "./components/ui/floatingBtn/FloatBtn";
+import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,19 +29,19 @@ export default function RootLayout({ children }) {
     <html lang="en" className="!scroll-smooth !pr-0" suppressHydrationWarning>
       <body className="antialiased">
         <AppProviders>
-          <AuthProvider>
-            <ClientOnly>
-              <div className="flex min-h-screen flex-col relative">
-                <HeaderWrapper />
-                <OTPConfirmModal />
-                <AdressModal />
-                <FloatBtn />
+          <ClientOnly>
+            <div className="flex min-h-screen flex-col relative">
+              <HeaderWrapper />
+              <OTPConfirmModal />
+              <DeleteConfirmModal />
 
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </div>
-            </ClientOnly>
-          </AuthProvider>
+              <AdressModal />
+              <FloatBtn />
+
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ClientOnly>
         </AppProviders>
       </body>
     </html>

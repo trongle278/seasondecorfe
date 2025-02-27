@@ -8,14 +8,22 @@ const protectedRoutes = [
 
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  
+  const accessToken = token?.accessToken;
 
-  if (!token || !token.roleId) {
+  const { pathname } = req.nextUrl;
+
+  if (!accessToken) {
+    if (pathname.startsWith("/authen/login") || pathname.startsWith("/authen/signup")) {
+      return NextResponse.next(); // Allow access to login/signup
+    }
     return NextResponse.redirect(new URL("/authen/login", req.url));
+  }
+  if (token && (pathname.startsWith("/authen/login") || pathname.startsWith("/authen/signup"))) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   const userRoleId = token.roleId; // Ensure roleId is stored in NextAuth session
-  const { pathname } = req.nextUrl;
+  
 
   const matchedRoute = protectedRoutes.find((route) =>
     pathname.startsWith(route.path)
@@ -29,6 +37,7 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/seller/:path*"],
+  matcher: ["/admin/:path*", "/seller/:path*", "/authen/:path*"],
+
 };
 

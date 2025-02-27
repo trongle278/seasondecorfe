@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import Image from "next/image";
 import ButtonInvert from "../Buttons/ButtonInvert";
 import { FaLongArrowAltRight } from "react-icons/fa";
@@ -10,13 +12,58 @@ import { IoIosMail } from "react-icons/io";
 import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 import { useSession } from "next-auth/react";
 import { useGetAccountDetails } from "@/app/queries/user/user.query";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSendInvitation } from "@/app/queries/user/provider.query";
 
 const ProviderSign = () => {
   const { data: session } = useSession();
   const accountId = session?.accountId;
+  const mutationSendInv = useSendInvitation();
 
   const { data: account, isLoading: isFetchingAccount } =
     useGetAccountDetails(accountId);
+
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Email is invalid. Please enter a valid email address.")
+      .required("Email is required"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: "",
+    },
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = React.useCallback(
+    async (data) => {
+      const payload = {
+        email: data.email,
+      };
+
+      mutationSendInv.mutate(payload, {
+        onSuccess: () => {
+          //console.log("Invitation sent successfully:", response);
+          reset();
+        },
+        onError: (error) => {
+          console.error("Error sending invitation:", error.message);
+        },
+      });
+    },
+    [mutationSendInv, reset]
+  );
 
   return (
     <div className="relative z-20 sm:py-28 lg:py-52 xl:pb-36 mx-auto px-4 sm:px-6 lg:px-0">
@@ -33,6 +80,7 @@ const ProviderSign = () => {
           <div className="p-4 sm:p-32 relative overflow-hidden col-span-1 md:col-span-3 border-r dark:border-neutral-800">
             <p className="mx-auto mt-4 text-lg font-tertiary text-zinc-500 dark:text-zinc-300 lg:text-xl lg:leading-8">
               Our platform is dedicated to connecting users with skilled house
+              providers
             </p>
             <h2 className="text-black dark:text-primary font-normal text-left max-w-xl mx-0 md:text-sm my-2">
               <ul className="list-disc font-primary py-5 text-sm">
@@ -60,14 +108,22 @@ const ProviderSign = () => {
               <>
                 <div className="flex flex-col mb-4 max-w-xs">
                   <Input
+                    id="email"
                     placeholder="Your email for us to contact"
+                    required
                     type="text"
                     icon={<IoIosMail />}
+                    register={register}
                   />
+                  {errors.email && (
+                    <p className="text-red">{errors.email.message}</p>
+                  )}
                 </div>
                 <ButtonInvert
+                  onClick={handleSubmit(onSubmit)}
                   label="Get started"
                   icon={<FaLongArrowAltRight />}
+                  loading={mutationSendInv.isPending}
                 />
               </>
             )}

@@ -36,35 +36,37 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, account, user }) {
-      //console.log("Google data:", account )
-      if (account?.id_token) {
-        try {
+      console.log("Google data:", account )
+      try {
+        if (account?.id_token) {
           console.log("Google Login Token:", account.id_token);
-
           const response = await BaseRequest.Post("/api/Auth/google-login", {
             idToken: account.id_token,
           });
-
-          if (response?.success && response.token) {
-            token.accessToken = response.token;// Store backend's token
-            token.roleId = response.roleId; // Store roleId in token
-            token.accountId = response.accountId; // Store accountId in token
-
-
-          } else {
-            throw new Error(response?.message || "Google login failed.");
+  
+          if (!response?.success || !response.token) {
+            throw new Error("Google login failed.");
           }
-        } catch (error) {
-          console.error("Google Login Error:", error);
+  
+          token.accessToken = response.token;
+          token.roleId = response.roleId;
+          token.accountId = response.accountId;
         }
+      } catch (error) {
+        console.error("JWT Callback Error:", error);
       }
       return token;
     },
+  
 
     async session({ session, token }) {
       session.accessToken = token.accessToken || null; // Store accessToken in session
       session.roleId = token.roleId || null; // Store roleId in session
       session.accountId = token.accountId || null; // Store accountId in session
+
+      if (!session.accessToken) {
+        session.error = "There is problem with our sever.";
+      }
 
       return session;
     },

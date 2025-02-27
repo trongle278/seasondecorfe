@@ -4,15 +4,26 @@ import * as React from "react";
 import Button from "@/app/components/ui/Buttons/Button";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { UserWrapper } from "../../components/UserWrapper";
-import { useSession } from "next-auth/react";
-import { FaRegSave } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import useAddressModal from "@/app/hooks/useAddressModal";
+import AddressBox from "../../components/AddressBox";
+import { useGetAllAddress } from "@/app/queries/user/address.query";
+import DataMapper from "@/app/components/DataMapper";
 
 const UserAddress = () => {
-  const { data } = useSession();
-  const [isLoading, setIsLoading] = React.useState(false);
   const addressModal = useAddressModal();
+
+  const { data: addresses, isFetching, isError } = useGetAllAddress();
+  console.log("Addresses Data:", addresses);
+
+  if (isError) return <p>Error loading addresses.</p>;
+
+  const sortedAddresses = Array.isArray(addresses)
+    ? [...addresses].sort((a, b) => (b.isDefault ? 1 : -1))
+    : [];
+
+    
+
   return (
     <UserWrapper>
       <div className="flex-grow ml-6 relative ">
@@ -26,15 +37,21 @@ const UserAddress = () => {
                 />
               </span>
 
-              <Button label="Add address" icon={<FaPlus size={20} />} onClick={addressModal.onOpen} />
-            </div>
-          </div>
-          <div className="pt-7">
-            <div className="flex-1 pr-12">
-              <form className="flex flex-col gap-7 mb-10"></form>
+              <Button
+                label="Add address"
+                icon={<FaPlus size={20} />}
+                onClick={addressModal.onOpen}
+              />
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <DataMapper
+          data={sortedAddresses}
+          Component={AddressBox}
+          getKey={(address) => address.id}
+        />
       </div>
     </UserWrapper>
   );

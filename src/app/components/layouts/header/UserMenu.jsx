@@ -12,15 +12,10 @@ import { RiListUnordered } from "react-icons/ri";
 import { PiSignOutBold } from "react-icons/pi";
 import { FaRegSmileBeam } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useGetAccountDetails } from "@/app/queries/user/user.query";
+import { useUser } from "@/app/providers/userprovider";
 
 export const UserMenu = () => {
-  const { data: session } = useSession();
-
-  const accountId = session?.accountId;
-
-  const { data: account, isLoading: isFetchingAccount } =
-    useGetAccountDetails(accountId);
+  const { user } = useUser();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const router = useRouter();
@@ -39,7 +34,7 @@ export const UserMenu = () => {
       >
         <AiOutlineMenu />
         <div className="hidden md:block">
-          <Avatar userImg={account?.avatar} h={30} w={30} />
+          <Avatar userImg={user?.avatar} h={30} w={30} />
         </div>
       </div>
 
@@ -52,8 +47,9 @@ export const UserMenu = () => {
                   Hello <FaRegSmileBeam />
                 </span>
 
-                {account?.lastName}
+                {user?.lastName}
               </div>
+              
               <MenuItem
                 onClick={() => router.push("/user/account/profile")}
                 closeMenu={closeMenu}
