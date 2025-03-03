@@ -9,10 +9,10 @@ import Button from "@/app/components/ui/Buttons/Button";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { AiOutlineShop } from "react-icons/ai";
 import { BorderBox } from "@/app/components/ui/BorderBox";
-import DetailSection from "./components/sections/DetailSection";
-import DescrriptionSection from "./components/sections/DescriptionSection";
+import DetailSection from "../components/sections/DetailSection";
+import DescrriptionSection from "../components/sections/DescriptionSection";
 import ExampleNumberField from "@/app/components/ui/Select/NumberField";
-import CommentSection from "./components/sections/CommentSection";
+import CommentSection from "../components/sections/CommentSection";
 import { FaDongSign } from "react-icons/fa6";
 import { BsCartPlus } from "react-icons/bs";
 

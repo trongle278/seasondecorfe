@@ -12,7 +12,8 @@ import {
   IconChartBarPopular,
   IconMessages,
   IconDatabase,
-  IconWorldDollar
+  IconWorldDollar,
+  IconPackage
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
 
@@ -48,6 +49,13 @@ export default function SellerWrapper({children}) {
       ),
     },
     {
+      label: "Product Management",
+      href: "/seller/product",
+      icon: (
+        <IconPackage className=" h-5 w-5 flex-shrink-0" />
+      ),
+    },
+    {
       label: "Data Management",
       href: "#",
       icon: (
@@ -63,7 +71,7 @@ export default function SellerWrapper({children}) {
     },
     {
       label: "Shop Management",
-      href: "/seller/shop",
+      href: "/seller/shop/",
       icon: (
         <IconBuildingStore className=" h-5 w-5 flex-shrink-0" />
       ),
@@ -97,7 +105,7 @@ const Dashboard = ({props}) => {
   return (
     <div className="flex flex-1">
       <div className="flex h-full w-full flex-col gap-2 rounded-tl-2xl border border-neutral-200 p-2 md:p-10">
-        <div className="flex flex-grow flex-col items-center justify-start">
+        <div className="flex flex-grow flex-col items-start justify-start">
           {props}
         </div>
       </div>

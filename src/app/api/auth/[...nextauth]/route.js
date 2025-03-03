@@ -6,25 +6,30 @@ import BaseRequest from "../../../lib/api/config/Axios-config";
 export const authOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (credentials) {
-          const response = await BaseRequest.Post("/api/Auth/login", {
+        if (!credentials) return null;
+
+        try {
+          const response = await BaseRequest.Post(`/api/Auth/login`, {
             email: credentials.email,
             password: credentials.password,
           });
 
-          if (response?.message) {
-            throw new Error(response.message);
-          }
 
-          return response || null;
+          return {
+            accessToken: response.token,
+            roleId: response.roleId,
+            accountId: response.accountId,
+          };
+        } catch (error) {
+          console.error("Login error:", error?.response?.data || error.message);
+          throw new Error(error?.response?.data?.message || "Login failed");
         }
-        return null;
       },
     }),
 
@@ -36,18 +41,24 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, account, user }) {
-      console.log("Google data:", account )
+      //console.log("Google data:", account )
       try {
+        if (user) {
+          // ✅ Save credentials login token
+          token.accessToken = user.accessToken;
+          token.roleId = user.roleId;
+          token.accountId = user.accountId;
+        }
         if (account?.id_token) {
           console.log("Google Login Token:", account.id_token);
           const response = await BaseRequest.Post("/api/Auth/google-login", {
             idToken: account.id_token,
           });
-  
+
           if (!response?.success || !response.token) {
             throw new Error("Google login failed.");
           }
-  
+
           token.accessToken = response.token;
           token.roleId = response.roleId;
           token.accountId = response.accountId;
@@ -57,7 +68,6 @@ export const authOptions = {
       }
       return token;
     },
-  
 
     async session({ session, token }) {
       session.accessToken = token.accessToken || null; // Store accessToken in session

@@ -1,7 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-    domains: ['s3.amazonaws.com', 'images.unsplash.com', 'assets.aceternity.com', 'hespruce.com', 'lh3.googleusercontent.com', 'res.cloudinary.com', 'payos.vn'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 's3.amazonaws.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'assets.aceternity.com' },
+      { protocol: 'https', hostname: 'hespruce.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'payos.vn' },
+    ],
   },
 
   async headers() {

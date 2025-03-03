@@ -3,7 +3,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 
-const Avatar = ({ userImg, className, h = 120, w = 120 }) => {
+const Avatar = ({ userImg, className, h = 120, w = 120}) => {
   const defaultAvatar = "/img/user-ava.jpg";
 
   return (

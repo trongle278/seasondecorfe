@@ -2,6 +2,10 @@
 import { memo, useCallback, useEffect, useRef } from "react";
 import { cn } from "@/app/utils/Utils";
 import { animate } from "motion/react";
+import clsx from "clsx";
+import Button from "../Buttons/Button";
+import { FaPlus } from "react-icons/fa";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
 const GlowingEffect = memo(
   ({
@@ -175,10 +179,10 @@ GlowingEffect.displayName = "GlowingEffect";
 
 export { GlowingEffect };
 
-export const GridItem = ({ area, icon, btn1, btn2, userDetails }) => {
+export const GlowingCard = ({ id, icon, userDetails, className, onCardClick, onFollowClick, onChatClick  }) => {
   return (
-    <li className={`min-h-[14rem] list-none ${area}`}>
-      <div className="relative h-fit rounded-2.5xl border  p-2  md:rounded-3xl md:p-3 w-[25rem]">
+    <li id={id} className={`min-h-[10rem] list-none`}>
+      <div className={clsx("relative h-fit rounded-2.5xl border  p-2  md:rounded-3xl md:p-3", className)}>
         <GlowingEffect
           spread={40}
           glow={true}
@@ -188,14 +192,14 @@ export const GridItem = ({ area, icon, btn1, btn2, userDetails }) => {
         />
         <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-0.75 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
           <div className="relative flex flex-1 flex-col justify-start p-4 gap-4">
-            <div className="w-fit flex flex-row items-center gap-2">
+            <div className="w-fit flex flex-row items-center gap-2 cursor-pointer hover:underline" onClick={onCardClick}>
               {icon}
               <span>{userDetails}</span>
             </div>
             <div className="flex">
               <div className="items-center flex flex-row gap-2">
-                {btn1}
-                {btn2}
+              <Button label="Follow" icon={<FaPlus />} className="bg-primary" onClick={onFollowClick}/>
+              <Button label="Message" icon={<IoChatboxEllipsesOutline />} onClick={onChatClick}/>
               </div>
             </div>
           </div>

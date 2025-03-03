@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import { IoSearchSharp } from "react-icons/io5";
 import { IconButton } from "@mui/material";
 import { TfiMoreAlt } from "react-icons/tfi";
@@ -11,24 +13,63 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "../UserMenu";
 import { CartBtn, NotificationBtn } from "../components/indexBtn";
-import { useRouter } from "next/navigation";
-import { useGetAccountDetails } from "@/app/queries/user/user.query";
-import {
-  MovingBorder,
-  MovingBorderButton,
-} from "@/app/components/ui/animated/MovingBorder";
+import { useRouter, usePathname } from "next/navigation";
+import { MovingBorderButton } from "@/app/components/ui/animated/MovingBorder";
 
-import { UserProvider, useUser } from "@/app/providers/userprovider";
+import { useUser } from "@/app/providers/userprovider";
+import { useChangeStatus } from "@/app/queries/user/provider.query";
+import { ColourfulText } from "@/app/components/ui/animated/ColorfulText";
+import { scroller } from "react-scroll";
 
-export default function Header() {
+export default function Header({ providerRef }) {
   const { user } = useUser();
   const { data: session } = useSession();
+  const mutationChangeStatus = useChangeStatus();
+  const pathname = usePathname();
 
-  console.log(session);
+  //console.log(session);
+  //console.log("isProvider:", session?.isProvider);
 
   //console.log(user);
 
   const router = useRouter();
+
+  const onChangeStatus = React.useCallback(() => {
+    mutationChangeStatus.mutate(true, {
+      onSuccess: () => {
+        router.push("/seller/dashboard");
+      },
+      onError: (error) => {
+        if (pathname === "/authen/login") {
+          return;
+        }
+        if (error) {
+          router.push("/authen/login");
+        }
+
+        if (session && !user?.isProvider) {
+          if (pathname !== "/") {
+            router.push("/");
+            setTimeout(() => {
+              scroller.scrollTo("providerSection", {
+                duration: 800,
+                delay: 0,
+                smooth: "easeInOutQuart",
+                offset: -50,
+              });
+            }, 1000);
+          } else {
+            scroller.scrollTo("providerSection", {
+              duration: 800,
+              delay: 0,
+              smooth: "easeInOutQuart",
+              offset: -50,
+            });
+          }
+        }
+      },
+    });
+  }, [mutationChangeStatus, router, pathname, session, user]);
 
   return (
     <header
@@ -41,21 +82,25 @@ export default function Header() {
             <Logo />
           </div>
           <section className="left-wrapper desktop-only flex items-center space-x-6 text-sm font-medium xl:flex">
-            <div className="flex items-center gap-4 transition-all">
-            {user?.roleId === 3 && (
-                <div className="relative">
-                  <p className="">
-                    <Link href="/seller/dashboard">
-                      <MovingBorderButton
-                        borderRadius="1.75rem"
-                        className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
-                      >
-                        Provider Centre
-                      </MovingBorderButton>
-                    </Link>
-                  </p>
-                </div>
-              )}
+            <div className="flex items-center gap-4 transition-all ">
+              <div>
+                <ColourfulText
+                  colors={[
+                    "#40ffaa",
+                    "#4079ff",
+                    "#40ffaa",
+                    "#4079ff",
+                    "#40ffaa",
+                  ]}
+                  animationSpeed={3}
+                  showBorder={true}
+                  className="p-2 text-sm"
+                  onClick={onChangeStatus}
+                >
+                  Provider centre
+                </ColourfulText>
+              </div>
+
               <div className="relative">
                 <p className="flex cursor-pointer items-center gap-2 hover:text-red">
                   <Link href="/provider">Providers</Link>

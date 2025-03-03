@@ -4,10 +4,14 @@ import {
   Radio,
   RadioGroup as HeadlessRadioGroup,
 } from "@headlessui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function RadioGroup({ options = [], value, onChange, label }) {
-  const [selected, setSelected] = useState(value || options[0] || "");
+  const [selected, setSelected] = useState(value || "");
+
+  useEffect(() => {
+    setSelected(value);
+  }, [value]);
 
   const handleChange = (newValue) => {
     setSelected(newValue);

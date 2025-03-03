@@ -9,7 +9,7 @@ export default function BasicDatePicker({ label, selectedDate, onChange, require
   
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 z-[40]">
       <Label htmlFor="gender">{label}</Label>
       <div className="relative flex max-w-sm flex-row items-center justify-start gap-2">
         <div className="flex items-center">

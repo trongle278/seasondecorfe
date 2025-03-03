@@ -7,11 +7,11 @@ import { Label } from "@/app/components/ui/inputs/Label";
 import DropdownSelect from "@/app/components/ui/Select/DropdownSelect";
 import Button2 from "@/app/components/ui/Buttons/Button2";
 import BasicDatePicker from "@/app/components/ui/Select/DatePicker";
-import { RegisterCustomer } from "@/app/api/register";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useOTPModal from "@/app/hooks/useOTPModel";
 import Logo from "@/app/components/Logo";
+import { useRegisterCustomer } from "@/app/queries/user/authen.query";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -32,8 +32,8 @@ const schema = yup.object().shape({
 });
 
 export default function SignUp() {
-  const [isLoading, setIsLoading] = React.useState(false);
   const OTPModal = useOTPModal();
+  const mutateRegister = useRegisterCustomer();
 
   const genderOptions = [
     { id: 0, name: "Female" },
@@ -67,7 +67,7 @@ export default function SignUp() {
     setValue("gender", selectedGender); // Update form value
   };
 
-  const onSubmit = React.useCallback(async (data) => {
+  const onSubmit = async (data) => {
     const userData = {
       email: data.email,
       password: data.password,
@@ -78,27 +78,16 @@ export default function SignUp() {
       phone: data.phone,
       address: data.address,
     };
-    try {
-      setIsLoading(true);
-      const userEmail = data.email;
-      console.log(userData);
-
-      const res = await RegisterCustomer(userData);
-      setIsLoading(false);
-      if (res?.success) {
+    mutateRegister.mutate(userData, {
+      onSuccess: () => {
         OTPModal.onOpen(data.email);
-      } else {
-        console.log("API Error: ", res);
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-    }
-  }, []);
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen overflow-hidden">
-      <div className="container mx-auto flex h-screen w-screen flex-col items-center justify-center">
+      <div className="container mx-auto flex w-screen flex-col items-center justify-center">
         {/* Right Side: Sign Up Form */}
         <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px] items-center">
           <Logo outsideStyle="justify-center !m-0" insideStyle="!m-0" />
@@ -214,7 +203,7 @@ export default function SignUp() {
             {/* Submit Button */}
             <Button2
               onClick={handleSubmit(onSubmit)}
-              loading={isLoading}
+              loading={mutateRegister.isPending}
               label="Continue"
               btnClass="w-full"
               labelClass="justify-center p-3 z-0"

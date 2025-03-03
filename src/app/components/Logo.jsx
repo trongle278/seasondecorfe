@@ -5,10 +5,14 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import ShinyText from "./ui/animated/ShinyText";
 import { usePathname } from "next/navigation";
+import { useUser } from "../providers/userprovider";
 
 const Logo = ({ outsideStyle, insideStyle }) => {
   const pathname = usePathname();
+  const { user } = useUser();
   const isSellerRegistration = pathname.startsWith("/seller/");
+
+  const destination = user?.isProvider ? "/seller/dashboard" : "/";
 
   return (
     <div className={clsx("center-wrapper hidden md:flex mr-4", outsideStyle)}>
@@ -18,7 +22,7 @@ const Logo = ({ outsideStyle, insideStyle }) => {
           insideStyle
         )}
       >
-        <Link href="/" className="relative flex items-center">
+        <Link href={destination} className="relative flex items-center">
           {/* Logo Image */}
           <div className="relative h-8 w-8 md:h-6 md:w-6 bg-black border border-slate-800 text-white flex items-center justify-center rounded-md text-sm antialiased">
             <div className="absolute h-10 w-full bg-white/[0.2] -top-10 inset-x-0 rounded-full blur-xl"></div>
