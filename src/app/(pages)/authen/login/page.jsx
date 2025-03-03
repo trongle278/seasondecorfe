@@ -15,12 +15,12 @@ import Button2 from "@/app/components/ui/Buttons/Button2";
 import { FaGoogle } from "react-icons/fa";
 import Logo from "@/app/components/Logo";
 import { signIn } from "next-auth/react";
+import { useLogin } from "@/app/queries/user/authen.query";
 
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
-   const [isLoading, setIsLoading] = React.useState(false);
-
+  const mutateLogin = useLogin();
   const {
     register,
     handleSubmit,
@@ -32,7 +32,18 @@ export default function Login() {
     },
     //resolver: yupResolver(schema),
   });
-  
+
+  const onSubmit = async (data) => {
+    mutateLogin.mutate(data, {
+      onSuccess: (data) => {
+        console.log("Login data:", data);
+        router.push("/");
+      },
+      onError: (error) => {
+        console.error("Login error:", error);
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen overflow-hidden">
@@ -73,8 +84,9 @@ export default function Login() {
 
             <Button2
               type="submit"
+              onClick={handleSubmit(onSubmit)}
               label="Continue with email"
-              loading={isLoading}
+              //loading={mutateLogin.isPending}
               btnClass="w-full mt-3 mb-1"
               labelClass="justify-center p-3"
             />
@@ -92,8 +104,8 @@ export default function Login() {
 
           <Button2
             type="button"
-            onClick={async () => signIn("google", { callbackUrl: "/" })}
-            loading={isLoading}
+            onClick={async () => await signIn("google", { callbackUrl: "/" })}
+            //loading={isLoading}
             label="Continue with"
             btnClass="w-full m-0"
             labelClass="justify-center p-3"

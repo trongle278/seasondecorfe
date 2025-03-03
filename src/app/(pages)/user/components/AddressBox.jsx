@@ -20,6 +20,7 @@ const AddressBox = ({
   street,
   detail,
   phone,
+  addressType
 }) => {
   const deleteConfirmModal = useDeleteConfirmModal();
   const addressModal = useAddressModal();
@@ -51,6 +52,7 @@ const AddressBox = ({
       street,
       detail,
       phone,
+      addressType
     });
   };
 

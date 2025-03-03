@@ -9,6 +9,7 @@ import useAddressModal from "@/app/hooks/useAddressModal";
 import AddressBox from "../../components/AddressBox";
 import { useGetAllAddress } from "@/app/queries/user/address.query";
 import DataMapper from "@/app/components/DataMapper";
+import EmptyState from "@/app/components/EmptyState";
 
 const UserAddress = () => {
   const addressModal = useAddressModal();
@@ -21,8 +22,6 @@ const UserAddress = () => {
   const sortedAddresses = Array.isArray(addresses)
     ? [...addresses].sort((a, b) => (b.isDefault ? 1 : -1))
     : [];
-
-    
 
   return (
     <UserWrapper>
@@ -47,11 +46,15 @@ const UserAddress = () => {
         </div>
       </div>
       <div>
-        <DataMapper
-          data={sortedAddresses}
-          Component={AddressBox}
-          getKey={(address) => address.id}
-        />
+        {sortedAddresses.length === 0 ? (
+          <EmptyState title="You have no saved addresses" />
+        ) : (
+          <DataMapper
+            data={sortedAddresses}
+            Component={AddressBox}
+            getKey={(address) => address.id}
+          />
+        )}
       </div>
     </UserWrapper>
   );

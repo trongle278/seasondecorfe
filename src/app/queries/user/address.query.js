@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
+import nProgress from "nprogress";
+import "nprogress/nprogress.css";
 
 const SUB_URL = `api/Address`;
 
@@ -7,8 +9,13 @@ export function useGetAllAddress() {
   return useQuery({
     queryKey: ["addressList"],
     queryFn: async () => {
-      const res = await BaseRequest.Get(`/${SUB_URL}`, false);
-      return res.data;
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(`/${SUB_URL}`, false);
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -19,7 +26,12 @@ export function useCreateAddress() {
   return useMutation({
     mutationKey: ["create_address"],
     mutationFn: async (data) => {
-      return BaseRequest.Post(`/${SUB_URL}`, data);
+      nProgress.start();
+      try {
+        return await BaseRequest.Post(`/${SUB_URL}`, data);
+      } finally {
+        nProgress.done();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["addressList"]);
@@ -35,7 +47,12 @@ export function useUpdateAddress() {
   return useMutation({
     mutationKey: ["update_address"],
     mutationFn: async ({ id, ...data }) => {
-      return BaseRequest.Put(`/${SUB_URL}/${id}`, data);
+      nProgress.start();
+      try {
+        return await BaseRequest.Put(`/${SUB_URL}/${id}`, data);
+      } finally {
+        nProgress.done();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["addressList"]);
@@ -51,7 +68,12 @@ export function useDeleteAddress() {
   return useMutation({
     mutationKey: ["delete_address"],
     mutationFn: async (addressId) => {
-      return BaseRequest.Delete(`/${SUB_URL}/${addressId}`);
+      nProgress.start();
+      try {
+        return await BaseRequest.Delete(`/${SUB_URL}/${addressId}`);
+      } finally {
+        nProgress.done();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["addressList"]);
@@ -67,7 +89,12 @@ export function useSetDefaultAddress() {
   return useMutation({
     mutationKey: ["set_default_address"],
     mutationFn: async (id) => {
-      return BaseRequest.Post(`/${SUB_URL}/set-default/${id}`);
+      nProgress.start();
+      try {
+        return await BaseRequest.Post(`/${SUB_URL}/set-default/${id}`);
+      } finally {
+        nProgress.done();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["addressList"]);
@@ -77,4 +104,3 @@ export function useSetDefaultAddress() {
     },
   });
 }
-

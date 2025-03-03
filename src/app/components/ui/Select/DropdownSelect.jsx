@@ -15,6 +15,7 @@ export default function DropdownSelect({
   value,
   onChange,
   labelKey = "name", // Default key for displaying labels
+  lisboxClassName
 }) {
   const [selected, setSelected] = React.useState(value || options[0]?.[labelKey] || "Select");
 
@@ -45,8 +46,8 @@ export default function DropdownSelect({
 
         <ListboxOptions
           className={clsx(
-            "absolute mt-9 w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
-            "z-50 transition-opacity duration-100 ease-i max-h-60 overflow-y-auto "
+            "absolute w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
+            "z-50 transition-opacity duration-100 ease-i max-h-60 overflow-y-auto ", lisboxClassName
           )}
         >
           {options.map((option, index) => (

@@ -3,8 +3,6 @@ import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { getSession } from "next-auth/react";
-import nProgress from "nprogress";
-import "nprogress/nprogress.css";
 
 const baseURL = "http://localhost:5297/";
 
@@ -30,6 +28,11 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+// apiClient.interceptors.request.use((config) => {
+//   console.log("Axios Request Config:", config);
+//   return config;
+// });
 
 // Response Interceptor: Handle errors and token expiration
 apiClient.interceptors.response.use(
@@ -89,58 +92,46 @@ const handleValidationErrors = (errors) => {
 
 // Utility: Handle unauthorized (401) responses
 const handleUnauthorized = () => {
-  toast.warning("Session expired. Redirecting to login...");
-  redirect("/authen/login"); // Redirect user to login page
+  toast.warning("Please login first !");
+  redirect("/authen/login"); 
 };
 
 // API request functions
 const BaseRequest = {
   Get: async (url, showToast = true) => {
     try {
-      nProgress.start(); 
       const response = await apiClient.get(url, { showToast });
       return response;
     } catch (err) {
       console.error("GET request error:", err);
       throw err;
-    } finally {
-      nProgress.done(); 
     }
   },
   Post: async (url, data, showToast = true) => {
     try {
-      nProgress.start(); 
-      const response = await apiClient.post(url, data, { showToast });
+      const response = await apiClient.post(url, data, {  showToast });
       return response;
     } catch (err) {
       console.error("POST request error:", err);
       throw err;
-    } finally {
-      nProgress.done();
     }
   },
   Put: async (url, data, showToast = true) => {
     try {
-      nProgress.start();
       const response = await apiClient.put(url, data, { showToast });
       return response;
     } catch (err) {
       console.error("PUT request error:", err);
       throw err;
-    } finally {
-      nProgress.done();
     }
   },
   Delete: async (url, showToast = true) => {
     try {
-      nProgress.start();
       const response = await apiClient.delete(url, { showToast });
       return response;
     } catch (err) {
       console.error("DELETE request error:", err);
       throw err;
-    } finally {
-      nProgress.done();
     }
   },
 };

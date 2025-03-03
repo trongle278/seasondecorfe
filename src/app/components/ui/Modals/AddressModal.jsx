@@ -37,7 +37,7 @@ const AdressModal = () => {
     defaultValues: {
       fullName: "",
       phone: "",
-      type: "Home",
+      type: "",
       isDefault: false,
       province: "",
       district: "",
@@ -62,7 +62,7 @@ const AdressModal = () => {
       reset({
         fullName: addressModal.editAddress.fullName || "",
         phone: addressModal.editAddress.phone || "",
-        type: addressModal.editAddress.type || "Home",
+        type: addressModal.editAddress.addressType || "",
         isDefault: addressModal.editAddress.isDefault ?? false,
         province: addressModal.editAddress.province || "",
         district: addressModal.editAddress.district || "",
@@ -70,6 +70,8 @@ const AdressModal = () => {
         street: addressModal.editAddress.street || "",
         detail: addressModal.editAddress.detail || "",
       });
+
+      setValue("type", addressModal.editAddress.addressType || "");
       setIsDefault(addressModal.editAddress.isDefault ?? false);
     }
   }, [addressModal.editAddress, reset]);
@@ -79,6 +81,8 @@ const AdressModal = () => {
       ...data,
       isDefault: isDefault,
     };
+
+    console.log("payloadToCreate:", payloadToCreate);
 
     const payloadToUpdate = {
       ...data,
@@ -198,7 +202,7 @@ const AdressModal = () => {
       <RadioGroup
         label="Type"
         options={typeOptions}
-        value={addressModal.type}
+        value={watch("type") || ""}
         onChange={(type) => {
           setValue("type", type);
         }}
@@ -214,9 +218,7 @@ const AdressModal = () => {
   );
 
   const footerContent = (
-    <div className="flex flex-col gap-4 mt-3 ">
-      <hr />
-    </div>
+   <></>
   );
 
   const handleClose = () => {

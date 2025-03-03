@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "motion/react";
 
 export function ColourfulText({
+  onClick,
   children,
   className = "",
   colors = ["#ffaa40", "#9c40ff", "#ffaa40"],
@@ -15,7 +16,8 @@ export function ColourfulText({
   };
 
   return (
-    <div
+    <button
+      onClick={onClick}
       className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 overflow-hidden cursor-pointer ${className}`}
     >
       {showBorder && (
@@ -49,7 +51,7 @@ export function ColourfulText({
       >
         {children}
       </div>
-    </div>
+    </button>
   );
 }
 

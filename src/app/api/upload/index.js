@@ -2,8 +2,7 @@ import BaseRequest from "@/app/lib/api/config/Axios-config";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryClient } from "@/app/providers/providers";
 
-const SUB_URL1 = `api/Account`;
-const SUB_URL2 = `api/AccountProfile`;
+const SUB_URL = `api/AccountProfile`;
 
 export const UserProfileUpdate = () => {
   const queryClient = useQueryClient();
@@ -19,7 +18,7 @@ export const UserProfileUpdate = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await BaseRequest.Put(`/${SUB_URL2}/avatar`, formData);
+      const response = await BaseRequest.Put(`/${SUB_URL}/avatar`, formData);
 
       queryClient.invalidateQueries(["accountDetails"]);
 
@@ -30,10 +29,10 @@ export const UserProfileUpdate = () => {
   };
 
   // Update profile API call
-  const updateProfile = async (accountId, profileData) => {
+  const updateProfile = async (profileData) => {
     try {
       const response = await BaseRequest.Put(
-        `/${SUB_URL1}/${accountId}`,
+        `/${SUB_URL}/update-account`,
         profileData
       );
 

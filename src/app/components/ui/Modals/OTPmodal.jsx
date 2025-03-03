@@ -4,11 +4,9 @@ import * as React from "react";
 import Modal from "../Modal";
 import Heading from "./components/Heading";
 import { useForm } from "react-hook-form";
-import { ClipLoader } from "react-spinners";
 import useOTPModal from "@/app/hooks/useOTPModel";
-import { VerifyEmail } from "@/app/api/register";
-import { OutputOutlined } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { useVerifyEmail } from "@/app/queries/user/authen.query";
 
 const OTPConfirmModal = () => {
   const [otp, setOtp] = React.useState({
@@ -20,8 +18,6 @@ const OTPConfirmModal = () => {
     sixth: "",
   });
   const OTPModal = useOTPModal();
-
-  const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
 
   const {
@@ -35,26 +31,26 @@ const OTPConfirmModal = () => {
 
   const isOTPComplete = Object.values(otp).every((digit) => digit !== "");
 
+  const { mutate: verifyEmail, isLoading } = useVerifyEmail();
+
   const onSubmit = async () => {
     if (!isOTPComplete) return;
-    setIsLoading(true);
-    try {
-      const userOTP = {
-        otp: `${otp.first}${otp.second}${otp.third}${otp.fourth}${otp.fifth}${otp.sixth}`,
-        email: OTPModal.email,
-      };
-      console.log(userOTP);
 
-      await VerifyEmail(userOTP);
-      OTPModal.onClose();
-      router.refresh();
-    } catch (error) {
-      console.error("Error verify user:", error);
-    } finally {
-      setIsLoading(false);
-      reset();
+    const userOTP = {
+      otp: `${otp.first}${otp.second}${otp.third}${otp.fourth}${otp.fifth}${otp.sixth}`,
+      email: OTPModal.email,
+    };
 
-    }
+    verifyEmail(userOTP, {
+      onSuccess: () => {
+        OTPModal.onClose();
+        setOtp({ first: "", second: "", third: "", fourth: "", fifth: "", sixth: "" }); 
+        router.push("/authen/login");
+      },
+      onError: () => {
+        setOtp({ first: "", second: "", third: "", fourth: "", fifth: "", sixth: "" });
+      },
+    });
   };
 
   const handleChange = (e) => {
@@ -94,7 +90,10 @@ const OTPConfirmModal = () => {
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-      <Heading title="Please confirm code has been sent to your email" center={true}/>
+      <Heading
+        title="Please confirm code has been sent to your email"
+        center={true}
+      />
       <div className="container mx-auto">
         <div className="max-w-sm mx-auto md:max-w-lg">
           <div className="w-full">
@@ -127,7 +126,6 @@ const OTPConfirmModal = () => {
                   value={otp.second}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                  autoFocus
                   required
                 />
                 <input
@@ -138,7 +136,6 @@ const OTPConfirmModal = () => {
                   value={otp.third}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                  autoFocus
                   required
                 />
                 <input
@@ -149,7 +146,6 @@ const OTPConfirmModal = () => {
                   value={otp.fourth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                  autoFocus
                   required
                 />
                 <input
@@ -160,7 +156,6 @@ const OTPConfirmModal = () => {
                   value={otp.fifth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                  autoFocus
                   required
                 />
                 <input
@@ -171,7 +166,6 @@ const OTPConfirmModal = () => {
                   value={otp.sixth}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                  autoFocus
                   required
                 />
               </div>
@@ -193,15 +187,14 @@ const OTPConfirmModal = () => {
 
   return (
     <Modal
-      disabled={isLoading || !isOTPComplete}
+      disabled={isLoading}
       isOpen={OTPModal.isOpen}
       title="Verify"
-      actionLabel={
-        isLoading ? <ClipLoader size={20} color={"#fff"} /> : "Continue"
-      }
+      actionLabel="Complete"
       onClose={OTPModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
+      loading={isLoading}
     />
   );
 };

@@ -2,6 +2,12 @@
 import * as React from "react";
 import { cn } from "@/app/utils/Utils";
 import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
+import { Controller } from "react-hook-form";
+
+const formatNumber = (value) => {
+  if (!value) return "";
+  return new Intl.NumberFormat("vi-VN").format(value.replace(/\D/g, ""));
+};
 
 const Input = ({
   id,
@@ -12,10 +18,13 @@ const Input = ({
   icon,
   placeholder,
   register = () => {},
+  control,
 
   disabled,
   required,
   errors,
+  formatPrice,
+  validate,
 }) => {
   const radius = 100; // change this to increase the rdaius of the hover effect
   const [visible, setVisible] = React.useState(false);
@@ -51,30 +60,62 @@ const Input = ({
             {icon}
           </span>
         )}
-        <input
-          id={id}
-          defaultValue={defaultValue}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-          {...register(id, { required })}
-          type={type}
-          className={cn(
-            `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
-              file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
-              focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
-              disabled:cursor-not-allowed disabled:opacity-50
-              dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
-              group-hover/input:shadow-none transition duration-400
-              ${errors?.[id] ? "border-rose-500" : "border-neutral-300"}
-              ${
-                errors?.[id]
-                  ? "focus:border-rose-500"
-                  : "focus:border-neutral-black"
-              }`,
-            className
-          )}
-        />
+        {formatPrice ? (
+          <Controller
+            control={control}
+            name={id}
+            rules={{ required, validate }}
+            render={({ field: { onChange, value } }) => (
+              <input
+                id={id}
+                disabled={disabled}
+                value={formatNumber(value)}
+                onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
+                placeholder={placeholder}
+                className={cn(
+                  `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
+                  file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
+                  focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
+                  disabled:cursor-not-allowed disabled:opacity-50
+                  dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
+                  group-hover/input:shadow-none transition duration-400
+                  ${errors?.[id] ? "border-rose-500" : "border-neutral-300"}
+                  ${
+                    errors?.[id]
+                      ? "focus:border-rose-500"
+                      : "focus:border-neutral-black"
+                  }`,
+                  className
+                )}
+              />
+            )}
+          />
+        ) : (
+          <input
+            id={id}
+            defaultValue={defaultValue}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            {...register(id, { required, validate })}
+            type={type}
+            className={cn(
+              `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
+                file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
+                focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
+                disabled:cursor-not-allowed disabled:opacity-50
+                dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
+                group-hover/input:shadow-none transition duration-400
+                ${errors?.[id] ? "border-rose-500" : "border-neutral-300"}
+                ${
+                  errors?.[id]
+                    ? "focus:border-rose-500"
+                    : "focus:border-neutral-black"
+                }`,
+              className
+            )}
+          />
+        )}
       </div>
     </motion.div>
   );

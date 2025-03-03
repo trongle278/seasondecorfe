@@ -149,9 +149,9 @@ export default {
           },
         },
         shine: {
-          '0%': { 'background-position': '100%' },
-          '100%': { 'background-position': '-100%' },
-         },
+          "0%": { "background-position": "100%" },
+          "100%": { "background-position": "-100%" },
+        },
         shimmer: {
           from: {
             backgroundPosition: "0 0",
@@ -159,6 +159,11 @@ export default {
           to: {
             backgroundPosition: "-200% 0",
           },
+        },
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
         },
         "star-movement-bottom": {
           "0%": { transform: "translate(0%, 0%)", opacity: "1" },

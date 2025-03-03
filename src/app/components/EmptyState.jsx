@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Heading from "./Heading";
+import Heading from "./ui/Modals/components/Heading";
 import Button from "./ui/Buttons/Button";
 
 const EmptyState = ({
@@ -9,7 +9,7 @@ const EmptyState = ({
   subtitle ,
   showReset,
   label,
-  pathName
+  button
 }) => {
   const router = useRouter();
   return (
@@ -17,11 +17,7 @@ const EmptyState = ({
       <Heading center title={title} subtitle={subtitle} />
       <div className="w-48 ml-4">
         {showReset && (
-          <Button
-            outline
-            label={label}
-            onClick={() => router.push({pathName})}
-          />
+          {button}
         )}
       </div>
     </div>

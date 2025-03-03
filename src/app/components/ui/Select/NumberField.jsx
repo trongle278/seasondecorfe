@@ -10,6 +10,7 @@ export default function ExampleNumberField() {
       id={id}
       defaultValue={1}
       min={1}
+      max={9999}
       className=""
     >
       <NumberField.ScrubArea className="cursor-ew-resize">

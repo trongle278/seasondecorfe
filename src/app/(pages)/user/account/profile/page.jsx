@@ -48,11 +48,11 @@ const UserProfile = () => {
   };
 
   const onSubmit = React.useCallback(async (data) => {
-    const id = user?.id;
 
     const userData = {
       firstName: data.firstName,
       lastName: data.lastName,
+      slug: data.slug,
       dateOfBirth: data.dob,
       gender: data.gender === "true",
       phone: data.phone,
@@ -60,7 +60,7 @@ const UserProfile = () => {
     try {
       setIsLoading(true);
       console.log(userData);
-      await updateProfile(id, userData);
+      await updateProfile(userData);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -87,13 +87,29 @@ const UserProfile = () => {
               <form className="flex flex-col gap-7 mb-10">
                 <EditAvatar userImg={user?.avatar} childStyle="left-14" />
 
-                <div className="inline-flex gap-5">
+                <div className="inline-flex gap-5 items-center">
                   <FootTypo
                     footlabel="Email :"
                     className="!m-0 font-semibold w-40"
                   />
                   {user?.email || "email"}
                 </div>
+                <div className="inline-flex gap-5 items-center">
+                  <FootTypo
+                    footlabel="Slug :"
+                    className="!m-0 font-semibold w-40"
+                  />
+                  <Input
+                    id="slug"
+                    type="text"
+                    placeholder="Abc"
+                    className="pl-3"
+                    register={register}
+                    errors={errors}
+                    defaultValue={user?.slug || ""}
+                  />
+                </div>
+
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 mb-4 items-center gap-5">
                   <FootTypo
                     footlabel="First name :"
@@ -146,6 +162,7 @@ const UserProfile = () => {
                     options={genderOptions}
                     value="Male"
                     onChange={handleGenderChange}
+                    lisboxClassName="mt-9"
                   />
                 </div>
                 <div className="inline-flex gap-5 items-center">
