@@ -46,15 +46,13 @@ const UserAddress = () => {
         </div>
       </div>
       <div>
-        {sortedAddresses.length === 0 ? (
-          <EmptyState title="You have no saved addresses" />
-        ) : (
-          <DataMapper
-            data={sortedAddresses}
-            Component={AddressBox}
-            getKey={(address) => address.id}
-          />
-        )}
+        <DataMapper
+          data={sortedAddresses}
+          Component={AddressBox}
+          emptyStateComponent={<EmptyState title="You saved no addresses" />}
+          loading={isFetching}
+          getKey={(address) => address.id}
+        />
       </div>
     </UserWrapper>
   );

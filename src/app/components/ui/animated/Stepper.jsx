@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Stepper({
   children,
   initialStep = 1,
-  onStepChange = () => { },
-  onFinalStepCompleted = () => { },
-  validateStep = () => true, 
+  onStepChange = () => {},
+  onFinalStepCompleted = () => {},
+  validateStep = () => true,
   stepCircleContainerClassName = "",
   stepContainerClassName = "",
   contentClassName = "",
@@ -15,7 +15,7 @@ export default function Stepper({
   nextButtonProps = {},
   backButtonText = "Back",
   nextButtonText = "Continue",
-  disableStepIndicators = false,
+  disableStepIndicators = true,
   renderStepIndicator,
   ...rest
 }) {
@@ -46,7 +46,7 @@ export default function Stepper({
         updateStep(currentStep + 1);
       }
     } else {
-      return null
+      return null;
     }
   };
 
@@ -60,10 +60,10 @@ export default function Stepper({
       className="flex w-full h-full flex-col items-center justify-start"
       {...rest}
     >
-      <div
-        className={`mx-auto w-full h-full ${stepCircleContainerClassName}`}
-      >
-        <div className={`${stepContainerClassName} flex w-full items-center p-8`}>
+      <div className={`mx-auto w-full h-full ${stepCircleContainerClassName}`}>
+        <div
+          className={`${stepContainerClassName} flex w-full items-center p-8`}
+        >
           {stepsArray.map((_, index) => {
             const stepNumber = index + 1;
             const isNotLastStep = index < totalSteps - 1;
@@ -107,28 +107,32 @@ export default function Stepper({
         {!isCompleted && (
           <div className={`px-8 pb-8 ${footerClassName}`}>
             <div
-              className={`mt-10 flex ${currentStep !== 1 ? "justify-between" : "justify-end"
-                }`}
+              className={`mt-10 flex ${
+                currentStep !== 1 ? "justify-between" : "justify-end"
+              }`}
             >
               {currentStep !== 1 && (
                 <button
                   onClick={handleBack}
-                  className={`duration-350 rounded px-2 py-1 transition ${currentStep === 1
-                    ? "pointer-events-none opacity-50 "
-                    : " hover:text-neutral-700"
-                    }`}
+                  className={`duration-350 rounded px-2 py-1 transition ${
+                    currentStep === 1
+                      ? "pointer-events-none opacity-50 "
+                      : " hover:text-neutral-700"
+                  }`}
                   {...backButtonProps}
                 >
                   {backButtonText}
                 </button>
               )}
-              <button
-                onClick={isLastStep ? handleComplete : handleNext}
-                className="duration-350 flex items-center justify-center rounded-full bg-primary py-1.5 px-3.5 font-medium tracking-tight transition hover:bg-white active:bg-primary"
-                {...nextButtonProps}
-              >
-                {isLastStep ? "Complete" : nextButtonText}
-              </button>
+              {!isLastStep && (
+                <button
+                  onClick={handleNext}
+                  className="duration-350 flex items-center justify-center rounded-full bg-primary py-1.5 px-3.5 font-medium tracking-tight transition hover:bg-white active:bg-primary"
+                  {...nextButtonProps}
+                >
+                  {nextButtonText}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -137,12 +141,22 @@ export default function Stepper({
   );
 }
 
-function StepContentWrapper({ isCompleted, currentStep, direction, children, className }) {
+function StepContentWrapper({
+  isCompleted,
+  currentStep,
+  direction,
+  children,
+  className,
+}) {
   const [parentHeight, setParentHeight] = useState(0);
 
   return (
     <motion.div
-      style={{ position: "relative"}}
+      style={{
+        position: "relative",
+        overflowX: "hidden",
+        overflowY: "visible",
+      }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
       transition={{ type: "spring", duration: 0.4 }}
       className={className}
@@ -204,8 +218,18 @@ export function Step({ children }) {
   return <div className="px-8">{children}</div>;
 }
 
-function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators }) {
-  const status = currentStep === step ? "active" : currentStep < step ? "inactive" : "complete";
+function StepIndicator({
+  step,
+  currentStep,
+  onClickStep,
+  disableStepIndicators,
+}) {
+  const status =
+    currentStep === step
+      ? "active"
+      : currentStep < step
+      ? "inactive"
+      : "complete";
 
   const handleClick = () => {
     if (step !== currentStep && !disableStepIndicators) onClickStep(step);
@@ -270,7 +294,12 @@ function CheckIcon(props) {
       <motion.path
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ delay: 0.1, type: "tween", ease: "easeOut", duration: 0.3 }}
+        transition={{
+          delay: 0.1,
+          type: "tween",
+          ease: "easeOut",
+          duration: 0.3,
+        }}
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M5 13l4 4L19 7"

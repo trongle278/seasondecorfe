@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Container from "@/app/components/layouts/Container";
 import ImageSlider from "@/app/components/ui/slider/ImageSlider";
 import { FavouriteBtn } from "@/app/components/layouts/header/components/indexBtn";
@@ -15,15 +16,47 @@ import ExampleNumberField from "@/app/components/ui/Select/NumberField";
 import CommentSection from "../components/sections/CommentSection";
 import { FaDongSign } from "react-icons/fa6";
 import { BsCartPlus } from "react-icons/bs";
+import { useParams } from "next/navigation";
+import { useGetProductById } from "@/app/queries/product/product.query";
+import { useGetListProduct } from "@/app/queries/list/product.list.query";
 
 const ProductDetail = () => {
+  const { slug } = useParams();
+
+  const { data: products } = useGetListProduct();
+  const [productId, setProductId] = React.useState(null);
+  const { data: productDetail, isLoading } = useGetProductById(productId);
+
+  React.useEffect(() => {
+    if (products) {
+      console.log(products);
+      const matchedProduct = products.find(
+        (p) => generateSlug(p.productName) === slug
+      );
+      if (matchedProduct) {
+        setProductId(matchedProduct.id);
+      }
+    }
+  }, [products, slug]);
+
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+
+  if (!productDetail) {
+    return <p className="text-center mt-20">Loading product details...</p>;
+  }
+
   return (
     <Container>
       <div className="my-7"></div>
       <BorderBox>
         <div className="flex flex-col lg:flex-row gap-20">
           <div className="flex flex-col w-full gap-6  h-fit items-center pt-10">
-            <ImageSlider />
+            <ImageSlider img={productDetail.imageUrls || []} loading={isLoading} />
             <span className="inline-flex items-center">
               <FavouriteBtn /> People liked (...)
             </span>
@@ -33,14 +66,16 @@ const ProductDetail = () => {
             <div className="flex flex-col justify-start">
               <span className="inline-flex items-center gap-5 my-3">
                 <FootTypo
-                  footlabel="A Lamp for your home"
+                  footlabel={productDetail.productName}
                   className="text-3xl !mx-0 font-primary"
                 />
               </span>
 
               <span className="bg-gray-50 w-full dark:bg-zinc-800 inline-flex text-3xl p-5 text-red">
                 <FaDongSign />
-                123.123
+                {new Intl.NumberFormat("vi-VN").format(
+                  productDetail.productPrice
+                )}
               </span>
 
               <span className="inline-flex items-center gap-5 my-3">
@@ -87,7 +122,11 @@ const ProductDetail = () => {
                 <ExampleNumberField />
               </span>
             </div>
-            <Button label="Add to cart" className="bg-primary !p-3" icon={<BsCartPlus size={20}/>}/>
+            <Button
+              label="Add to cart"
+              className="bg-primary !p-3"
+              icon={<BsCartPlus size={20} />}
+            />
           </div>
         </div>
       </BorderBox>
@@ -149,7 +188,7 @@ const ProductDetail = () => {
         </div>
       </BorderBox>
       <DetailSection />
-      <DescrriptionSection />
+      <DescrriptionSection description={productDetail.description} />
       <CommentSection />
     </Container>
   );

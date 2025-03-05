@@ -43,6 +43,23 @@ export function useCreateProviderProfile() {
   });
 }
 
+export function useCreateProviderAvatar() {
+  return useMutation({
+    mutationKey: ["create_provider_avatar"],
+    mutationFn: async (data) => {
+      nProgress.start();
+      try {
+        return await BaseRequest.Put(
+          `/${SUB_URL}/upload-provider-avatar`,
+          data
+        );
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+
 export function useChangeStatus() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -84,17 +101,20 @@ export function useGetProviderProfile() {
 
 export function useGetProviderById(accountId) {
   return useQuery({
-    queryKey: ["get_provider_by_id", accountId], 
+    queryKey: ["get_provider_by_id", accountId],
     queryFn: async () => {
       if (!accountId) return null;
       nProgress.start();
       try {
-        const res = await BaseRequest.Get(`/${SUB_URL}/profile/${accountId}`, false);
+        const res = await BaseRequest.Get(
+          `/${SUB_URL}/profile/${accountId}`,
+          false
+        );
         return res.data;
       } finally {
         nProgress.done();
       }
     },
-    enabled: !!accountId, 
+    enabled: !!accountId,
   });
 }

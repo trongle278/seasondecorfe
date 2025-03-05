@@ -12,6 +12,10 @@ const HeaderWrapper = () => {
     return null;
   }
 
+  if (pathname.startsWith("/admin/")) {
+    return <SellerHeader />;
+  }
+
   if (pathname.startsWith("/seller/")) {
     return <SellerHeader />;
   }

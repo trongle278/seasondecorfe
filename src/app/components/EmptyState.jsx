@@ -13,13 +13,8 @@ const EmptyState = ({
 }) => {
   const router = useRouter();
   return (
-    <div className="h-[60vh] flex flex-col gap-2 justify-center items-center">
+    <div className="col-span-full flex items-center justify-center w-full h-60">
       <Heading center title={title} subtitle={subtitle} />
-      <div className="w-48 ml-4">
-        {showReset && (
-          {button}
-        )}
-      </div>
     </div>
   );
 };

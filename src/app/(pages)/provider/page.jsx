@@ -7,6 +7,7 @@ import DataMapper from "@/app/components/DataMapper";
 import { useFollow } from "@/app/queries/user/user.query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 import { useQueryClient } from "@tanstack/react-query";
+import EmptyState from "@/app/components/EmptyState";
 
 const filters = [
   {
@@ -48,18 +49,16 @@ const ProviderPage = () => {
 
   return (
     <ListWrapper filters={filters}>
-      {listProvider?.length > 0 ? (
-        <DataMapper
-          data={listProvider}
-          Component={ProviderCard}
-          getKey={(item) => item.id}
-          componentProps={(item) => ({
-            onFollowClick: () => handleFollow(item.id),
-          })}
-        />
-      ) : (
-        <p className="text-center text-gray-500">No providers found.</p>
-      )}
+      <DataMapper
+        data={listProvider}
+        Component={ProviderCard}
+        emptyStateComponent={<EmptyState title="No providers found" />}
+        loading={isLoading}
+        getKey={(item) => item.id}
+        componentProps={(item) => ({
+          onFollowClick: () => handleFollow(item.id),
+        })}
+      />  
     </ListWrapper>
   );
 };

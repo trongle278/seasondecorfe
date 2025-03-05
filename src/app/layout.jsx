@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "./providers/providers";
 import HeaderWrapper from "./components/layouts/header/HeaderWrapper";
@@ -9,15 +9,7 @@ import AdressModal from "./components/ui/Modals/AddressModal";
 import { FloatBtn } from "./components/ui/floatingBtn/FloatBtn";
 import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
   title: "SeasonDecor",
@@ -26,7 +18,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="!scroll-smooth !pr-0" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`!scroll-smooth !pr-0 ${montserrat.className}`}
+      suppressHydrationWarning
+    >
       <body className="antialiased">
         <AppProviders>
           <ClientOnly>
