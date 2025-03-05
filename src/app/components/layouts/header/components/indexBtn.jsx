@@ -28,7 +28,7 @@ export const NotificationBtn = ({notiClick}) => {
 export const FavouriteBtn = ({favClick}) => {
   return (
     <div className="relative">
-      <IconButton className="dark:hover:bg-zinc-700" onClick={favClick}>
+      <IconButton className="dark:hover:bg-primary hover:bg-primary" onClick={favClick}>
         <MdFavoriteBorder size={20} className="dark:text-white" />
       </IconButton>
     </div>

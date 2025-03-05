@@ -10,7 +10,8 @@ import { useUser } from "../providers/userprovider";
 const Logo = ({ outsideStyle, insideStyle }) => {
   const pathname = usePathname();
   const { user } = useUser();
-  const isSellerRegistration = pathname.startsWith("/seller/");
+  const isSeller = pathname.startsWith("/seller/");
+  const isAdmin = pathname.startsWith("/admin/");
 
   const destination = user?.isProvider ? "/seller/dashboard" : "/";
 
@@ -52,11 +53,21 @@ const Logo = ({ outsideStyle, insideStyle }) => {
 
           {/* Text Container */}
           <div className="flex flex-col relative ml-2">
-            {/* Positioning ShinyText above "SeasonDecor" */}
-            {isSellerRegistration && (
+            {isSeller && (
               <span className="absolute -top-5 right-[-30]">
                 <ShinyText
                   text="Provider"
+                  disabled={false}
+                  speed={3}
+                  className="text-xs font-semibold font-tertiary"
+                />
+              </span>
+            )}
+
+            {isAdmin && (
+              <span className="absolute -top-5 right-[-30]">
+                <ShinyText
+                  text="Administrator"
                   disabled={false}
                   speed={3}
                   className="text-xs font-semibold font-tertiary"

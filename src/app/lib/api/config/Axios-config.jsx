@@ -103,7 +103,7 @@ const BaseRequest = {
       const response = await apiClient.get(url, { showToast });
       return response;
     } catch (err) {
-      console.error("GET request error:", err);
+      //console.error("GET request error:", err);
       throw err;
     }
   },
@@ -112,7 +112,7 @@ const BaseRequest = {
       const response = await apiClient.post(url, data, {  showToast });
       return response;
     } catch (err) {
-      console.error("POST request error:", err);
+      //console.error("POST request error:", err);
       throw err;
     }
   },
@@ -121,7 +121,7 @@ const BaseRequest = {
       const response = await apiClient.put(url, data, { showToast });
       return response;
     } catch (err) {
-      console.error("PUT request error:", err);
+      //console.error("PUT request error:", err);
       throw err;
     }
   },
@@ -130,7 +130,7 @@ const BaseRequest = {
       const response = await apiClient.delete(url, { showToast });
       return response;
     } catch (err) {
-      console.error("DELETE request error:", err);
+      //console.error("DELETE request error:", err);
       throw err;
     }
   },

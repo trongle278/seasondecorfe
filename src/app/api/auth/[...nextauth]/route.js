@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import BaseRequest from "../../../lib/api/config/Axios-config";
 
 export const authOptions = {
+  
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -19,6 +20,8 @@ export const authOptions = {
             email: credentials.email,
             password: credentials.password,
           });
+
+          console.log("API Response:", response);
 
 
           return {
@@ -47,7 +50,7 @@ export const authOptions = {
           // ✅ Save credentials login token
           token.accessToken = user.accessToken;
           token.roleId = user.roleId;
-          token.accountId = user.accountId;
+          token.accountId = user.accountId !== undefined ? user.accountId : null;
         }
         if (account?.id_token) {
           console.log("Google Login Token:", account.id_token);
@@ -61,7 +64,7 @@ export const authOptions = {
 
           token.accessToken = response.token;
           token.roleId = response.roleId;
-          token.accountId = response.accountId;
+          token.accountId = response.accountId !== undefined ? response.accountId : null;
         }
       } catch (error) {
         console.error("JWT Callback Error:", error);
@@ -72,7 +75,7 @@ export const authOptions = {
     async session({ session, token }) {
       session.accessToken = token.accessToken || null; // Store accessToken in session
       session.roleId = token.roleId || null; // Store roleId in session
-      session.accountId = token.accountId || null; // Store accountId in session
+      session.accountId = token.accountId !== undefined ? token.accountId : null;
 
       if (!session.accessToken) {
         session.error = "There is problem with our sever.";

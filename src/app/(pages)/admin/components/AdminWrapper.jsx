@@ -16,9 +16,8 @@ import {
   IconPackage
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
-import ScrollToTop from "@/app/components/ScrollToTop";
 
-export default function SellerWrapper({children}) {
+export default function AdminWrapper({children}) {
 
   const links = [
     {
@@ -96,7 +95,6 @@ export default function SellerWrapper({children}) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <ScrollToTop/>
       <Dashboard props={children}/>
     </div>
   );

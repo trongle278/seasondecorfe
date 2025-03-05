@@ -3,11 +3,13 @@ import { NumberField } from "@base-ui-components/react/number-field";
 import { FaMinus } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
 
-export default function ExampleNumberField() {
+export default function ExampleNumberField({value, onChange}) {
   const id = React.useId();
   return (
     <NumberField.Root
       id={id}
+      value={value}
+      onValueChange={onChange}
       defaultValue={1}
       min={1}
       max={9999}

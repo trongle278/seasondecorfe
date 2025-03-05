@@ -12,6 +12,7 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const { data: session, status } = useSession();
   const accountId = session?.accountId;
+  const roleId = session?.roleId;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,7 +31,7 @@ export function UserProvider({ children }) {
       toast.error("Session expired or server is unavailable. Logging out...", {
         id: "session-expired",
       });
-      
+
       // Sign out and redirect
       signOut({ redirect: false }).then(() => {
         router.push("/authen/login");
@@ -40,11 +41,17 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     if (!user) return;
-  
+
     if (!user.isProvider && pathname.startsWith("/seller/dashboard")) {
       router.push("/");
     } else if (user.isProvider && pathname === "/") {
       router.push("/seller/dashboard");
+    }
+
+    if (!roleId === 1 && pathname.startsWith("/admin/dashboard")) {
+      router.push("/authen/login");
+    } else if (roleId === 1 && pathname === "/") {
+      router.push("/admin/dashboard");
     }
   }, [user, pathname, router]);
 
