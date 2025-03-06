@@ -43,15 +43,15 @@ export function UserProvider({ children }) {
     if (!user) return;
 
     if (!user.isProvider && pathname.startsWith("/seller/dashboard")) {
-      router.push("/");
+      router.replace("/");
     } else if (user.isProvider && pathname === "/") {
-      router.push("/seller/dashboard");
+      router.replace("/seller/dashboard");
     }
 
     if (!roleId === 1 && pathname.startsWith("/admin/dashboard")) {
-      router.push("/authen/login");
+      router.replace("/authen/login");
     } else if (roleId === 1 && pathname === "/") {
-      router.push("/admin/dashboard");
+      router.replace("/admin/dashboard");
     }
   }, [user, pathname, router]);
 

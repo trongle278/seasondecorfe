@@ -29,7 +29,7 @@ const tabs = [
   { icon: TbGiftCardFilled, name: "Vouchers", component: VoucherTab },
 ];
 
-const ShopWall = () => {
+const ProviderDetailPage = () => {
   return (
     <Container>
       <div className="seller-info py-5">
@@ -148,4 +148,4 @@ const ShopWall = () => {
   );
 };
 
-export default ShopWall;
+export default ProviderDetailPage;

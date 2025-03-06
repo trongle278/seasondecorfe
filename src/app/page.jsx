@@ -70,8 +70,8 @@ export default function Main() {
                   are.
                 </h2>
                 <div className="flex relative sm:flex-row flex-col space-y-2 justify-center dark:text-white sm:space-y-0 sm:space-x-4 sm:justify-center mb-4 w-full">
-                  <WhiteBgButon whiteBtnlable="Browse providers" />
-                  <BlackBgButton blackBtnlable="Custom design" />
+                  <WhiteBgButon whiteBtnlable="Browse providers" href="/provider" />
+                  <BlackBgButton blackBtnlable="Book now" href="/booking" />
                 </div>
                 <div>
                   <h2 className="text-neutral-500 text-center my-4 relative z-40 dark:text-white">

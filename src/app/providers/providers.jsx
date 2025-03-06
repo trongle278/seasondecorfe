@@ -9,6 +9,8 @@ import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./authprovider";
 import { UserProvider } from "./userprovider";
+import { Provider } from "react-redux";
+import store from "../lib/redux/store";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,21 +35,23 @@ export function AppProviders({ children }) {
   return (
     <>
       <Suspense>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools />
-          <AuthProvider>
-            <UserProvider>
-              <Toaster richColors position="top-center" />
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
-                {children}
-              </ThemeProvider>
-            </UserProvider>
-          </AuthProvider>
-        </QueryClientProvider>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools />
+            <AuthProvider>
+              <UserProvider>
+                <Toaster richColors position="top-center" />
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                >
+                  {children}
+                </ThemeProvider>
+              </UserProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </Provider>
       </Suspense>
     </>
   );

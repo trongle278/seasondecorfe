@@ -2,7 +2,7 @@
 
 import { BlackBgButton } from "../Buttons/Button2colors";
 import Categories from "./components/Categories";
-import Card from "../card/Card";
+import ProductCard from "../card/ProductCard";
 import Container from "../../layouts/Container";
 import DataMapper from "../../DataMapper";
 import { useGetListProduct } from "@/app/queries/list/product.list.query";
@@ -22,7 +22,7 @@ const ProductSection = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-12 mt-10  relative">
         <DataMapper
           data={productList}
-          Component={Card}
+          Component={ProductCard}
           loading={isLoading}
           emptyStateComponent={<EmptyState title="No products found"/>}
           getKey={(product) => product.id}
@@ -39,7 +39,7 @@ const ProductSection = () => {
         <div className="absolute inset-x-0 bottom-0 z-30 h-80 bg-gradient-to-t from-white to-transparent dark:from-black opacity-90 rounded-2xl"></div>
       </div>
       <div className="flex justify-center w-full">
-        <BlackBgButton blackBtnlable="Browse products" />
+        <BlackBgButton blackBtnlable="Browse products" href={"/products"}  />
       </div>
     </Container>
   );

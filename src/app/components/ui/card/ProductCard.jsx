@@ -3,13 +3,11 @@
 import Image from "next/image";
 import React from "react";
 import { CardContainer, CardBody, CardItem } from "./components/3dCard";
-import Link from "next/link";
 import { TbCurrencyDong } from "react-icons/tb";
-import { FavouriteBtn } from "../../layouts/header/components/indexBtn";
 import { FootTypo } from "../Typography";
 import { useRouter } from "next/navigation";
 
-const Card = ({ image, productName, rate, price, totalSold, href }) => {
+const ProductCard = ({ image, productName, rate, price, totalSold, href }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -64,4 +62,4 @@ const Card = ({ image, productName, rate, price, totalSold, href }) => {
   );
 };
 
-export default Card;
+export default ProductCard;
