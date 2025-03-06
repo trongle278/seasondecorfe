@@ -76,8 +76,11 @@ const ProductCreate = () => {
       madein: "",
       shipForm: dataProvider?.address,
       categoryId: "",
+      providerId: ""
     },
   });
+
+  const providerId = dataProvider?.id;
 
   const onSubmit = React.useCallback(
     async (data) => {
@@ -91,6 +94,7 @@ const ProductCreate = () => {
         return;
       }
 
+
       const formData = new FormData();
       formData.append("ProductName", data.name);
       formData.append("Description", data.description);
@@ -99,7 +103,9 @@ const ProductCreate = () => {
       formData.append("MadeIn", data.madein);
       formData.append("ShipFrom", data.shipForm);
       formData.append("CategoryId", selectedCategoryId);
+      formData.append("ProviderId", providerId);
 
+      
       // ✅ Append each image as a File
       images.forEach((img) => {
         formData.append("Images", img); 

@@ -9,7 +9,7 @@ import useDeleteConfimModal from "@/app/hooks/useDeleteConfirmModal";
 import { IoWarningOutline } from "react-icons/io5";
 import { useDeleteAddress } from "@/app/queries/user/address.query";
 
-const DeleteConfirmModal = ({}) => {
+const DeleteConfirmModal = ({title}) => {
   const deleteConfirmModal = useDeleteConfimModal();
   const deleteMutation = useDeleteAddress();
 

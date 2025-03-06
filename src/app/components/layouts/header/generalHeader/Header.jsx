@@ -14,8 +14,6 @@ import { useSession } from "next-auth/react";
 import { UserMenu } from "../UserMenu";
 import { CartBtn, NotificationBtn } from "../components/indexBtn";
 import { useRouter, usePathname } from "next/navigation";
-import { MovingBorderButton } from "@/app/components/ui/animated/MovingBorder";
-
 import { useUser } from "@/app/providers/userprovider";
 import { useChangeStatus } from "@/app/queries/user/provider.query";
 import { ColourfulText } from "@/app/components/ui/animated/ColorfulText";

@@ -1,13 +1,15 @@
 "use client";
 
+import * as React from "react";
 import { ListWrapper } from "@/app/components/ui/ListWrapper";
-import ProviderCard from "./components/ProviderCard";
+import ProviderCard from "@/app/components/ui/card/ProviderCard";
 import { useGetListProvider } from "@/app/queries/list/provider.list.query";
 import DataMapper from "@/app/components/DataMapper";
 import { useFollow } from "@/app/queries/user/user.query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 import { useQueryClient } from "@tanstack/react-query";
 import EmptyState from "@/app/components/EmptyState";
+import { useUser } from "@/app/providers/userprovider";
 
 const filters = [
   {
@@ -21,11 +23,9 @@ const filters = [
   },
 ];
 
-const ProviderPage = () => {
+const ListProviderPage = () => {
   const { data: listProvider, isLoading, isError } = useGetListProvider();
-
   const queryClient = useQueryClient();
-
   const followMutation = useFollow();
 
   const handleFollow = async (followingId) => {
@@ -63,4 +63,4 @@ const ProviderPage = () => {
   );
 };
 
-export default ProviderPage;
+export default ListProviderPage;
