@@ -6,6 +6,8 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import { useGetListCart } from "@/app/queries/list/cart.query";
 import { useUser } from "@/app/providers/userprovider";
 import { ClipLoader } from "react-spinners";
+import useSearchModal from "@/app/hooks/useSearchModal";
+import { IoSearchSharp } from "react-icons/io5";
 
 export const CartBtn = ({ cartClick }) => {
   const { user } = useUser();
@@ -40,11 +42,28 @@ export const CartBtn = ({ cartClick }) => {
   );
 };
 
-export const NotificationBtn = ({ notiClick }) => {
+export const NotificationBtn = ({ toggleDrawer }) => {
   return (
     <div className="relative">
-      <IconButton className="dark:hover:bg-zinc-700" onClick={notiClick}>
+      <IconButton
+        className="dark:hover:bg-zinc-700"
+        onClick={toggleDrawer(true)} 
+      >
         <IoNotificationsSharp size={20} className="dark:text-white" />
+      </IconButton>
+    </div>
+  );
+};
+
+export const SearchBtn = ({ searchClick }) => {
+  const searchModal = useSearchModal();
+  return (
+    <div className="relative">
+      <IconButton
+        className="dark:hover:bg-zinc-700"
+        onClick={searchModal.onOpen}
+      >
+        <IoSearchSharp size={20} className="dark:text-white" />
       </IconButton>
     </div>
   );

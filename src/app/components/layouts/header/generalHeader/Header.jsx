@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import { IoSearchSharp } from "react-icons/io5";
-import { IconButton } from "@mui/material";
 import { TfiMoreAlt } from "react-icons/tfi";
 import ThemeSwitch from "../../../ThemeSwitch";
 import Logo from "../../../Logo";
@@ -18,6 +16,8 @@ import { useUser } from "@/app/providers/userprovider";
 import { useChangeStatus } from "@/app/queries/user/provider.query";
 import { ColourfulText } from "@/app/components/ui/animated/ColorfulText";
 import { scroller } from "react-scroll";
+import { SearchBtn } from "../components/indexBtn";
+import AnchorDrawer from "@/app/components/ui/drawer/Drawer";
 
 export default function Header({ providerRef }) {
   const { user } = useUser();
@@ -68,6 +68,12 @@ export default function Header({ providerRef }) {
       },
     });
   }, [mutationChangeStatus, router, pathname, session, user]);
+
+  const [isDrawerOpen, setDrawerOpen] = React.useState(false);
+
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
 
   return (
     <header
@@ -124,11 +130,10 @@ export default function Header({ providerRef }) {
 
           <div className="right-wrapper flex flex-1 items-center justify-end gap-5 sm:gap-3 md:justify-end">
             <ThemeSwitch />/
-            <IconButton className="dark:hover:bg-zinc-700">
-              <IoSearchSharp size={20} className="dark:text-white" />
-            </IconButton>
+            <SearchBtn />
             <CartBtn cartClick={() => router.push("/cart")} />
-            <NotificationBtn />
+            <NotificationBtn toggleDrawer={toggleDrawer} />
+            <AnchorDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
             {user && (
               <>
                 <UserMenu />

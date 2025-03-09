@@ -2,16 +2,19 @@
 
 import { GlowingCard } from "@/app/components/ui/animated/GlowingEffect";
 import Avatar from "@/app/components/ui/Avatar/Avatar";
+import { useRouter } from "next/navigation";
 
 
-const ProviderCard = ({id,avatar, name, onFollowClick, slug}) => {
+const ProviderCard = ({id,avatar, name, onFollowClick, slug, href}) => {
+  const router = useRouter();
+
   const handleClick = () => {
-    console.log("clicked"); 
-  }
+    if (href) {
+      console.log("clicked");
+      router.push(href);
+    }
+  };
 
-  const Test = () => {
-    console.log("clicked");
-  }
   
   return (
     <>
@@ -24,6 +27,7 @@ const ProviderCard = ({id,avatar, name, onFollowClick, slug}) => {
         onFollowClick={onFollowClick}
         onChatClick={()=>{console.log("clicked")}}
         className="w-full"
+        href={href}
       />
     </>
   );

@@ -99,15 +99,15 @@ export function useGetProviderProfile() {
   });
 }
 
-export function useGetProviderById(accountId) {
+export function useGetProviderBySlug(slug) {
   return useQuery({
-    queryKey: ["get_provider_by_id", accountId],
+    queryKey: ["get_provider_by_slug", slug],
     queryFn: async () => {
-      if (!accountId) return null;
+      if (!slug) return null;
       nProgress.start();
       try {
         const res = await BaseRequest.Get(
-          `/${SUB_URL}/profile/${accountId}`,
+          `/${SUB_URL}/profile/${slug}`,
           false
         );
         return res.data;
@@ -115,6 +115,5 @@ export function useGetProviderById(accountId) {
         nProgress.done();
       }
     },
-    enabled: !!accountId,
   });
 }

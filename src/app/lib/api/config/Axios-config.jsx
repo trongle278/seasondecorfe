@@ -68,7 +68,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(data);
     }
 
-    toast.error("Network error. Please check your internet connection.");
+    //toast.error("Network error. Please check your internet connection.");
     return Promise.reject(error);
   }
 );

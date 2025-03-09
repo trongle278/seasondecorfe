@@ -8,6 +8,7 @@ import ClientOnly from "./components/ClientOnly";
 import AdressModal from "./components/ui/Modals/AddressModal";
 import { FloatBtn } from "./components/ui/floatingBtn/FloatBtn";
 import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
+import SearchModal from "./components/ui/Modals/SearchModal";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -20,16 +21,17 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`!scroll-smooth !pr-0 ${montserrat.className}`}
+      className={`!scroll-smooth ${montserrat.className}`}
       suppressHydrationWarning
     >
-      <body className="antialiased">
+      <body className="antialiased overflow-auto">
         <AppProviders>
           <ClientOnly>
             <div className="flex min-h-screen flex-col relative">
               <HeaderWrapper />
               <OTPConfirmModal />
               <DeleteConfirmModal />
+              <SearchModal />
 
               <AdressModal />
               <FloatBtn />

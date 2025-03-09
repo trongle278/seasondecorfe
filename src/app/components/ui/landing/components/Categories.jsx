@@ -18,8 +18,10 @@ import { BiCabinet, BiCloset } from "react-icons/bi";
 import { FaCouch, FaBath, FaChair, FaUtensils } from "react-icons/fa";
 import { RiComputerLine, RiSheoLine } from "react-icons/ri";
 import CategoryBox from "./CategoryBox";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { HeadTypo, BodyTypo } from "../../Typography";
+import { useGetListProductCategory } from "@/app/queries/list/category.list.query";
+import { Skeleton } from "@mui/material";
 
 export const categories = [
   {
@@ -96,7 +98,23 @@ export const categories = [
 
 const Categories = () => {
   const params = useSearchParams();
-  const category = params?.get("category");
+  const router = useRouter();
+  const selectedCategory = params?.get("category");
+  const selectedCategoryId = params?.get("categoryId");
+
+  const {
+    data: categoriesData,
+    isLoading,
+    isError,
+  } = useGetListProductCategory();
+
+  const categoriesList = Array.isArray(categoriesData) ? categoriesData : [];
+
+  const mappedCategories = categoriesList.map((item) => ({
+    id: item.id,
+    label: item.categoryName, // Map categoryName to label
+    icon: categories.find((c) => c.label === item.categoryName)?.icon || null, // Match predefined icon
+  }));
 
   return (
     <>
@@ -105,16 +123,24 @@ const Categories = () => {
         <BodyTypo bodylabel="Explore funitures from all categories" />
       </div>
 
-      <div className="pt-4 flex flex-row items-center justify-between overflow-x-auto ">
-        {categories.map((item) => (
-          <CategoryBox
-            key={item.label}
-            label={item.label}
-            descripton={item.descripton}
-            icon={item.icon}
-            selected={category === item.label}
-          />
-        ))}
+      <div className="pt-4 flex flex-row items-center justify-center overflow-x-auto ">
+        {isLoading ? (
+          <Skeleton animation="wave" width={200} height={100} />
+        ) : isError ? (
+          <p className="text-center text-red-500">Failed to load categories</p>
+        ) : (
+          <div className="pt-4 flex flex-row items-center justify-between gap-5 overflow-x-auto">
+            {mappedCategories.map((item) => (
+              <CategoryBox
+                key={item.id || item.label}
+                id={item.id}
+                label={item.label}
+                icon={item.icon}
+                selected={selectedCategoryId == item.id}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

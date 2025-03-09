@@ -55,10 +55,13 @@ const ListProviderPage = () => {
         emptyStateComponent={<EmptyState title="No providers found" />}
         loading={isLoading}
         getKey={(item) => item.id}
-        componentProps={(item) => ({
-          onFollowClick: () => handleFollow(item.id),
+        componentProps={(provider) => ({
+          id: provider.id,
+          slug: provider.slug,
+          onFollowClick: () => handleFollow(provider.id),
+          href: `provider/${provider.slug}`,
         })}
-      />  
+      />
     </ListWrapper>
   );
 };

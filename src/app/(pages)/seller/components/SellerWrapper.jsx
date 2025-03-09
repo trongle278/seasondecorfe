@@ -13,69 +13,58 @@ import {
   IconMessages,
   IconDatabase,
   IconWorldDollar,
-  IconPackage
+  IconPackage,
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
 import ScrollToTop from "@/app/components/ScrollToTop";
+import { RiFolderSettingsLine } from "react-icons/ri";
 
-export default function SellerWrapper({children}) {
-
+export default function SellerWrapper({ children }) {
   const links = [
     {
-        label: "Overeview",
-        href: "/seller/dashboard",
-        icon: (
-          <IconBrandTabler className=" h-5 w-5 flex-shrink-0" />
-        ),
-      },
+      label: "Overeview",
+      href: "/seller/dashboard",
+      icon: <IconBrandTabler className=" h-5 w-5 flex-shrink-0" />,
+    },
     {
       label: "Order Management",
       href: "/seller/order",
-      icon: (
-        <IconReceipt className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconReceipt className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Marketing Channel",
       href: "#",
-      icon: (
-        <IconChartBarPopular className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconChartBarPopular className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Chat Management",
       href: "#",
-      icon: (
-        <IconMessages className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconMessages className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Product Management",
       href: "/seller/product",
-      icon: (
-        <IconPackage className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconPackage className=" h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Service Management",
+      href: "/seller/service",
+      icon: <RiFolderSettingsLine className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Data Management",
       href: "#",
-      icon: (
-        <IconDatabase className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconDatabase className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Finance Management",
       href: "#",
-      icon: (
-        <IconWorldDollar className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconWorldDollar className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Shop Management",
       href: "/seller/shop/",
-      icon: (
-        <IconBuildingStore className=" h-5 w-5 flex-shrink-0" />
-      ),
+      icon: <IconBuildingStore className=" h-5 w-5 flex-shrink-0" />,
     },
   ];
   const [open, setOpen] = useState(false);
@@ -96,14 +85,14 @@ export default function SellerWrapper({children}) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <ScrollToTop/>
-      <Dashboard props={children}/>
+      <ScrollToTop />
+      <Dashboard props={children} />
     </div>
   );
 }
 
 // Dummy dashboard component with content
-const Dashboard = ({props}) => {
+const Dashboard = ({ props }) => {
   return (
     <div className="flex flex-1">
       <div className="flex h-full w-full flex-col gap-2 rounded-tl-2xl border border-neutral-200 p-2 md:p-10">

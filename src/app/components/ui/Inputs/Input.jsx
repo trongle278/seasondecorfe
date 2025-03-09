@@ -19,12 +19,13 @@ const Input = ({
   placeholder,
   register = () => {},
   control,
-
   disabled,
   required,
   errors,
   formatPrice,
   validate,
+  ...props
+  
 }) => {
   const radius = 100; // change this to increase the rdaius of the hover effect
   const [visible, setVisible] = React.useState(false);
@@ -99,6 +100,7 @@ const Input = ({
             required={required}
             {...register(id, { required, validate })}
             type={type}
+            {...props}
             className={cn(
               `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm
                 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 

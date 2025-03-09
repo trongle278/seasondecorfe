@@ -19,3 +19,21 @@ export function useGetListProduct() {
     },
   });
 }
+
+export function useGetProductByCategoryId(categoryId) {
+  return useQuery({
+    queryKey: ["product_list", categoryId],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(
+          `/${SUB_URL}/getProductByCategory/${categoryId}`,
+          false
+        );
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}

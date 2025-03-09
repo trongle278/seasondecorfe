@@ -8,6 +8,8 @@ import { FaPlus } from "react-icons/fa";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { useUser } from "@/app/providers/userprovider";
 import { FootTypo } from "../Typography";
+import Link from "next/link";
+import { useSelector } from "react-redux";
 
 const GlowingEffect = memo(
   ({
@@ -190,9 +192,10 @@ export const GlowingCard = ({
   onFollowClick,
   onChatClick,
   slug,
+  href = "",
 }) => {
-  const { user } = useUser();
-  const isMySelf = user?.slug === slug;
+
+  const isMySelf = useSelector((state) => state.users.userSlug === slug);
 
   return (
     <li id={id} className={`min-h-[10rem] list-none`}>
@@ -209,7 +212,10 @@ export const GlowingCard = ({
           proximity={64}
           inactiveZone={0.01}
         />
-        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-0.75 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
+        <Link
+          href={href}
+          className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-0.75 dark:shadow-[0px_0px_27px_0px_#2D2D2D]"
+        >
           <div className="relative flex flex-1 flex-col justify-start p-4 gap-4">
             <div
               className="w-fit flex flex-row items-center gap-2 cursor-pointer hover:underline"
@@ -221,7 +227,7 @@ export const GlowingCard = ({
             <div className="flex">
               <div className="items-center flex flex-row gap-2">
                 {isMySelf ? (
-                  <FootTypo footlabel="You" className="!m-0 font-semibold"  />
+                  <FootTypo footlabel="You" className="!m-0 font-semibold" />
                 ) : (
                   <div className="items-center flex flex-row gap-2">
                     <Button
@@ -240,7 +246,7 @@ export const GlowingCard = ({
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </li>
   );
