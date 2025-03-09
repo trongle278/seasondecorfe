@@ -29,7 +29,7 @@ const ImageSlider = ({ img = [], loading }) => {
             width={500}
             height={500}
             unoptimized={true}
-            className="w-full h-96 object-cover rounded-xl shadow-lg transition-opacity duration-300 ease-in-out"
+            className="w-full h-96 object-cover rounded-xl"
           />
         ) : (
           <Skeleton animation="wave" />

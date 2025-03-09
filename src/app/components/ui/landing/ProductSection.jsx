@@ -6,11 +6,21 @@ import ProductCard from "../card/ProductCard";
 import Container from "../../layouts/Container";
 import DataMapper from "../../DataMapper";
 import { useGetListProduct } from "@/app/queries/list/product.list.query";
+import { useGetProductByCategoryId } from "@/app/queries/list/product.list.query";
 import EmptyState from "../../EmptyState";
 import { Skeleton } from "@mui/material";
+import { useSearchParams } from "next/navigation";
 
 const ProductSection = () => {
-  const { data: productList, isLoading, isError } = useGetListProduct();
+  const params = useSearchParams();
+
+  const selectedCategoryId = params?.get("categoryId"); 
+
+
+  const { data: productList, isLoading, isError } = selectedCategoryId
+    ? useGetProductByCategoryId(selectedCategoryId) 
+    : useGetListProduct(); 
+  
 
   const generateSlug = (name) => {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");

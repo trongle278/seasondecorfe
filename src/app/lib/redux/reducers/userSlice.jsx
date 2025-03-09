@@ -5,16 +5,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const usersSlice = createSlice({
   name: "users",
   initialState: {
-    isProviderSigned: "",
+    userSlug: "",
   },
   reducers: {
-    setIsProviderSigned: (state, action) => {
-      state.isProviderSigned = action.payload;
+    setUserSlug: (state, action) => {
+      state.userSlug = action.payload;
     },
   },
 });
 
 export const {
-  setIsProviderSigned,
+  setUserSlug,
 } = usersSlice.actions;
 export default usersSlice.reducer;

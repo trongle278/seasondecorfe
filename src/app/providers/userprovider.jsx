@@ -6,10 +6,13 @@ import { useGetAccountDetails } from "../queries/user/user.query";
 import { useRouter, usePathname } from "next/navigation";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setUserSlug } from "../lib/redux/reducers/userSlice";
 
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
+  const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const accountId = session?.accountId;
   const roleId = session?.roleId;
@@ -41,6 +44,12 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     if (!user) return;
+
+    const isUserSelf = Number(user.id) === Number(accountId);
+
+    if (isUserSelf) {
+      dispatch(setUserSlug(user.slug));
+    }
 
     if (!user.isProvider && pathname.startsWith("/seller/dashboard")) {
       router.replace("/");

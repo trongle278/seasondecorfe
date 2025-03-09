@@ -3,7 +3,7 @@ import * as React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import qs from "query-string";
 
-const CategoryBox = ({ icon, label, selected }) => {
+const CategoryBox = ({ id, icon, label, selected }) => {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -17,10 +17,12 @@ const CategoryBox = ({ icon, label, selected }) => {
     const updatedQuery = {
       ...currentQuery,
       category: label,
+      categoryId: selected ? undefined : id,
     };
 
     if (params?.get("category") === label) {
       delete updatedQuery.category;
+      delete updatedQuery.categoryId;
     }
 
     const url = qs.stringifyUrl(
@@ -32,12 +34,12 @@ const CategoryBox = ({ icon, label, selected }) => {
     );
 
     router.replace(url, { scroll: false });
-  }, [label, params, router]);
+  }, [label, id, params, router]);
 
   return (
     <div
       onClick={handleClick}
-      className={`flex flex-col items-center justify-center gap-2 p-3 border-b-2 hover:text-neutral-800 dark:hover:text-neutral-300 transition cursor-pointer
+      className={`flex flex-col items-center justify-center gap-2 px-2 border-b-2 hover:text-neutral-800 dark:hover:text-neutral-300 transition cursor-pointer
     ${
       selected
         ? "border-b-neutral-800 dark:border-b-white"

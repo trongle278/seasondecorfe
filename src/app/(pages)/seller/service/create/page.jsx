@@ -10,27 +10,25 @@ import { TbCurrencyDong } from "react-icons/tb";
 import { useForm } from "react-hook-form";
 import { Field, Textarea } from "@headlessui/react";
 import ExampleNumberField from "@/app/components/ui/Select/NumberField";
-import { useGetProviderBySlug } from "@/app/queries/user/provider.query";
-import { useGetListProductCategory } from "@/app/queries/list/category.list.query";
+import { useGetListDecorCategory } from "@/app/queries/list/category.list.query";
 import { useUser } from "@/app/providers/userprovider";
 import DropdownSelectReturnObj from "@/app/components/ui/Select/DropdownObject";
 import Button2 from "@/app/components/ui/Buttons/Button2";
-import { useCreateProduct } from "@/app/queries/product/product.query";
+import { useCreateDecorService } from "@/app/queries/service/service.query";
 import { useRouter } from "next/navigation";
 
-const ProductCreate = () => {
+const ServiceCreate = () => {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data: dataCategory } = useGetListProductCategory();
+  const { data: dataCategory } = useGetListDecorCategory();
 
-  const { data: dataProvider } = useGetProviderBySlug(user.slug);
   const [images, setImages] = React.useState([]);
 
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = React.useState(null);
 
-  const { mutate: mutationCreate, isPending } = useCreateProduct();
+  const { mutate: mutationCreate, isPending } = useCreateDecorService();
 
   const handleImageUpload = (uploadedImages) => {
     setImages(uploadedImages);
@@ -69,18 +67,13 @@ const ProductCreate = () => {
     mode: "onChange",
     defaultValues: {
       images: [],
-      name: "",
-      price: "",
+      //name: "",
+      style: "",
       description: "",
-      quantity: 1,
-      madein: "",
-      shipForm: dataProvider?.address,
+      province: "",
       categoryId: "",
-      providerId: ""
     },
   });
-
-  const providerId = dataProvider?.id;
 
   const onSubmit = React.useCallback(
     async (data) => {
@@ -94,21 +87,15 @@ const ProductCreate = () => {
         return;
       }
 
-
       const formData = new FormData();
-      formData.append("ProductName", data.name);
+      formData.append("Style", data.style);
       formData.append("Description", data.description);
-      formData.append("ProductPrice", data.price);
-      formData.append("Quantity", data.quantity);
-      formData.append("MadeIn", data.madein);
-      formData.append("ShipFrom", data.shipForm);
-      formData.append("CategoryId", selectedCategoryId);
-      formData.append("ProviderId", providerId);
+      formData.append("Province", data.province);
+      formData.append("DecorCategoryId", selectedCategoryId);
 
-      
       // ✅ Append each image as a File
       images.forEach((img) => {
-        formData.append("Images", img); 
+        formData.append("Images", img);
       });
 
       console.log("Submitting FormData:", formData);
@@ -116,7 +103,7 @@ const ProductCreate = () => {
       mutationCreate(formData, {
         onSuccess: (response) => {
           console.log("Product created successfully:", response);
-          router.push("/seller/product");
+          router.push("/seller/service");
         },
         onError: (error) => {
           console.error("Error creating product:", error);
@@ -126,40 +113,44 @@ const ProductCreate = () => {
     [selectedCategoryId, images, mutationCreate]
   );
 
-  const productName = watch("name");
-  const price = watch("price");
-  const description = watch("description");
-
-  const quantity = watch("quantity");
-  const madein = watch("madein");
-  const shipForm = watch("shipForm");
-  const categoryId = watch("categoryId");
+  const serviceStyle = watch("style");
+  const serviceDescription = watch("description");
+  const serviceProvince = watch("province");
+  const serviceCategoryId = watch("categoryId");
 
   // Validation function for Step 1
   const validateStep = (step) => {
     if (step === 1) {
       if (
-        !productName?.trim() ||
-        !price?.trim() ||
-        !description?.trim() ||
+        !serviceStyle?.trim() ||
+        !serviceDescription?.trim() ||
+        !serviceProvince?.trim() ||
+        !selectedCategoryId ||
         images.length === 0
       ) {
+        console.log(
+          "Validation failed",
+          serviceStyle,
+          serviceProvince,
+          selectedCategoryId,
+          images.length
+        );
         alert("Please fill in all fields before proceeding.");
         return false;
       }
     }
 
-    if (step === 2) {
-      if (
-        !quantity ||
-        !madein?.trim() ||
-        !shipForm?.trim() ||
-        !selectedCategoryId
-      ) {
-        alert("Please fill in all fields before proceeding.");
-        return false;
-      }
-    }
+    // if (step === 2) {
+    //   if (
+    //     !quantity ||
+    //     !madein?.trim() ||
+    //     !shipForm?.trim() ||
+    //     !selectedCategoryId
+    //   ) {
+    //     alert("Please fill in all fields before proceeding.");
+    //     return false;
+    //   }
+    // }
     return true;
   };
 
@@ -171,7 +162,7 @@ const ProductCreate = () => {
   return (
     <SellerWrapper>
       <FootTypo
-        footlabel="Provide product details"
+        footlabel="Provide service details"
         className="text-lg font-semibold"
       />
       <Stepper
@@ -186,24 +177,24 @@ const ProductCreate = () => {
         <Step validateStep={validateStep}>
           <div className="step-1 form-detail">
             <FootTypo
-              footlabel="Basic information"
+              footlabel="Basic service information"
               className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
             />
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
-                footlabel="Product Images :"
+                footlabel="Service Images :"
                 className="!m-0 text-lg font-semibold"
               />
               <ImageUpload onImageChange={handleImageUpload} />
             </div>
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
-                footlabel="Product Name :"
+                footlabel="Service Style :"
                 className="!m-0 text-lg font-semibold w-40"
               />
               <Input
-                id="name"
-                placeholder="Product name"
+                id="style"
+                placeholder="Service's style"
                 required
                 className=""
                 register={register}
@@ -211,89 +202,15 @@ const ProductCreate = () => {
             </div>
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
-                footlabel="Product Name :"
+                footlabel="Available at :"
                 className="!m-0 text-lg font-semibold w-40"
               />
               <Input
-                id="price"
-                placeholder="Price"
-                required
-                icon={<TbCurrencyDong size={20} />}
-                formatPrice
-                control={control}
-                register={register}
-              />
-            </div>
-            <div className="form inline-flex items-start w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Descriptions :"
-                className="!m-0 text-lg font-semibold w-40"
-              />
-              <div className="w-full">
-                <Field>
-                  <Textarea
-                    {...register("description", { required: true })}
-                    placeholder="descriptions"
-                    className={`
-      mt-3 block w-full resize-none rounded-lg border-[1px] 
-      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
-      bg-white dark:bg-gray-800 text-black dark:text-white
-      placeholder-gray-500 dark:placeholder-gray-400
-      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
-      transition duration-200
-    `}
-                    rows={10}
-                  />
-                </Field>
-              </div>
-            </div>
-          </div>
-        </Step>
-        <Step>
-          <div className="step-2 form min-h-screen">
-            <FootTypo
-              footlabel="Basic information"
-              className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
-            />
-            <div className="form inline-flex items-center w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Product Quantity :"
-                className="!m-0 text-lg font-semibold"
-              />
-              <ExampleNumberField
-                onChange={(value) => setValue("quantity", value)}
-                value={watch("quantity")}
-              />
-            </div>
-            <div className="form inline-flex items-center w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Product Origin :"
-                className="!m-0 text-lg font-semibold"
-              />
-              <Input
-                id="madein"
-                placeholder="Made in"
-                type="text"
-                required
-                register={register}
-              />
-            </div>
-            <div className="form inline-flex items-center w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Ship From :"
-                className="!m-0 text-lg font-semibold"
-              />
-              <Input
-                id="shipForm"
+                id="province"
                 placeholder=""
-                defaultValue={dataProvider?.address}
-                disabled={true}
                 required
+                className=""
                 register={register}
-              />
-              <FootTypo
-                footlabel="Note : If this not your address, please update your profile"
-                className="!m-0 text-sm font-semibold"
               />
             </div>
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
@@ -311,32 +228,59 @@ const ProductCreate = () => {
                 lisboxClassName="mt-10"
               />
             </div>
+            <div className="form inline-flex items-start w-full h-full gap-5 my-5">
+              <FootTypo
+                footlabel="Descriptions :"
+                className="!m-0 text-lg font-semibold w-40"
+              />
+              <div className="w-full">
+                <Field>
+                  <Textarea
+                    {...register("description", { required: true })}
+                    placeholder="Service descriptions"
+                    className={`
+      mt-3 block w-full resize-none rounded-lg border-[1px] 
+      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
+      bg-white dark:bg-gray-800 text-black dark:text-white
+      placeholder-gray-500 dark:placeholder-gray-400
+      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
+      transition duration-200
+    `}
+                    rows={10}
+                  />
+                </Field>
+              </div>
+            </div>
           </div>
         </Step>
         <Step>
           <div className="step-3 form flex flex-col items-center justify-center p-5">
             <FootTypo
-              footlabel="Our Policy"
+              footlabel="Our Policy for Creating a Decor Service"
               className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
             />
 
-            <div className="bg-transparent p-5 rounded-lg w-full  shadow-md space-y-5">
+            {/* Policy Content */}
+            <div className="bg-transparent p-5 rounded-lg w-full shadow-md space-y-5">
               <h3 className="text-lg font-semibold mb-2">Terms & Conditions</h3>
               <p className="text-sm">
-                Before creating a product, please ensure that:
+                Before creating a decor service, please ensure that:
               </p>
-              <ul className="list-disc text-sm ml-5 mt-2 space-y-5">
-                <li>Your product complies with all legal regulations.</li>
+              <ul className="list-disc text-sm ml-5 mt-2 space-y-3">
+                <li>Your service complies with all legal regulations.</li>
                 <li>All provided information is accurate and up to date.</li>
                 <li>You agree to follow marketplace policies.</li>
                 <li>Failure to comply may result in account suspension.</li>
               </ul>
             </div>
 
-            <div className="flex items-center mt-10">
+            {/* Policy Agreement Checkbox */}
+            <div className="flex items-center mt-6">
               <input
                 type="checkbox"
-                {...register("agreePolicy", { required: true })}
+                {...register("agreePolicy", {
+                  required: "You must agree to the policy before proceeding.",
+                })}
                 className="mr-2 w-5 h-5"
               />
               <label className="text-sm">
@@ -363,4 +307,4 @@ const ProductCreate = () => {
   );
 };
 
-export default ProductCreate;
+export default ServiceCreate;

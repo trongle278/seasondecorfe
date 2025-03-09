@@ -1,0 +1,155 @@
+"use client";
+
+import Container from "@/app/components/layouts/Container";
+import { GlowingCard } from "@/app/components/ui/animated/GlowingEffect";
+import Avatar from "@/app/components/ui/Avatar/Avatar";
+import Button from "@/app/components/ui/Buttons/Button";
+import { FaPlus } from "react-icons/fa";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import { FootTypo } from "@/app/components/ui/Typography";
+import { BsBoxSeam } from "react-icons/bs";
+import { GiShadowFollower } from "react-icons/gi";
+import { RiUserFollowLine } from "react-icons/ri";
+import { FaRegStar } from "react-icons/fa";
+import { LuUsers } from "react-icons/lu";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import { IoMdHome } from "react-icons/io";
+import { GoPackage } from "react-icons/go";
+import { MdMiscellaneousServices } from "react-icons/md";
+import HomeTab from "../components/HomeTab";
+import ProductsTab from "../components/ProductTab";
+import ServicesTab from "../components/ServiceTab";
+import VoucherTab from "../components/VoucherTab";
+import { TbGiftCardFilled } from "react-icons/tb";
+import { useGetProviderBySlug } from "@/app/queries/user/provider.query";
+import { ClipLoader } from "react-spinners";
+import { useParams } from "next/navigation";
+import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
+
+
+const tabs = [
+  { icon: IoMdHome, name: "Home", component: HomeTab },
+  { icon: GoPackage, name: "Products", component: ProductsTab },
+  { icon: MdMiscellaneousServices, name: "Services", component: ServicesTab },
+  { icon: TbGiftCardFilled, name: "Vouchers", component: VoucherTab },
+];
+
+const ProviderDetailPage = () => {
+  const { slug } = useParams();
+  const { data: provider, isLoading, isError } = useGetProviderBySlug(slug);
+
+
+  if (isLoading) {
+    return (
+      <Container>
+        <div className="flex justify-center items-center h-screen">
+          <ClipLoader size={30} />
+        </div>
+      </Container>
+    );
+  }
+
+  if (isError || !provider) {
+    return (
+      <Container>
+        <div className="text-center text-red-500">
+          Error loading provider details.
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+    <div className="my-7">
+            <MuiBreadcrumbs />
+          </div>
+      <div className="seller-info py-5">
+        <section className="pt-5 flex items-start">
+          <GlowingCard
+            icon={
+              <Avatar
+                userImg={provider.avatar || ""}
+                w={72}
+                h={72}
+                className="cursor-pointer"
+              />
+            }
+            slug={slug}
+            userDetails={provider.name}
+            className="w-[24rem]"
+          />
+          <section className="pl-7 w-full">
+            <div className="grid grid-cols-[repeat(2,auto)] gap-9">
+              <StatItem icon={<BsBoxSeam />} label="Products" value="100" />
+              <StatItem
+                icon={<GiShadowFollower />}
+                label="Followers"
+                value={provider.followersCount}
+              />
+              <StatItem
+                icon={<RiUserFollowLine />}
+                label="Following"
+                value={provider.followingsCount}
+              />
+              <StatItem icon={<FaRegStar />} label="Rating" value="4" />
+              <StatItem
+                icon={<IoChatboxEllipsesOutline />}
+                label="Chat performance"
+                value="80%"
+              />
+              <StatItem
+                icon={<LuUsers />}
+                label="Joined"
+                value={provider.joinedDate}
+              />
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div className="tabs-pannel">
+        <TabGroup>
+          <TabList className="flex gap-base border-b-[1px] pb-9 justify-center">
+            {tabs.map(({ name, icon: Icon }) => (
+              <Tab
+                key={name}
+                className="flex items-center gap-2 rounded-full py-1 px-3 font-semibold text-lg focus:outline-none 
+                 data-[selected]:border-b-[2px] data-[selected]:border-red
+                 data-[hover]:bg-white/5 
+                 data-[selected]:data-[hover]:bg-white/10 
+                 data-[focus]:outline-1 data-[focus]:outline-white"
+              >
+                <Icon className="text-xl" /> {name}
+              </Tab>
+            ))}
+          </TabList>
+
+          <TabPanels className="mt-3">
+            {tabs.map(({ name, component: Component }) => (
+              <TabPanel key={name} className="rounded-xl bg-white/5 p-3">
+                <Component />
+              </TabPanel>
+            ))}
+          </TabPanels>
+        </TabGroup>
+      </div>
+    </Container>
+  );
+};
+
+// Reusable Component for Stats
+const StatItem = ({ icon, label, value }) => (
+  <div className="flex justify-between outline-none overflow-visible relative">
+    <span className="inline-flex items-center gap-2">
+      {icon}
+      <FootTypo footlabel={label} className="text-sm !mx-0" />
+    </span>
+    <FootTypo
+      footlabel={value ?? "N/A"}
+      className="text-sm !mx-0 text-red font-semibold"
+    />
+  </div>
+);
+
+export default ProviderDetailPage;
