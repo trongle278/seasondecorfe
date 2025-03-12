@@ -3,9 +3,10 @@
 import { GlowingCard } from "@/app/components/ui/animated/GlowingEffect";
 import Avatar from "@/app/components/ui/Avatar/Avatar";
 import { useRouter } from "next/navigation";
+import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 
 
-const ProviderCard = ({id,avatar, name, onFollowClick, slug, href}) => {
+const ProviderCard = ({id,avatar, name, onFollowClick, slug, href, isFollowed, isLoading}) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -28,6 +29,8 @@ const ProviderCard = ({id,avatar, name, onFollowClick, slug, href}) => {
         onChatClick={()=>{console.log("clicked")}}
         className="w-full"
         href={href}
+        isFollowed={isFollowed}
+        isLoading={isLoading}
       />
     </>
   );

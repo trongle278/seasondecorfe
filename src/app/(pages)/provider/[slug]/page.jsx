@@ -25,7 +25,9 @@ import { useGetProviderBySlug } from "@/app/queries/user/provider.query";
 import { ClipLoader } from "react-spinners";
 import { useParams } from "next/navigation";
 import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
-
+import { useFollow, useUnfollow } from "@/app/queries/user/user.query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 
 const tabs = [
   { icon: IoMdHome, name: "Home", component: HomeTab },
@@ -37,7 +39,11 @@ const tabs = [
 const ProviderDetailPage = () => {
   const { slug } = useParams();
   const { data: provider, isLoading, isError } = useGetProviderBySlug(slug);
-
+  const queryClient = useQueryClient();
+  const followMutation = useFollow();
+  const unfollowMutation = useUnfollow();
+  const { data: followingData, isLoading: followingLoading } =
+    useGetFollowing();
 
   if (isLoading) {
     return (
@@ -59,11 +65,50 @@ const ProviderDetailPage = () => {
     );
   }
 
+  const handleFollowToggle = async (providerId) => {
+    if (!providerId) {
+      console.error("No providerId provided");
+      return;
+    }
+
+    if (isProviderFollowed(providerId)) {
+      unfollowMutation.mutate(
+        { followingId: providerId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["following"]);
+          },
+          onError: (error) => {
+            console.error("Error unfollowing provider:", error);
+          },
+        }
+      );
+    } else {
+      followMutation.mutate(
+        { followingId: providerId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["following"]);
+          },
+          onError: (error) => {
+            console.error("Error following provider:", error);
+          },
+        }
+      );
+    }
+  };
+
+  const isProviderFollowed = (providerId) => {
+    return followingData?.some(
+      (following) => following.accountId === providerId
+    );
+  };
+
   return (
     <Container>
-    <div className="my-7">
-            <MuiBreadcrumbs />
-          </div>
+      <div className="my-7">
+        <MuiBreadcrumbs />
+      </div>
       <div className="seller-info py-5">
         <section className="pt-5 flex items-start">
           <GlowingCard
@@ -76,8 +121,11 @@ const ProviderDetailPage = () => {
               />
             }
             slug={slug}
-            userDetails={provider.name}
+            userDetails={provider.businessName}
             className="w-[24rem]"
+            onFollowClick={() => handleFollowToggle(provider.id)}
+            isFollowed={isProviderFollowed(provider.id)}
+            isLoading={followMutation.isLoading || unfollowMutation.isLoading || followingLoading}
           />
           <section className="pl-7 w-full">
             <div className="grid grid-cols-[repeat(2,auto)] gap-9">

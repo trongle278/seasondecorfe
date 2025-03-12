@@ -10,6 +10,9 @@ import { useUser } from "@/app/providers/userprovider";
 import { FootTypo } from "../Typography";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import { IoClose } from "react-icons/io5";
+import { Skeleton } from "@mui/material";
+
 
 const GlowingEffect = memo(
   ({
@@ -193,8 +196,9 @@ export const GlowingCard = ({
   onChatClick,
   slug,
   href = "",
+  isFollowed = false,
+  isLoading = false,
 }) => {
-
   const isMySelf = useSelector((state) => state.users.userSlug === slug);
 
   return (
@@ -212,41 +216,45 @@ export const GlowingCard = ({
           proximity={64}
           inactiveZone={0.01}
         />
-        <Link
-          href={href}
-          className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-0.75 dark:shadow-[0px_0px_27px_0px_#2D2D2D]"
-        >
+        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-0.75 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
           <div className="relative flex flex-1 flex-col justify-start p-4 gap-4">
-            <div
+            <Link
+              href={href}
               className="w-fit flex flex-row items-center gap-2 cursor-pointer hover:underline"
               onClick={onCardClick}
             >
               {icon}
               <span>{userDetails}</span>
-            </div>
+            </Link>
             <div className="flex">
               <div className="items-center flex flex-row gap-2">
                 {isMySelf ? (
                   <FootTypo footlabel="You" className="!m-0 font-semibold" />
                 ) : (
                   <div className="items-center flex flex-row gap-2">
-                    <Button
-                      label="Follow"
-                      icon={<FaPlus />}
-                      className="bg-primary"
-                      onClick={onFollowClick}
-                    />
-                    <Button
-                      label="Message"
-                      icon={<IoChatboxEllipsesOutline />}
-                      onClick={onChatClick}
-                    />
+                    {isLoading ? (
+                      <Skeleton animation="wave" width={100} height={40} />
+                    ) : (
+                      <>
+                        <Button
+                          label={isFollowed ? "Unfollow" : "Follow"}
+                          icon={isFollowed ? <IoClose /> : <FaPlus />}
+                          className={isFollowed ? "bg-red" : "bg-primary"}
+                          onClick={onFollowClick}
+                        />
+                        <Button
+                          label="Message"
+                          icon={<IoChatboxEllipsesOutline />}
+                          onClick={onChatClick}
+                        />
+                      </>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           </div>
-        </Link>
+        </div>
       </div>
     </li>
   );

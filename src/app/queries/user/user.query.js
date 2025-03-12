@@ -30,13 +30,16 @@ export function useGetAccountDetails(accountId) {
 
 export function useFollow() {
   return useMutation({
-    mutationFn: async ({followingId}) => {
+    mutationFn: async ({ followingId }) => {
       if (!followingId) throw new Error("No followingId provided");
 
       nProgress.start();
 
       try {
-        return await BaseRequest.Post(`/${SUB_URL2}/follow`, followingId);
+        return await BaseRequest.Post(
+          `/${SUB_URL2}/follow?followingId=${followingId}`,
+          followingId
+        );
       } finally {
         nProgress.done();
       }
@@ -44,3 +47,21 @@ export function useFollow() {
   });
 }
 
+export function useUnfollow() {
+  return useMutation({
+    mutationFn: async ({ followingId }) => {
+      if (!followingId) throw new Error("No followingId provided");
+
+      nProgress.start();
+
+      try {
+        return await BaseRequest.Delete(
+          `/${SUB_URL2}/unfollow?followingId=${followingId}`,
+          followingId
+        );
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}

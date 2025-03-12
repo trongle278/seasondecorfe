@@ -52,7 +52,6 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response) {
       const { status, data } = error.response;
-
       if (status === 400) {
         handleValidationErrors(data.errors);
       } else if (status === 401) {
@@ -93,7 +92,7 @@ const handleValidationErrors = (errors) => {
 // Utility: Handle unauthorized (401) responses
 const handleUnauthorized = () => {
   toast.warning("Please login first !");
-  redirect("/authen/login"); 
+  redirect("/authen/login");
 };
 
 // API request functions
@@ -109,7 +108,7 @@ const BaseRequest = {
   },
   Post: async (url, data, showToast = true) => {
     try {
-      const response = await apiClient.post(url, data, {  showToast });
+      const response = await apiClient.post(url, data, { showToast });
       return response;
     } catch (err) {
       //console.error("POST request error:", err);
