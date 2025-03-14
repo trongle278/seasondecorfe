@@ -313,6 +313,22 @@
   --ring: 240 4.9% 83.9%;
 }
 
+.ProseMirror {
+  padding: 1px;
+  min-height: 40px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+}
+
 html,
 body,
 #__next {

@@ -37,3 +37,21 @@ export function useGetProductByCategoryId(categoryId) {
     },
   });
 }
+
+export function useGetProductByProvider(slug) {
+  return useQuery({
+    queryKey: ["product_list_by_provider", slug],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(
+          `/${SUB_URL}/getProductByProvider/${slug}`,
+          false
+        );
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}

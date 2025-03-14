@@ -3,6 +3,7 @@ import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SUB_URL = `api/Provider`;
 
@@ -27,6 +28,7 @@ export function useSendInvitation() {
 }
 
 export function useCreateProviderProfile() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["create_provider_profile"],
     mutationFn: async (data) => {
@@ -37,8 +39,11 @@ export function useCreateProviderProfile() {
         nProgress.done();
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accountDetails"] });
+    },
     onError: (error) => {
-      console.error("Error creating profile:", error.message);
+      console.error("Error creating profile:", error);
     },
   });
 }
@@ -77,6 +82,7 @@ export function useChangeStatus() {
       queryClient.invalidateQueries({ queryKey: ["accountDetails"] });
     },
     onError: () => {
+      toast.info("Please apply for provider first !");
       console.error("Error changing status:", error.message);
     },
   });

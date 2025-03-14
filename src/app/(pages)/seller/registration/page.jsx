@@ -64,7 +64,7 @@ export default function RegistrationPage() {
         onSuccess: () => {
           //console.log("Invitation sent successfully:", response);
           reset();
-          router.push("/");
+          router.push("/seller/dashboard");
         },
         onError: (error) => {
           console.error("Error sending invitation:", error.message);

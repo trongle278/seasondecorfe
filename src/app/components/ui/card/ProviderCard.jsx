@@ -5,7 +5,7 @@ import Avatar from "@/app/components/ui/Avatar/Avatar";
 import { useRouter } from "next/navigation";
 
 
-const ProviderCard = ({id,avatar, name, onFollowClick, slug, href}) => {
+const ProviderCard = ({id,avatar, name, onFollowClick, onChatClick, slug, href, isFollowed, isLoading}) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -25,9 +25,11 @@ const ProviderCard = ({id,avatar, name, onFollowClick, slug, href}) => {
         userDetails={name}
         slug={slug}
         onFollowClick={onFollowClick}
-        onChatClick={()=>{console.log("clicked")}}
+        onChatClick={onChatClick}
         className="w-full"
         href={href}
+        isFollowed={isFollowed}
+        isLoading={isLoading}
       />
     </>
   );

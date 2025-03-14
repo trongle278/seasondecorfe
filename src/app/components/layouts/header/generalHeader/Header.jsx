@@ -25,7 +25,7 @@ export default function Header({ providerRef }) {
   const mutationChangeStatus = useChangeStatus();
   const pathname = usePathname();
 
-  //console.log(session);
+  console.log(session);
   //console.log("isProvider:", session?.isProvider);
 
   //console.log(user);
@@ -77,7 +77,7 @@ export default function Header({ providerRef }) {
 
   return (
     <header
-      className="z-[50] sticky top-0 w-full border-b bg-white dark:bg-black border-neutral-200 dark:border-white/[0.1]"
+      className="z-[50] sticky top-0 w-full border-b bg-white dark:bg-black  border-neutral-200 dark:border-white/[0.1]"
       tabIndex="-1"
     >
       <div className="hidden lg:block">

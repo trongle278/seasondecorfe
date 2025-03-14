@@ -73,13 +73,7 @@ export const UserMenu = () => {
                 <MenuItem
                   onClick={() => {}}
                   closeMenu={closeMenu}
-                  label="Followed"
-                  icon={<MdSubscriptions />}
-                />
-                <MenuItem
-                  onClick={() => {}}
-                  closeMenu={closeMenu}
-                  label="Orders"
+                  label="My purchase"
                   icon={<RiListUnordered />}
                 />
                 <MenuItem

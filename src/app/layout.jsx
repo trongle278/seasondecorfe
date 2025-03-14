@@ -6,9 +6,9 @@ import Footer from "./components/layouts/footer/Footer";
 import OTPConfirmModal from "./components/ui/Modals/OTPmodal";
 import ClientOnly from "./components/ClientOnly";
 import AdressModal from "./components/ui/Modals/AddressModal";
-import { FloatBtn } from "./components/ui/floatingBtn/FloatBtn";
 import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
 import SearchModal from "./components/ui/Modals/SearchModal";
+import ChatBox from "./components/ui/chatBox/ChatBox";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -32,9 +32,9 @@ export default function RootLayout({ children }) {
               <OTPConfirmModal />
               <DeleteConfirmModal />
               <SearchModal />
+              <ChatBox />
 
               <AdressModal />
-              <FloatBtn />
 
               <main className="flex-1">{children}</main>
               <Footer />
