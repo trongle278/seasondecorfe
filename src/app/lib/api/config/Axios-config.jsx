@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { redirect } from "next/navigation";
 import { toast } from "sonner";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 const baseURL = "http://localhost:5297/";
 
@@ -49,13 +49,14 @@ apiClient.interceptors.response.use(
     toast.error("Unexpected server response. Please try again.");
     return Promise.reject(new Error("Invalid response from server"));
   },
-  (error) => {
+  async (error) => {
     if (error.response) {
       const { status, data } = error.response;
       if (status === 400) {
         handleValidationErrors(data.errors);
       } else if (status === 401) {
-        handleUnauthorized();
+        await handleUnauthorized();
+        return Promise.reject(data);
       } else if (status === 403) {
         toast.error("You do not have permission to perform this action.");
       } else if (status === 500) {
@@ -90,9 +91,9 @@ const handleValidationErrors = (errors) => {
 };
 
 // Utility: Handle unauthorized (401) responses
-const handleUnauthorized = () => {
-  toast.warning("Please login first !");
-  redirect("/authen/login");
+const handleUnauthorized = async () => {
+  toast.warning("Please login to continue!");
+  window.location.href = "/authen/login";
 };
 
 // API request functions

@@ -7,6 +7,8 @@ import { IoNotificationsSharp } from "react-icons/io5";
 import { GoPackage } from "react-icons/go";
 import { FaLocationDot } from "react-icons/fa6";
 import { PiShoppingBag } from "react-icons/pi";
+import { GiShadowFollower } from "react-icons/gi";
+import { RiUserFollowLine } from "react-icons/ri";
 
 const Sidebar = ({ selectedPath, userId, userRole }) => {
   return (
@@ -73,7 +75,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
                 : "inline-flex gap-2 items-center"
             }`}
           >
-            <PiShoppingBag  size={20} /> Orders
+            <PiShoppingBag size={20} /> Orders
           </Link>
         </li>
         <li>
@@ -86,6 +88,31 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
             }`}
           >
             <GoPackage size={20} /> Membership
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`/user/followers`}
+            className={`${
+              selectedPath === `/user/followers`
+                ? "text-red font-semibold inline-flex gap-2 items-center"
+                : "inline-flex gap-2 items-center"
+            }`}
+          >
+            <GiShadowFollower size={20} />
+            Followers
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`/user/following`}
+            className={`${
+              selectedPath === `/user/following`
+                ? "text-red font-semibold inline-flex gap-2 items-center"
+                : "inline-flex gap-2 items-center"
+            }`}
+          >
+            <RiUserFollowLine size={20} /> Following
           </Link>
         </li>
       </ul>
