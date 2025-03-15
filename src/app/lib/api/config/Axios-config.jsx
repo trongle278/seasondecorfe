@@ -4,19 +4,37 @@ import { toast } from "sonner";
 import { getSession, signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 
-const baseURL = "http://localhost:5297/";
+export const BASE_URL = "http://localhost:5297";
+
+let cachedToken = null;
+let tokenExpiryTime = null;
+
+const getAndCacheToken = async () => {
+  if (cachedToken && tokenExpiryTime && Date.now() < tokenExpiryTime) {
+    return cachedToken;
+  }
+
+  const session = await getSession();
+  if (session?.accessToken) {
+    cachedToken = session.accessToken;
+    // Set token expiry time (e.g., 5 minutes before actual expiry)
+    // Adjust this value based on your token's actual expiry time
+    tokenExpiryTime = Infinity;
+    return cachedToken;
+  }
+  return null;
+};
 
 const apiClient = axios.create({
-  baseURL,
-  //withCredentials: true, // Ensures cookies are sent with requests
+  baseURL: BASE_URL,
 });
 
-// Request Interceptor: Attach token from cookies
+// Request Interceptor: Attach token from cache
 apiClient.interceptors.request.use(
   async (config) => {
-    const session = await getSession();
-    if (session?.accessToken) {
-      config.headers["Authorization"] = `Bearer ${session?.accessToken}`;
+    const token = await getAndCacheToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     if (!(config.data instanceof FormData)) {
       config.headers["Content-Type"] = "application/json";
@@ -94,6 +112,12 @@ const handleValidationErrors = (errors) => {
 const handleUnauthorized = async () => {
   toast.warning("Please login to continue!");
   window.location.href = "/authen/login";
+};
+
+// Clear token cache on unauthorized response
+const clearTokenCache = () => {
+  cachedToken = null;
+  tokenExpiryTime = null;
 };
 
 // API request functions

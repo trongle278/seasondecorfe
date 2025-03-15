@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 
 const SUB_URL = `api/Chat`;
@@ -12,5 +12,6 @@ export function useGetHistoryChat(userId) {
       return res.data;
     },
     enabled: !!userId,
+    refetchOnMount: true,
   });
 }
