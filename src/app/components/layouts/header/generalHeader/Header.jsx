@@ -24,6 +24,22 @@ export default function Header({ providerRef }) {
   const { data: session } = useSession();
   const mutationChangeStatus = useChangeStatus();
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Add scroll event listener
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check initial scroll position
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   console.log(session);
   //console.log("isProvider:", session?.isProvider);
@@ -77,17 +93,22 @@ export default function Header({ providerRef }) {
 
   return (
     <header
-      className="z-[50] sticky top-0 w-full border-b bg-white dark:bg-black  border-neutral-200 dark:border-white/[0.1]"
+      className={`z-[50] fixed top-0 w-full transition-all ${
+        isScrolled ? "border-b border-white/[0.1] bg-white dark:bg-black" : ""
+      }`}
       tabIndex="-1"
     >
       <div className="hidden lg:block">
-        <div className="header-container px-8 flex items-center max-w-[88rem] mx-auto">
-          <div className="logo-wrapper flex justify-center ">
-            <Logo />
-          </div>
-          <section className="left-wrapper desktop-only flex items-center space-x-6 text-sm font-medium xl:flex">
-            <div className="flex items-center gap-4 transition-all ">
-              <div>
+        <div className="header container mx-auto px-4 py-3">
+          <nav className="flex items-center justify-between">
+            {/* Logo Section */}
+            <div className="flex items-center">
+              <Logo />
+            </div>
+
+            {/* Center Navigation */}
+            <div className="flex items-center space-x-8">
+              <div className="flex items-center gap-4 transition-all ">
                 <ColourfulText
                   colors={[
                     "#40ffaa",
@@ -101,75 +122,72 @@ export default function Header({ providerRef }) {
                   className="p-2 text-sm"
                   onClick={onChangeStatus}
                 >
-                  Provider centre
+                  PROVIDER CENTRE
                 </ColourfulText>
               </div>
-
-              <div className="relative">
-                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                  <Link href="/provider">Providers</Link>
-                </p>
-              </div>
-              <div className="relative">
-                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                  <Link href="/features">Features</Link>
-                </p>
-              </div>
-              <div className="relative">
-                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                  <Link href="/pricing">Pricing</Link>
-                </p>
-              </div>
-              <div className="relative">
-                <p className="flex cursor-pointer items-center gap-2 hover:text-red">
-                  <Link href="/blog">Blog</Link>
-                </p>
-              </div>
+              <Link
+                href="/pricing"
+                className="text-sm font-medium text-white/70 hover:text-primary"
+              >
+                PRICING
+              </Link>
+              <Link
+                href="/provider"
+                className="text-sm font-medium text-white/70 hover:text-primary "
+              >
+                PROVIDERS
+              </Link>
+              <Link
+                href="/enterprise"
+                className="text-sm font-medium text-white/70 hover:text-primary "
+              >
+                ENTERPRISE
+              </Link>
+              <Link
+                href="/blog"
+                className="text-sm font-medium text-white/70 hover:text-primary "
+              >
+                BLOG
+              </Link>
+              <Link
+                href="/forum"
+                className="text-sm font-medium text-white/70 hover:text-primary "
+              >
+                FORUM
+              </Link>
+              <Link
+                href="/careers"
+                className="text-sm font-medium text-white/70 hover:text-primary"
+              >
+                CAREERS
+              </Link>
             </div>
-          </section>
 
-          <div className="right-wrapper flex flex-1 items-center justify-end gap-5 sm:gap-3 md:justify-end">
-            <ThemeSwitch />/
-            <SearchBtn />
-            <CartBtn cartClick={() => router.push("/cart")} />
-            <NotificationBtn toggleDrawer={toggleDrawer} />
-            <AnchorDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
-            {user && (
-              <>
-                <UserMenu />
-              </>
-            )}
-            {!user && <RightWrapper />}
-          </div>
+            {/* Right Section */}
+            <div className="flex items-center space-x-4">
+              <ThemeSwitch />/
+              <SearchBtn />
+              <CartBtn cartClick={() => router.push("/cart")} />
+              <NotificationBtn toggleDrawer={toggleDrawer} />
+              <AnchorDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+              {user && (
+                <>
+                  <UserMenu />
+                </>
+              )}
+              {!user && <RightWrapper />}
+            </div>
+          </nav>
         </div>
       </div>
+
+      {/* Mobile Header */}
       <div className="block lg:hidden">
-        <div className="flex justify-between  items-center w-full rounded-md px-4 py-4">
-          <div className="flex items-center gap-1.5">
-            <Image
-              src={"/logo/logo-black.png"}
-              alt="Logo"
-              loading="lazy"
-              width={24}
-              height={24}
-              decoding="async"
-              className="block dark:hidden"
-              style={{ color: "transparent" }}
-            />
-            <Image
-              src={"/logo/logo-white.png"}
-              alt="Logo"
-              loading="lazy"
-              width={24}
-              height={24}
-              decoding="async"
-              className="hidden dark:block"
-              style={{ color: "transparent" }}
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <TfiMoreAlt />
-          </div>
+        <div className="flex items-center justify-between px-4 py-3">
+          <Logo />
+          <button className="text-white">
+            <TfiMoreAlt size={20} />
+          </button>
         </div>
       </div>
     </header>

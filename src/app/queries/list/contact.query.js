@@ -11,14 +11,8 @@ export function useGetListContact() {
   return useQuery({
     queryKey: ["get_list_contact"],
     queryFn: async () => {
-      nProgress.start();
-
-      try {
-        const res = await BaseRequest.Get(`/${SUB_URL}/contacts`, false);
-        return res.data;
-      } finally {
-        nProgress.done();
-      }
+      const res = await BaseRequest.Get(`/${SUB_URL}/contacts`, false);
+      return res.data;
     },
     enabled: !!user,
   });

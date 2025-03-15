@@ -3,19 +3,13 @@
 import * as React from "react";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
-import { IoSend } from "react-icons/io5";
 import useChatBox from "@/app/hooks/useChatBox";
 import useChat from "@/app/hooks/useChat";
-import { FcSms } from "react-icons/fc";
 import { FootTypo } from "../Typography";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
-import { BsImage } from "react-icons/bs";
-import { AiOutlineFileGif } from "react-icons/ai";
-import { ImAttachment } from "react-icons/im";
-import Avatar from "../Avatar/Avatar";
 import { useUser } from "@/app/providers/userprovider";
 import { FaLock } from "react-icons/fa";
 import Button from "../Buttons/Button";
@@ -23,29 +17,75 @@ import { MdOutlineLogin } from "react-icons/md";
 import { useRouter, usePathname } from "next/navigation";
 import { useGetListContact } from "@/app/queries/list/contact.query";
 import { useGetHistoryChat } from "@/app/queries/chat/history.query";
-import { useSendMessage } from "@/app/queries/chat/send.message.quey";
 import { useQueryClient } from "@tanstack/react-query";
+import { signalRService } from "@/app/services/signalRService";
+import { toast } from "sonner";
+import ChatView from './View';
+import ContactList from './ContactList';
 
 const ChatBox = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
   const { isOpen, onOpen, onClose } = useChatBox();
-  const { selectedProvider, setSelectedProvider, addMessage, getConversation } =
-    useChat();
+  const { selectedProvider, setSelectedProvider } = useChat();
+  const [currentMessages, setCurrentMessages] = React.useState([]);
 
   const fileInputRef = React.useRef(null);
   const messagesEndRef = React.useRef(null);
   const [editors, setEditors] = React.useState({});
 
   const { data: contactList, isLoading: contactLoading } = useGetListContact();
-
-  const sendMessageMutation = useSendMessage();
   const { data: chatHistory, isLoading: historyLoading } = useGetHistoryChat(
-    user?.providerVerified ? user.id : selectedProvider?.contactId
+    selectedProvider?.contactId 
   );
 
   const queryClient = useQueryClient();
+
+  const [selectedFiles, setSelectedFiles] = React.useState([]);
+  const [uploadProgress, setUploadProgress] = React.useState(0);
+  const [isUploading, setIsUploading] = React.useState(false);
+
+  const handleFileSelect = (event) => {
+    const files = Array.from(event.target.files);
+    const maxTotalFiles = 5;
+    
+    console.log('Files selected:', files); // Debug log
+    
+    // Check if total files exceed limit
+    if (selectedFiles.length + files.length > maxTotalFiles) {
+      toast.error(`You can only upload up to ${maxTotalFiles} files at a time`);
+      return;
+    }
+
+    // Preview files before adding them
+    const newFiles = files.filter(file => {
+      // Check if file is already selected
+      const isDuplicate = selectedFiles.some(
+        existingFile => existingFile.name === file.name && existingFile.size === file.size
+      );
+      if (isDuplicate) {
+        toast.error(`File ${file.name} is already selected`);
+        return false;
+      }
+      return true;
+    });
+
+    console.log('New files to add:', newFiles); // Debug log
+    setSelectedFiles(prevFiles => {
+      const updatedFiles = [...prevFiles, ...newFiles];
+      console.log('Updated selected files:', updatedFiles); // Debug log
+      return updatedFiles;
+    });
+  };
+
+  const handleRemoveFile = (index) => {
+    setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    // Reset file input to allow selecting the same file again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   // Create a single editor instance
   const editor = useEditor({
@@ -67,102 +107,22 @@ const ChatBox = () => {
   });
 
   const scrollToBottom = React.useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: "smooth",
+        block: "end"
+      });
+    }
   }, []);
 
-  React.useEffect(() => {
-    scrollToBottom();
-  }, [selectedProvider, scrollToBottom]);
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!editor?.getText().trim()) return;
-
-    const htmlContent = editor.getHTML();
-    const formData = new FormData();
-
-    if (user?.providerVerified) {
-      // If user is a provider, use the ID from the current chat
-      if (chatHistory && chatHistory.length > 0) {
-        const receiverId = chatHistory[0].senderId === user.id 
-          ? chatHistory[0].receiverId 
-          : chatHistory[0].senderId;
-        formData.append("ReceiverId", receiverId);
-      }
-    } else {
-      // For regular users, use the selected provider's ID
-      if (!selectedProvider) return;
-      formData.append("ReceiverId", selectedProvider.contactId);
-    }
-
-    formData.append("Message", htmlContent);
-    formData.append("Files", "");
-    formData.append("files", "");
-
-    // Send message to the API
-    sendMessageMutation.mutate(formData, {
-      onSuccess: () => {
-        editor.commands.setContent("");
-        if (user?.providerVerified) {
-          queryClient.invalidateQueries(["get_history_chat", user.id]);
-        } else {
-          queryClient.invalidateQueries(["get_history_chat", selectedProvider.contactId]);
-        }
-        scrollToBottom();
-      },
-      onError: (error) => {
-        console.error("Error sending message:", error);
-      },
-    });
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    
-    if (user?.providerVerified) {
-      // If user is a provider, use the ID from the current chat
-      if (chatHistory && chatHistory.length > 0) {
-        const receiverId = chatHistory[0].senderId === user.id 
-          ? chatHistory[0].receiverId 
-          : chatHistory[0].senderId;
-        formData.append("ReceiverId", receiverId);
-      }
-    } else {
-      // For regular users, use the selected provider's ID
-      if (!selectedProvider) return;
-      formData.append("ReceiverId", selectedProvider.contactId);
-    }
-
-    formData.append("Message", "");
-    formData.append("Files", file);
-    formData.append("files", file);
-
-    // Send file message
-    sendMessageMutation.mutate(formData, {
-      onSuccess: () => {
-        if (user?.providerVerified) {
-          queryClient.invalidateQueries(["get_history_chat", user.id]);
-        } else {
-          queryClient.invalidateQueries(["get_history_chat", selectedProvider.contactId]);
-        }
-        scrollToBottom();
-      },
-      onError: (error) => {
-        console.error("Error sending file:", error);
-      },
-    });
-  };
-
-  const [currentMessages, setCurrentMessages] = React.useState([]);
-
+  // Update messages when chat history changes
   React.useEffect(() => {
     if (user?.providerVerified && selectedProvider) {
       // Filter messages for selected customer when chat history updates
       const customerMessages = chatHistory?.filter(
-        msg => msg.senderId === selectedProvider.contactId || msg.receiverId === selectedProvider.contactId
+        (msg) =>
+          msg.senderId === selectedProvider.contactId ||
+          msg.receiverId === selectedProvider.contactId
       );
       setCurrentMessages(customerMessages || []);
     } else {
@@ -170,6 +130,220 @@ const ChatBox = () => {
       setCurrentMessages(chatHistory || []);
     }
   }, [chatHistory, selectedProvider, user]);
+
+  // Scroll to bottom when messages change
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [currentMessages, scrollToBottom]);
+
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setTimeout(scrollToBottom, 100);
+    }
+  }, [isOpen, scrollToBottom]);
+
+  // Add SignalR connection management
+  React.useEffect(() => {
+    let connectionAttempts = 0;
+    const maxAttempts = 3;
+
+    const connectToSignalR = async () => {
+      if (!user?.id || !isOpen) return;
+
+      try {
+        await signalRService.startConnection(user.id);
+        connectionAttempts = 0;
+
+        // Set up message listener for real-time updates
+        const handleNewMessage = async (message, isReceived = false) => {
+          console.log("New message received:", message, "isReceived:", isReceived);
+          
+          // Update current conversation if message belongs to it
+          if (selectedProvider && (
+            (message.senderId === selectedProvider.contactId && message.receiverId === user.id) ||
+            (message.senderId === user.id && message.receiverId === selectedProvider.contactId)
+          )) {
+            setCurrentMessages(prev => {
+              const messageExists = prev.some(msg => msg.id === message.id);
+              if (messageExists) return prev;
+              return [...prev, message];
+            });
+            
+            if (isReceived && message.receiverId === user.id) {
+              signalRService.markMessagesAsRead(message.senderId).catch(console.error);
+            }
+            
+            setTimeout(scrollToBottom, 100);
+          }
+
+          // Force refresh contact list when receiving a new message
+          if (isReceived) {
+            await queryClient.invalidateQueries({
+              queryKey: ["get_list_contact"],
+              refetchType: "active",
+            });
+
+            // Call UpdateContacts on the server to ensure contact list is up to date
+            try {
+              await signalRService.connection.invoke("UpdateContacts");
+            } catch (error) {
+              console.error("Error updating contacts:", error);
+            }
+          }
+
+          // Update chat history cache
+          queryClient.setQueryData(["get_history_chat", selectedProvider?.contactId], (oldData) => {
+            if (!oldData) return [message];
+            const messageExists = oldData.some(msg => msg.id === message.id);
+            if (messageExists) return oldData;
+            return [...oldData, message];
+          });
+        };
+
+        // Set up separate handlers for receive and sent messages
+        signalRService.onMessageReceived((message) => handleNewMessage(message, true));
+        signalRService.onMessageSent((message) => handleNewMessage(message, false));
+
+        // Set up messages read listener
+        const handleMessagesRead = (readByUserId) => {
+          setCurrentMessages(prev => 
+            prev.map(msg => 
+              msg.receiverId === readByUserId ? { ...msg, isRead: true } : msg
+            )
+          );
+
+          queryClient.setQueryData(["get_list_contact"], (oldData) => {
+            if (!oldData) return oldData;
+            return oldData.map(contact => {
+              if (contact.contactId === readByUserId) {
+                return {
+                  ...contact,
+                  unreadCount: 0
+                };
+              }
+              return contact;
+            });
+          });
+        };
+
+        // Set up contacts updated listener
+        const handleContactsUpdated = (contacts) => {
+          console.log("Contacts updated:", contacts);
+          // Directly set the new contacts data
+          queryClient.setQueryData(["get_list_contact"], contacts);
+        };
+
+        signalRService.onMessagesRead(handleMessagesRead);
+        signalRService.onContactsUpdated(handleContactsUpdated);
+
+        return () => {
+          signalRService.offMessageReceived(handleNewMessage);
+          signalRService.offMessageSent(handleNewMessage);
+          signalRService.offMessagesRead(handleMessagesRead);
+          signalRService.offContactsUpdated(handleContactsUpdated);
+          signalRService.stopConnection();
+        };
+
+      } catch (error) {
+        console.error('Failed to connect to SignalR:', error);
+        connectionAttempts++;
+        
+        if (connectionAttempts < maxAttempts) {
+          const delay = Math.min(1000 * Math.pow(2, connectionAttempts), 10000);
+          toast.error(`Connection failed. Retrying in ${delay/1000} seconds...`);
+          setTimeout(connectToSignalR, delay);
+        } else {
+          toast.error('Unable to establish chat connection. Please try again later.');
+        }
+      }
+    };
+
+    connectToSignalR();
+  }, [user?.id, isOpen, selectedProvider?.contactId, queryClient, scrollToBottom]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if ((!editor?.getText().trim() && selectedFiles.length === 0) || !selectedProvider || !user?.id) return;
+
+    try {
+      if (!signalRService.isConnected()) {
+        await signalRService.startConnection(user.id);
+        if (!signalRService.isConnected()) {
+          throw new Error("Unable to establish chat connection");
+        }
+      }
+
+      const htmlContent = editor?.getText().trim() ? editor.getHTML() : "Shared files";
+      
+      try {
+        setIsUploading(true);
+        await signalRService.sendMessage(
+          selectedProvider.contactId, 
+          htmlContent, 
+          selectedFiles,
+          (progress) => {
+            setUploadProgress(progress);
+          }
+        );
+
+        // Update contact list immediately after sending message
+        queryClient.setQueryData(["get_list_contact"], (oldData) => {
+          if (!oldData) return [selectedProvider];
+          
+          // Check if the contact already exists
+          const contactExists = oldData.some(contact => contact.contactId === selectedProvider.contactId);
+          
+          if (!contactExists) {
+            // Add new contact to the list
+            return [{
+              ...selectedProvider,
+              message: htmlContent,
+              lastMessageSenderId: user.id,
+              unreadCount: 0
+            }, ...oldData];
+          }
+          
+          // Update existing contact
+          return oldData.map(contact => {
+            if (contact.contactId === selectedProvider.contactId) {
+              return {
+                ...contact,
+                message: htmlContent,
+                lastMessageSenderId: user.id,
+                unreadCount: 0
+              };
+            }
+            return contact;
+          });
+        });
+
+        editor?.commands.setContent("");
+        setSelectedFiles([]); // Clear selected files after sending
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''; // Reset file input
+        }
+      } catch (error) {
+        if (error.message.includes("size limit") || error.message.includes("not supported")) {
+          toast.error(error.message);
+        } else {
+          throw error;
+        }
+      } finally {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error(
+        error.message === "Unable to establish chat connection"
+          ? "Unable to connect to chat. Please try again."
+          : "Failed to send message. Please try again."
+      );
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
 
   const handleNavigate = () => {
     onClose();
@@ -182,7 +356,9 @@ const ChatBox = () => {
       // If provider, filter messages for selected customer
       if (user?.providerVerified) {
         const customerMessages = chatHistory?.filter(
-          msg => msg.senderId === contact.contactId || msg.receiverId === contact.contactId
+          (msg) =>
+            msg.senderId === contact.contactId ||
+            msg.receiverId === contact.contactId
         );
         setCurrentMessages(customerMessages || []);
       }
@@ -191,28 +367,22 @@ const ChatBox = () => {
   };
 
   React.useEffect(() => {
-    console.log(chatHistory);
-  }, [chatHistory]);
-
-  React.useEffect(() => {
     if (!selectedProvider && contactList && contactList.length > 0) {
       // Automatically select the first provider if none is selected
       setSelectedProvider(contactList[0]);
     }
   }, [contactList, selectedProvider]);
 
+  // Consolidated query invalidation effect
   React.useEffect(() => {
-    if (isOpen) {
-      // Fetch chat history when the chat box is opened
-      if (user?.providerVerified) {
-        // For providers, fetch all chat history
-        queryClient.invalidateQueries(["get_history_chat", user.id]);
-      } else if (selectedProvider) {
-        // For customers, fetch chat with selected provider
-        queryClient.invalidateQueries(["get_history_chat", selectedProvider.contactId]);
-      }
+    if (isOpen && selectedProvider?.contactId) {
+      // Only fetch chat history for the current conversation
+      queryClient.invalidateQueries({
+        queryKey: ["get_history_chat", selectedProvider.contactId],
+        exact: true
+      });
     }
-  }, [isOpen, selectedProvider, queryClient, user]);
+  }, [isOpen, selectedProvider?.contactId, queryClient]);
 
   // Save editor content when switching providers
   React.useEffect(() => {
@@ -229,9 +399,87 @@ const ChatBox = () => {
     }
   }, [selectedProvider, editor]);
 
+  // Add debug logs
+  React.useEffect(() => {
+    console.log('Selected Provider:', selectedProvider);
+    console.log('Chat History:', chatHistory);
+    console.log('History Loading:', historyLoading);
+  }, [selectedProvider, chatHistory, historyLoading]);
+
+  // Add an effect to maintain scroll position when loading older messages
+  React.useEffect(() => {
+    const messageContainer = document.querySelector('.overflow-y-auto');
+    if (messageContainer) {
+      const isScrolledToBottom = 
+        messageContainer.scrollHeight - messageContainer.scrollTop === messageContainer.clientHeight;
+      
+      if (isScrolledToBottom) {
+        scrollToBottom();
+      }
+    }
+  }, [currentMessages, scrollToBottom]);
+
   if (pathname === "/authen/login" || pathname === "/authen/signup") {
     return null;
   }
+
+  const renderChatContent = () => {
+    if (!user) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full gap-4">
+          <FaLock size={48} className="text-gray-400" />
+          <FootTypo
+            footlabel="Please login to access the chat"
+            className="!m-0 font-semibold text-lg text-gray-600"
+          />
+          <FootTypo
+            footlabel="You need to be logged in to chat with our providers"
+            className="!m-0 font-semibold text-sm text-gray-600"
+          />
+          <Button
+            label="Login"
+            onClick={handleNavigate}
+            icon={<MdOutlineLogin />}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full h-full flex flex-row">
+        <ContactList 
+          user={user}
+          contactLoading={contactLoading}
+          contactList={contactList}
+          selectedProvider={selectedProvider}
+          handleChatClick={handleChatClick}
+        />
+
+        <div className="flex-1 flex flex-col h-full">
+          {selectedProvider ? (
+            <ChatView
+              messages={currentMessages}
+              user={user}
+              editor={editor}
+              fileInputRef={fileInputRef}
+              selectedFiles={selectedFiles}
+              isUploading={isUploading}
+              uploadProgress={uploadProgress}
+              handleRemoveFile={handleRemoveFile}
+              handleFileSelect={handleFileSelect}
+              handleSendMessage={handleSendMessage}
+              messagesEndRef={messagesEndRef}
+              isLoading={historyLoading}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <span>Select a {user?.providerVerified ? "customer" : "provider"} to start chatting</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -273,300 +521,7 @@ const ChatBox = () => {
                   <IoClose size={24} />
                 </button>
               </div>
-
-              {user ? (
-                <div className="w-full h-full flex flex-row">
-                  {/* Contact List - Show customers for providers, providers for customers */}
-                  {user?.providerVerified ? (
-                    // For providers, show list of customers who have messaged
-                    <div className="w-1/3 border-r overflow-y-auto">
-                      {contactLoading ? (
-                        <div>Loading contacts..</div>
-                      ) : (
-                        chatHistory?.map((chat) => {
-                          const customerId = chat.senderId === user.id ? chat.receiverId : chat.senderId;
-                          const customerName = chat.senderName === user.name ? chat.receiverName : chat.senderName;
-                          return (
-                            <div
-                              key={customerId}
-                              onClick={() => handleChatClick({ contactId: customerId, contactName: customerName })}
-                              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-300 transition-colors ${
-                                selectedProvider?.contactId === customerId ? "bg-gray-300" : ""
-                              }`}
-                            >
-                              <div className="relative">
-                                <Avatar userImg={chat.avatar} w={32} h={32} />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-medium text-sm">{customerName}</h4>
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  ) : (
-                    // For customers, show provider list as before
-                    contactList && contactList.length > 0 && (
-                      <div className="w-1/3 border-r overflow-y-auto">
-                        {contactLoading ? (
-                          <div>Loading contacts..</div>
-                        ) : (
-                          contactList.map((contact) => (
-                            <div
-                              key={contact.contactId}
-                              onClick={() => handleChatClick(contact)}
-                              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-300 transition-colors ${
-                                selectedProvider?.contactId === contact.contactId ? "bg-gray-300" : ""
-                              }`}
-                            >
-                              <div className="relative">
-                                <Avatar userImg={contact.avatar} w={32} h={32} />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-medium text-sm">{contact.contactName}</h4>
-                              </div>
-                              {contact.unreadCount > 0 && (
-                                <span className="bg-primary text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                  {contact.unreadCount}
-                                </span>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )
-                  )}
-
-                  {/* Chat Area */}
-                  <div className="flex-1 flex flex-col h-full">
-                    {user?.providerVerified ? (
-                      <>
-                        {/* Messages Container */}
-                        <div className="flex-1 overflow-y-auto mb-[160px]">
-                          <div className="flex flex-col p-4">
-                            {historyLoading ? (
-                              <div className="flex items-center justify-center h-full">
-                                <span>Loading messages...</span>
-                              </div>
-                            ) : currentMessages.length > 0 ? (
-                              currentMessages.map((msg) => (
-                                <div
-                                  key={msg.id}
-                                  className={`flex ${
-                                    msg.senderId === user?.id
-                                      ? "justify-end"
-                                      : "justify-start"
-                                  } mb-4`}
-                                >
-                                  <div
-                                    className={`max-w-[70%] rounded-lg p-3 ${
-                                      msg.senderId === user?.id
-                                        ? "bg-primary"
-                                        : "bg-gray-100 text-gray-800"
-                                    }`}
-                                  >
-                                    <div
-                                      className="text-sm prose prose-sm"
-                                      dangerouslySetInnerHTML={{
-                                        __html: msg.message,
-                                      }}
-                                    />
-                                    <span className="text-xs opacity-70">
-                                      {new Date(msg.sentTime).toLocaleTimeString()}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="flex items-center justify-center h-full">
-                                <span>No messages to display.</span>
-                              </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                          </div>
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="border-t bg-white absolute bottom-0 left-0 right-0 rounded-b-xl">
-                          <form onSubmit={handleSendMessage} className="p-4">
-                            <div className="flex flex-col gap-2">
-                              <EditorContent editor={editor} />
-                              <div className="flex items-center justify-between">
-                                <div className="flex gap-2">
-                                  <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileUpload}
-                                    className="hidden"
-                                    accept="image/*,.pdf,.doc,.docx"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <BsImage size={18} className="text-gray-500" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <AiOutlineFileGif size={18} className="text-gray-500" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <ImAttachment size={18} className="text-gray-500" />
-                                  </button>
-                                </div>
-                                <button
-                                  type="submit"
-                                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-                                  disabled={!editor?.getText().trim()}
-                                >
-                                  <IoSend size={18} className="text-primary" />
-                                </button>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </>
-                    ) : selectedProvider ? (
-                      // Existing customer chat view
-                      <>
-                        {/* Messages Container */}
-                        <div className="flex-1 overflow-y-auto mb-[160px]">
-                          <div className="flex flex-col p-4">
-                            {historyLoading ? (
-                              <div className="flex items-center justify-center h-full">
-                                <span>Loading messages...</span>
-                              </div>
-                            ) : selectedProvider && currentMessages.length > 0 ? (
-                              currentMessages.map((msg) => (
-                                <div
-                                  key={msg.id}
-                                  className={`flex ${
-                                    msg.senderId === user?.id
-                                      ? "justify-end"
-                                      : "justify-start"
-                                  } mb-4`}
-                                >
-                                  <div
-                                    className={`max-w-[70%] rounded-lg p-3 ${
-                                      msg.senderId === user?.id
-                                        ? "bg-primary"
-                                        : "bg-gray-100 text-gray-800"
-                                    }`}
-                                  >
-                                    <div
-                                      className="text-sm prose prose-sm"
-                                      dangerouslySetInnerHTML={{
-                                        __html: msg.message,
-                                      }}
-                                    />
-                                    <span className="text-xs opacity-70">
-                                      {new Date(msg.sentTime).toLocaleTimeString()}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="flex items-center justify-center h-full">
-                                <span>No messages to display.</span>
-                              </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                          </div>
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="border-t bg-white absolute bottom-0 left-0 right-0 rounded-b-xl">
-                          <form onSubmit={handleSendMessage} className="p-4">
-                            <div className="flex flex-col gap-2">
-                              {selectedProvider && <EditorContent editor={editor} />}
-                              <div className="flex items-center justify-between">
-                                <div className="flex gap-2">
-                                  <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileUpload}
-                                    className="hidden"
-                                    accept="image/*,.pdf,.doc,.docx"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <BsImage size={18} className="text-gray-500" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <AiOutlineFileGif size={18} className="text-gray-500" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                                  >
-                                    <ImAttachment size={18} className="text-gray-500" />
-                                  </button>
-                                </div>
-                                <button
-                                  type="submit"
-                                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-                                  disabled={!editor?.getText().trim()}
-                                >
-                                  <IoSend size={18} className="text-primary" />
-                                </button>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full gap-4">
-                        <FaLock size={48} className="text-gray-400" />
-                        <FootTypo
-                          footlabel="Please login to access the chat"
-                          className="!m-0 font-semibold text-lg text-gray-600"
-                        />
-                        <FootTypo
-                          footlabel="You need to be logged in to chat with our providers"
-                          className="!m-0 font-semibold text-sm text-gray-600"
-                        />
-                        <Button
-                          label="Login"
-                          onClick={handleNavigate}
-                          icon={<MdOutlineLogin />}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full gap-4">
-                  <FaLock size={48} className="text-gray-400" />
-                  <FootTypo
-                    footlabel="Please login to access the chat"
-                    className="!m-0 font-semibold text-lg text-gray-600"
-                  />
-                  <FootTypo
-                    footlabel="You need to be logged in to chat with our providers"
-                    className="!m-0 font-semibold text-sm text-gray-600"
-                  />
-                  <Button
-                    label="Login"
-                    onClick={handleNavigate}
-                    icon={<MdOutlineLogin />}
-                  />
-                </div>
-              )}
+              {renderChatContent()}
             </div>
           )}
         </div>

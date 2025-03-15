@@ -28,7 +28,7 @@ export default function Main() {
       <MainWrapper>
         <div className="w-full mx-auto  relative">
           <div className="">
-            <div className="left-wrapper relative pb-4 md:pb-20 flex flex-col items-center justify-center px-8  md:px-8 overflow-hidden ">
+            <div className="left-wrapper relative pb-4 md:pb-20 flex flex-col items-center justify-center px-8  md:px-8 overflow-hidden pt-28 ">
               <div className="relative flex flex-col items-center justify-center">
                 <Button2
                   label="Introducing new decorations"

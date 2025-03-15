@@ -15,9 +15,11 @@ export default function DropdownSelect({
   value,
   onChange,
   labelKey = "name", // Default key for displaying labels
-  lisboxClassName, 
+  lisboxClassName,
 }) {
-  const [selected, setSelected] = React.useState(value || options[0]?.[labelKey] || "Select");
+  const [selected, setSelected] = React.useState(
+    value || options[0]?.[labelKey] || "Select"
+  );
 
   return (
     <div className="flex flex-col gap-2">
@@ -45,9 +47,11 @@ export default function DropdownSelect({
         </ListboxButton>
 
         <ListboxOptions
+          modal={false}
           className={clsx(
             "absolute w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
-            "z-50 transition-opacity duration-100 ease-i max-h-60 overflow-y-auto ", lisboxClassName
+            "z-50 transition-opacity duration-100 ease-i max-h-60 overflow-y-auto ",
+            lisboxClassName
           )}
         >
           {options.map((option, index) => (
