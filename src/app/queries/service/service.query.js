@@ -24,7 +24,7 @@ export function useCreateDecorService() {
 export function useGetDecorServiceById(id) {
   return useQuery({
     queryKey: ["decor-service", id],
-    queryFn: async () => {
+    queryFn: async (style, province, category, season) => {
       if (!id) throw new Error("No id provided");
 
       nProgress.start();
@@ -36,5 +36,38 @@ export function useGetDecorServiceById(id) {
         nProgress.done();
       }
     },
+  });
+}
+
+export function useSearchDecorService(params) {
+  return useQuery({
+    queryKey: ["search-decor-service", params],
+    queryFn: async () => {
+      nProgress.start();
+      
+      try {
+        if (!params) {
+          const res = await BaseRequest.Get(`/${SUB_URL}/getPaginated`, false);
+          return {
+            data: res.data.data || [],
+            total: res.data.data?.length || 0
+          };
+        }
+        
+        // Construct the query string manually to ensure exact parameter format
+        const queryParams = [];
+        if (params.Province) queryParams.push(`Province=${encodeURIComponent(params.Province)}`);
+        if (params.CategoryName) queryParams.push(`CategoryName=${encodeURIComponent(params.CategoryName)}`);
+        if (params.SeasonName) queryParams.push(`SeasonName=${encodeURIComponent(params.SeasonName)}`);
+        
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        
+        const res = await BaseRequest.Get(`/${SUB_URL}/search${queryString}`, false);
+        return res;
+      } finally {
+        nProgress.done();
+      }
+    },
+    enabled: true, // Always enable the query
   });
 }

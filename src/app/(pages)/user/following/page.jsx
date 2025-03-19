@@ -73,11 +73,11 @@ const UserFollowing = () => {
               </span>
             </div>
           </div>
-          <div className="mt-3">
+          <div className="mt-3 space-y-4">
             <DataMapper
               data={following}
               Component={ProviderCard}
-              emptyStateComponent={<EmptyState title="No followers found" />}
+              emptyStateComponent={<EmptyState title="No following" />}
               loading={isLoading}
               getKey={(item) => item.accountId}
               componentProps={(following) => ({

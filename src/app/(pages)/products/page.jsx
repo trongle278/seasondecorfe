@@ -5,6 +5,7 @@ import DataMapper from "@/app/components/DataMapper";
 import ProductCard from "@/app/components/ui/card/ProductCard";
 import EmptyState from "@/app/components/EmptyState";
 import { useGetListProduct } from "@/app/queries/list/product.list.query";
+import { Skeleton } from "@mui/material";
 
 const filters = [
   {
@@ -45,7 +46,9 @@ const filters = [
   // },
 ];
 const ListProductPage = () => {
-  const { data: listProduct, isLoading, isError } = useGetListProduct();
+  const { data: productsData, isLoading, isError } = useGetListProduct();
+  
+  const products = productsData?.data || [];
 
   const generateSlug = (name) => {
     return name
@@ -57,7 +60,7 @@ const ListProductPage = () => {
   return (
     <ListWrapper filters={filters}>
       <DataMapper
-        data={listProduct}
+        data={products}
         Component={ProductCard}
         emptyStateComponent={<EmptyState title="No products found" />}
         loading={isLoading}

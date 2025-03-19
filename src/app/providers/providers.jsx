@@ -40,7 +40,7 @@ export function AppProviders({ children }) {
             <ReactQueryDevtools />
             <AuthProvider>
               <UserProvider>
-                <Toaster richColors position="top-center" />
+                <Toaster richColors position="top-right" />
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="system"

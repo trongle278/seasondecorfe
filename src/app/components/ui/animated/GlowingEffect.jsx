@@ -24,7 +24,7 @@ const GlowingEffect = memo(
     glow = false,
     className,
     movementDuration = 2,
-    borderWidth = 1,
+    borderWidth = 2,
     disabled = true,
   }) => {
     const containerRef = useRef(null);

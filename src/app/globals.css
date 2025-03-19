@@ -15,6 +15,13 @@
   --color-red: #dc362e;
   --color-green: #086100;
   --color-lightGrey: #959595;
+  --color-orange: #ffa500;
+  --color-purple: #800080;
+  --color-pink: #FFC0CB;
+  --color-indigo: #4B0082;
+  --color-fuchsia: #FF00FF;
+  --color-rose: #FF69B4;
+  
   --color-neutral-0: var(--color-black);
   --color-neutral-10: var(--color-mix-neutral-10, #1e1e1e);
   --color-neutral-20: var(--color-mix-neutral-20, #373737);

@@ -53,6 +53,7 @@ export default function DropdownSelectReturnObj({
         </ListboxButton>
 
         <ListboxOptions
+          modal={false}
           className={clsx(
             "absolute w-fit rounded-xl border border-gray-300 bg-white p-1 shadow-lg",
             "z-50 transition-opacity duration-100 ease-in max-h-60 overflow-y-auto",

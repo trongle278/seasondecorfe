@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { IoMailOutline } from "react-icons/io5";
 import { TbLockPassword } from "react-icons/tb";
 import Button2 from "@/app/components/ui/Buttons/Button2";
-import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import Logo from "@/app/components/Logo";
 import { signIn } from "next-auth/react";
 import { useLogin } from "@/app/queries/user/authen.query";
@@ -109,7 +109,7 @@ export default function Login() {
             label="Continue with"
             btnClass="w-full m-0"
             labelClass="justify-center p-3"
-            icon={<FaGoogle />}
+            icon={<FcGoogle size={20} />}
           />
 
           <p className="text-gray-600 dark:text-gray-300 text-center">

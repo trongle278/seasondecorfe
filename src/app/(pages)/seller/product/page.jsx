@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import SellerWrapper from "../components/SellerWrapper";
 import Button from "@/app/components/ui/Buttons/Button";
 import { useRouter } from "next/navigation";
@@ -10,12 +11,31 @@ import { MdDelete } from "react-icons/md";
 import DataTable from "@/app/components/ui/table/DataTable";
 import { MdOutlineFileUpload } from "react-icons/md";
 import Image from "next/image";
+import { Skeleton } from "@mui/material";
 
 const SellerProductManage = () => {
   const router = useRouter();
   const userSlug = useSelector((state) => state.users.userSlug);
 
-  const { data: products = [], isLoading } = useGetProductByProvider(userSlug);
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 1,
+    pageSize: 10,
+    sortBy: "",
+    descending: false,
+    productName: "",
+    minPrice: "",
+    maxPrice: "",
+  });
+
+  const { data, isLoading, error, refetch } = useGetProductByProvider(
+    userSlug,
+    pagination
+  );
+
+  const products = data?.data || [];
+  const totalCount = data?.totalCount || 0;
+  const totalPages = Math.ceil(totalCount / pagination.pageSize) || 1;
+
 
   const columns = [
     {
@@ -90,9 +110,71 @@ const SellerProductManage = () => {
     },
   ];
 
-  const handleDeleteProduct = (productId) => {
+  const handleDeleteProduct = React.useCallback((productId) => {
     // Implement delete functionality here
     console.log("Delete product:", productId);
+  }, []);
+
+  const handlePaginationChange = React.useCallback((newPagination) => {
+    console.log("Pagination changed from DataTable:", newPagination);
+
+    setPagination((prev) => {
+      const updated = {
+        ...prev,
+        pageIndex: newPagination.pageIndex,
+        pageSize: newPagination.pageSize,
+      };
+      console.log("Updated pagination state:", updated);
+      return updated;
+    });
+  }, []);
+
+  const handleSortingChange = React.useCallback((sorting) => {
+    console.log("Sorting changed:", sorting);
+    if (sorting.length > 0) {
+      setPagination((prev) => ({
+        ...prev,
+        sortBy: sorting[0].id,
+        descending: sorting[0].desc,
+      }));
+    } else {
+      setPagination((prev) => ({
+        ...prev,
+        sortBy: "",
+        descending: false,
+      }));
+    }
+  }, []);
+
+  // Function to handle search by product name
+  const handleSearch = React.useCallback((productName) => {
+    setPagination((prev) => ({
+      ...prev,
+      productName,
+      pageIndex: 1, // Reset to first page when searching
+    }));
+  }, []);
+
+  // Function to handle price filter
+  const handlePriceFilter = React.useCallback((minPrice, maxPrice) => {
+    setPagination((prev) => ({
+      ...prev,
+      minPrice,
+      maxPrice,
+      pageIndex: 1, // Reset to first page when filtering
+    }));
+  }, []);
+
+  const tablePageIndex =
+    pagination.pageIndex > 1 ? pagination.pageIndex - 1 : 0;
+
+  // Manual page navigation for testing
+  const manualPageChange = (newPageIndex) => {
+    console.log("Manual page change to:", newPageIndex);
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: newPageIndex,
+    }));
   };
 
   return (
@@ -101,18 +183,41 @@ const SellerProductManage = () => {
         <div className="section-1 flex flex-row gap-3 items-center mb-6">
           <Button
             onClick={() => router.push("/seller/product/create")}
-            label="Sell Product"
+            label="Start selling"
             className="bg-primary"
             icon={<MdOutlineFileUpload size={20} />}
           />
         </div>
-        <DataTable
-          data={products}
-          columns={columns}
-          isLoading={isLoading}
-          showPagination={true}
-          pageSize={10}
-        />
+
+        {isLoading && products.length === 0 ? (
+          <Skeleton animation="wave" variant="text" width="100%" height={40} />
+        ) : error ? (
+          <div className="bg-red-100 text-red-700 p-4 rounded">
+            Error loading products: {error.message}
+          </div>
+        ) : products.length === 0 && !isLoading ? (
+          <div className="p-4 bg-white rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">No Products Found</h2>
+            <p>
+              You don't have any products yet. Start selling by adding your
+              first product.
+            </p>
+          </div>
+        ) : (
+          <DataTable
+            data={products}
+            columns={columns}
+            isLoading={isLoading}
+            showPagination={true}
+            pageSize={pagination.pageSize}
+            initialPageIndex={tablePageIndex}
+            manualPagination={true}
+            pageCount={totalPages}
+            onPaginationChange={handlePaginationChange}
+            onSortingChange={handleSortingChange}
+            totalCount={totalCount}
+          />
+        )}
       </>
     </SellerWrapper>
   );
