@@ -13,7 +13,7 @@ class SignalRService {
     try {
       if (this.connection) {
         if (this.connection.state === signalR.HubConnectionState.Connected) {
-          console.log("Already connected to SignalR");
+          //console.log("Already connected to SignalR");
           return;
         }
         await this.stopConnection();
@@ -132,7 +132,7 @@ class SignalRService {
       reader.onload = () => {
         try {
           // Get the base64 string without the data URL prefix
-          const base64 = reader.result.split(',')[1] || '';
+          const base64 = reader.result.split(",")[1] || "";
           resolve(base64);
         } catch (error) {
           reject(new Error(`Failed to convert ${file.name} to base64`));
@@ -145,7 +145,10 @@ class SignalRService {
 
   // Send message through SignalR
   async sendMessage(receiverId, message, files = [], onProgress = null) {
-    if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
+    if (
+      !this.connection ||
+      this.connection.state !== signalR.HubConnectionState.Connected
+    ) {
       throw new Error("SignalR not connected");
     }
 
@@ -164,12 +167,12 @@ class SignalRService {
       // Validate file sizes and types
       const maxFileSize = 5 * 1024 * 1024; // 5MB limit
       const allowedTypes = [
-        'image/jpeg', 
-        'image/png', 
-        'image/gif', 
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
 
       // Validate each file
@@ -185,7 +188,7 @@ class SignalRService {
       // Convert files to the expected format
       const totalFiles = files.length;
       const fileRequests = [];
-      
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
@@ -193,9 +196,9 @@ class SignalRService {
           fileRequests.push({
             fileName: file.name,
             base64Content: base64Content,
-            contentType: file.type
+            contentType: file.type,
           });
-          
+
           // Report progress
           if (onProgress) {
             const progress = ((i + 1) / totalFiles) * 100;
@@ -207,11 +210,20 @@ class SignalRService {
         }
       }
 
-      console.log('Sending message with files:', { receiverId, messageContent, fileRequests });
+      console.log("Sending message with files:", {
+        receiverId,
+        messageContent,
+        fileRequests,
+      });
 
       // Send the message with files
-      await this.connection.invoke("SendMessage", receiverId, messageContent, fileRequests);
-      
+      await this.connection.invoke(
+        "SendMessage",
+        receiverId,
+        messageContent,
+        fileRequests
+      );
+
       // Complete progress
       if (onProgress) {
         onProgress(100);

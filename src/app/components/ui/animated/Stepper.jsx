@@ -154,8 +154,6 @@ function StepContentWrapper({
     <motion.div
       style={{
         position: "relative",
-        overflowX: "hidden",
-        overflowY: "visible",
       }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
       transition={{ type: "spring", duration: 0.4 }}

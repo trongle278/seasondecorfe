@@ -12,10 +12,10 @@ const MuiBreadcrumbs = () => {
   const pathSegments = pathname.split("/").filter((segment) => segment);
 
   return (
-    <Breadcrumbs aria-label="breadcrumb" className="mb-4" separator="›">
+    <Breadcrumbs aria-label="breadcrumb" className="mb-4 text-black dark:text-white" separator="›">
       <Link
         href="/"
-        className=" text-primary hover:underline flex items-center"
+        className="hover:underline flex items-center"
       >
         <HomeIcon fontSize="small" className="mr-1" /> Home
       </Link>
@@ -30,7 +30,7 @@ const MuiBreadcrumbs = () => {
             {decodeURIComponent(segment)}
           </Typography>
         ) : (
-          <Link key={href} href={href} className="hover:underline text-primary">
+          <Link key={href} href={href} className="hover:underline">
             {decodeURIComponent(segment)}
           </Link>
         );

@@ -16,6 +16,9 @@ import DropdownSelectReturnObj from "@/app/components/ui/Select/DropdownObject";
 import Button2 from "@/app/components/ui/Buttons/Button2";
 import { useCreateDecorService } from "@/app/queries/service/service.query";
 import { useRouter } from "next/navigation";
+import ProvinceDistrictWardSelect from "@/app/(pages)/user/components/ProvinceDropdown";
+import { useGetListSeason } from "@/app/queries/list/category.list.query";
+import MultiSelectChip from "@/app/components/ui/chip/Chip";
 
 const ServiceCreate = () => {
   const { user } = useUser();
@@ -23,12 +26,16 @@ const ServiceCreate = () => {
 
   const { data: dataCategory } = useGetListDecorCategory();
 
+  const { data: dataSeason, isLoading: isLoadingSeason } = useGetListSeason();
+
   const [images, setImages] = React.useState([]);
 
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = React.useState(null);
 
   const { mutate: mutationCreate, isPending } = useCreateDecorService();
+
+  const [selectedSeasons, setSelectedSeasons] = React.useState([]);
 
   const handleImageUpload = (uploadedImages) => {
     setImages(uploadedImages);
@@ -72,6 +79,7 @@ const ServiceCreate = () => {
       description: "",
       province: "",
       categoryId: "",
+      seasonIds: [],
     },
   });
 
@@ -90,10 +98,21 @@ const ServiceCreate = () => {
       const formData = new FormData();
       formData.append("Style", data.style);
       formData.append("Description", data.description);
+
+      // Province field contains the combined province and district
+      console.log("Sending location to API:", data.province);
       formData.append("Province", data.province);
+
       formData.append("DecorCategoryId", selectedCategoryId);
 
-      // ✅ Append each image as a File
+      // Handle season tags - append each selected season ID
+      if (selectedSeasons.length > 0) {
+        console.log("Sending season tags to API:", selectedSeasons);
+        selectedSeasons.forEach(seasonIds => {
+          formData.append("SeasonIds", seasonIds);
+        });
+      }
+
       images.forEach((img) => {
         formData.append("Images", img);
       });
@@ -102,15 +121,16 @@ const ServiceCreate = () => {
 
       mutationCreate(formData, {
         onSuccess: (response) => {
-          console.log("Product created successfully:", response);
+          console.log("Service created successfully:", response);
           router.push("/seller/service");
         },
         onError: (error) => {
-          console.error("Error creating product:", error);
+          console.error("Error creating service:", error);
+          alert("Failed to create service. Please try again.");
         },
       });
     },
-    [selectedCategoryId, images, mutationCreate]
+    [selectedCategoryId, images, mutationCreate, router, selectedSeasons]
   );
 
   const serviceStyle = watch("style");
@@ -123,7 +143,6 @@ const ServiceCreate = () => {
     if (step === 1) {
       if (
         !serviceStyle?.trim() ||
-        !serviceDescription?.trim() ||
         !serviceProvince?.trim() ||
         !selectedCategoryId ||
         images.length === 0
@@ -140,23 +159,24 @@ const ServiceCreate = () => {
       }
     }
 
-    // if (step === 2) {
-    //   if (
-    //     !quantity ||
-    //     !madein?.trim() ||
-    //     !shipForm?.trim() ||
-    //     !selectedCategoryId
-    //   ) {
-    //     alert("Please fill in all fields before proceeding.");
-    //     return false;
-    //   }
-    // }
+    if (step === 2) {
+      if (!serviceDescription?.trim()) {
+        alert("Please fill in all fields before proceeding.");
+        return false;
+      }
+    }
     return true;
   };
 
   const handleQuantityChange = (value) => {
     setValue("quantity", value);
     console.log("Updated Quantity:", value);
+  };
+
+  const handleSeasonChange = (selectedIds) => {
+    setSelectedSeasons(selectedIds);
+    setValue("seasonTagsId", selectedIds);
+    console.log("Selected Season IDs:", selectedIds);
   };
 
   return (
@@ -205,40 +225,71 @@ const ServiceCreate = () => {
                 footlabel="Available at :"
                 className="!m-0 text-lg font-semibold w-40"
               />
-              <Input
-                id="province"
-                placeholder=""
-                required
-                className=""
-                register={register}
-              />
+              <div className="w-[200px]">
+                <ProvinceDistrictWardSelect
+                  setValue={setValue}
+                  register={register}
+                  combineAsString={true}
+                  onChange={(locationString) => {
+                    if (typeof locationString === "string") {
+                      setValue("province", locationString);
+                      console.log("Combined location set to:", locationString);
+                    }
+                  }}
+                />
+              </div>
             </div>
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
                 footlabel="Category :"
-                className="!m-0 text-lg font-semibold"
-              />
-              <DropdownSelectReturnObj
-                options={CategoryOptions}
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                labelKey="label"
-                valueKey="value"
-                returnObject={true}
-                lisboxClassName="mt-10"
-              />
-            </div>
-            <div className="form inline-flex items-start w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Descriptions :"
                 className="!m-0 text-lg font-semibold w-40"
               />
-              <div className="w-full">
-                <Field>
-                  <Textarea
-                    {...register("description", { required: true })}
-                    placeholder="Service descriptions"
-                    className={`
+              <div className="w-[200px]">
+                <DropdownSelectReturnObj
+                  options={CategoryOptions}
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  labelKey="label"
+                  valueKey="value"
+                  returnObject={true}
+                  lisboxClassName="mt-10"
+                />
+              </div>
+            </div>
+          </div>
+        </Step>
+        <Step>
+          <div className="form inline-flex items-start w-full h-full gap-5 my-5">
+            <FootTypo
+              footlabel="Season Tags :"
+              className="!m-0 text-lg font-semibold w-40"
+            />
+            <div className="w-full">
+              {dataSeason ? (
+                <MultiSelectChip
+                  options={dataSeason.map(season => ({
+                    id: season.id,
+                    name: season.seasonName
+                  }))}
+                  onChange={handleSeasonChange}
+                  label="Select applicable seasons"
+                />
+              ) : (
+                <p>Loading seasons...</p>
+              )}
+            </div>
+          </div>
+          <div className="form inline-flex items-start w-full h-full gap-5 my-5">
+            <FootTypo
+              footlabel="Descriptions :"
+              className="!m-0 text-lg font-semibold w-40"
+            />
+            <div className="w-full">
+              <Field>
+                <Textarea
+                  {...register("description", { required: true })}
+                  placeholder="Service descriptions"
+                  className={`
       mt-3 block w-full resize-none rounded-lg border-[1px] 
       border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
       bg-white dark:bg-gray-800 text-black dark:text-white
@@ -246,10 +297,9 @@ const ServiceCreate = () => {
       focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
       transition duration-200
     `}
-                    rows={10}
-                  />
-                </Field>
-              </div>
+                  rows={10}
+                />
+              </Field>
             </div>
           </div>
         </Step>

@@ -104,6 +104,7 @@ const ProductCreate = () => {
       formData.append("ShipFrom", data.shipForm);
       formData.append("CategoryId", selectedCategoryId);
       formData.append("ProviderId", providerId);
+      formData.append("AccountId", user.id);
 
       
       // ✅ Append each image as a File

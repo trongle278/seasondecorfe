@@ -17,7 +17,7 @@ import { ProviderSpotlight } from "./components/ui/landing/ProviderSpotlight";
 import { FeaturesSection } from "./components/ui/landing/FeatureSection";
 import LandingEndSection from "./components/ui/landing/LandingEndSection";
 import { AnimatedTooltip } from "./components/ui/landing/components/AnimatedTooltip";
-import { people } from "@/app/people";
+import { people } from "@/app/constant/people";
 import DisclosureSection from "./components/ui/landing/Disclosure";
 
 export default function Main() {

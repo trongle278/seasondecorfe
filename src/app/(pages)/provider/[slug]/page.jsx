@@ -176,7 +176,15 @@ const ProviderDetailPage = () => {
           <TabPanels className="mt-3">
             {tabs.map(({ name, component: Component }) => (
               <TabPanel key={name} className="rounded-xl bg-white/5 p-3">
-                <Component />
+                {name === "Home" ? (
+                  <Component 
+                    phone={provider.phone} 
+                    address={provider.address}
+                    bio={provider.bio}
+                  />
+                ) : (
+                  <Component providerId={provider.id} />
+                )}
               </TabPanel>
             ))}
           </TabPanels>

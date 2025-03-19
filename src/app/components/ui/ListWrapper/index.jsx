@@ -1,5 +1,5 @@
 import Container from "../../layouts/Container";
-import { BorderBox } from "../BorderBox";
+import clsx from "clsx";
 import DropdownSelect from "../Select/DropdownSelect";
 
 export const ListWrapper = ({ children, filters }) => {
@@ -7,9 +7,9 @@ export const ListWrapper = ({ children, filters }) => {
     <Container>
       <div className="min-h-screen pt-5">
         <div className="flex container rounded-lg">
-          <div className="flex-shrink-0 w-[250px]">
+          <div className="flex-shrink-0 w-[200px] pr-10">
             <div className="flex">
-              <ListSidebar filters={filters} />
+              <ListSidebar filters={filters} className="flex-col" />
             </div>
           </div>
           <div className="flex-grow">
@@ -23,10 +23,10 @@ export const ListWrapper = ({ children, filters }) => {
   );
 };
 
-export const ListSidebar = ({ filters }) => {
+export const ListSidebar = ({ filters, className }) => {
   return (
-    <div className="flex flex-col flex-shrink-0 w-[180px] ">
-      <div className="flex flex-col gap-10">
+    <div className="flex w-full justify-start items-center">
+      <div className={clsx("w-full flex gap-10", className)}>
         {filters.map((filter, index) => (
           <div key={index} className="flex flex-1 flex-col justify-center pl-3">
             <DropdownSelect

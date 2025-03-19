@@ -94,12 +94,12 @@ export default function Header({ providerRef }) {
   return (
     <header
       className={`z-[50] fixed top-0 w-full transition-all ${
-        isScrolled ? "border-b border-white/[0.1] bg-white dark:bg-black" : ""
+        isScrolled ? "bg-white dark:bg-black shadow-md dark:shadow-white" : ""
       }`}
       tabIndex="-1"
     >
       <div className="hidden lg:block">
-        <div className="header container mx-auto px-4 py-3">
+        <div className="header container mx-auto px-4 max-w-[88rem]">
           <nav className="flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex items-center">
@@ -119,7 +119,7 @@ export default function Header({ providerRef }) {
                   ]}
                   animationSpeed={3}
                   showBorder={true}
-                  className="p-2 text-sm"
+                  className="p-2 text-sm font-primary"
                   onClick={onChangeStatus}
                 >
                   PROVIDER CENTRE
@@ -127,45 +127,30 @@ export default function Header({ providerRef }) {
               </div>
               <Link
                 href="/pricing"
-                className="text-sm font-medium text-white/70 hover:text-primary"
+                className="text-sm font-primary text-white/70 hover:text-primary"
               >
                 PRICING
               </Link>
               <Link
                 href="/provider"
-                className="text-sm font-medium text-white/70 hover:text-primary "
+                className="text-sm font-primary text-white/70 hover:text-primary "
               >
                 PROVIDERS
               </Link>
+              
+              
               <Link
-                href="/enterprise"
-                className="text-sm font-medium text-white/70 hover:text-primary "
+                href="/products"
+                className="text-sm font-primary text-white/70 hover:text-primary"
               >
-                ENTERPRISE
-              </Link>
-              <Link
-                href="/blog"
-                className="text-sm font-medium text-white/70 hover:text-primary "
-              >
-                BLOG
-              </Link>
-              <Link
-                href="/forum"
-                className="text-sm font-medium text-white/70 hover:text-primary "
-              >
-                FORUM
-              </Link>
-              <Link
-                href="/careers"
-                className="text-sm font-medium text-white/70 hover:text-primary"
-              >
-                CAREERS
+                SHOP
               </Link>
             </div>
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
-              <ThemeSwitch />/
+              <ThemeSwitch/>
+              <span>/</span>
               <SearchBtn />
               <CartBtn cartClick={() => router.push("/cart")} />
               <NotificationBtn toggleDrawer={toggleDrawer} />

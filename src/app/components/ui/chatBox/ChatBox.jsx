@@ -15,7 +15,7 @@ import { FaLock } from "react-icons/fa";
 import Button from "../Buttons/Button";
 import { MdOutlineLogin } from "react-icons/md";
 import { useRouter, usePathname } from "next/navigation";
-import { useGetListContact } from "@/app/queries/list/contact.query";
+import { useGetListContact } from "@/app/queries/list/contact.list.query";
 import { useGetHistoryChat } from "@/app/queries/chat/history.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { signalRService } from "@/app/services/signalRService";
@@ -89,6 +89,7 @@ const ChatBox = () => {
 
   // Create a single editor instance
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Image,

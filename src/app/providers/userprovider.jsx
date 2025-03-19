@@ -4,10 +4,10 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useGetAccountDetails } from "../queries/user/user.query";
 import { useRouter, usePathname } from "next/navigation";
-import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setUserSlug } from "../lib/redux/reducers/userSlice";
+import Spinner from "../components/Spinner";
 
 const UserContext = createContext(null);
 
@@ -67,7 +67,7 @@ export function UserProvider({ children }) {
   if (status === "loading" || isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <ClipLoader size={30} />
+        <Spinner />
       </div>
     );
   }

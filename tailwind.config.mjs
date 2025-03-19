@@ -50,6 +50,10 @@ export default {
         red: "var(--color-red)",
         green: "var(--color-green)",
         lightGrey: "var(--color-lightGrey)",
+        orange: "var(--color-orange)",
+        purple: "var(--color-purple)",
+        pink: "var(--color-pink)",
+    
         neutral: {
           0: "var(--color-neutral-0)",
           10: "var(--color-neutral-10)",

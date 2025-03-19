@@ -27,14 +27,14 @@ export default function ThemeSwitch() {
           <FiSun
             size={20}
             color="#fff"
-            className={`rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-yellow-500 text-yellow-400`}
+            className={`rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent`}
           />
         </IconButton>
       ) : (
         <IconButton onClick={() => setTheme("dark")} className="dark:hover:bg-zinc-700">
           <FiMoon
             size={20}
-            className={`rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-gray-800 text-gray-600`}
+            className={`rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent`}
           />
         </IconButton>
       )}

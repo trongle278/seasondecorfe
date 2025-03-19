@@ -8,7 +8,7 @@ import Logo from "@/app/components/Logo";
 import Link from "next/link";
 import Button2 from "@/app/components/ui/Buttons/Button2";
 import InfiniteScroll from "@/app/components/ui/animated/InfiniteScroll";
-import { items } from "@/app/items";
+import { items } from "@/app/constant/items";
 import { EditAvatar } from "@/app/components/logic/EditAvatar";
 import { useUser } from "@/app/providers/userprovider";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateProviderProfile } from "@/app/queries/user/provider.query";
 import { useRouter } from "next/navigation";
 import { FaAngleRight } from "react-icons/fa6";
+import { Field, Textarea } from "@headlessui/react";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -94,7 +95,7 @@ export default function RegistrationPage() {
             <h2 className="text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
               Provide more information
             </h2>
-            <div className="mt-10">
+            <div className="mt-10 w-[60%]">
               <div className="space-y-6">
                 <EditAvatar
                   userImg={user?.avatar}
@@ -117,22 +118,28 @@ export default function RegistrationPage() {
                       <p className="text-red">{errors.name.message}</p>
                     )}
                   </div>
-
-                  <div className="flex flex-col space-y-2 w-full">
-                    <Label htmlFor="providerBio">Bio</Label>
-                    <Input
-                      id="bio"
-                      placeholder="John Doe"
-                      type="text"
-                      required
-                      className="pl-3"
-                      register={register}
-                    />
-                    {errors.bio && (
-                      <p className="text-red">{errors.bio.message}</p>
-                    )}
-                  </div>
                 </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="providerName">Bio</Label>
+                    <div className="w-full">
+                      <Field>
+                        <Textarea
+                          {...register("bio", { required: true })}
+                          placeholder="Your bio"
+                          className={`
+      mt-3 block w-full resize-none rounded-lg border-[1px] 
+      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
+      bg-white dark:bg-gray-800 text-black dark:text-white
+      placeholder-gray-500 dark:placeholder-gray-400
+      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
+      transition duration-200
+    `}
+                          rows={7}
+                        />
+                      </Field>
+                    </div>
+                  </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="providerPhone">Provider's phone</Label>

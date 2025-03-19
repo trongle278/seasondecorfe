@@ -9,7 +9,19 @@ export const BASE_URL = "http://localhost:5297";
 let cachedToken = null;
 let tokenExpiryTime = null;
 
+// Token expiration time in milliseconds (1 day)
+const TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
 const getAndCacheToken = async () => {
+  // Check if token has expired
+  if (tokenExpiryTime && Date.now() >= tokenExpiryTime) {
+    clearTokenCache();
+    await signOut({ redirect: false });
+    window.location.href = "/authen/login";
+    return null;
+  }
+
+  // Return cached token if it exists and hasn't expired
   if (cachedToken && tokenExpiryTime && Date.now() < tokenExpiryTime) {
     return cachedToken;
   }
@@ -17,9 +29,8 @@ const getAndCacheToken = async () => {
   const session = await getSession();
   if (session?.accessToken) {
     cachedToken = session.accessToken;
-    // Set token expiry time (e.g., 5 minutes before actual expiry)
-    // Adjust this value based on your token's actual expiry time
-    tokenExpiryTime = Infinity;
+    // Set token expiry time to 1 day from now
+    tokenExpiryTime = Date.now() + TOKEN_EXPIRATION_MS;
     return cachedToken;
   }
   return null;
@@ -73,6 +84,7 @@ apiClient.interceptors.response.use(
       if (status === 400) {
         handleValidationErrors(data.errors);
       } else if (status === 401) {
+        clearTokenCache(); // Clear token cache on 401 responses
         await handleUnauthorized();
         return Promise.reject(data);
       } else if (status === 403) {
@@ -108,9 +120,9 @@ const handleValidationErrors = (errors) => {
   }
 };
 
-// Utility: Handle unauthorized (401) responses
 const handleUnauthorized = async () => {
-  toast.warning("Please login to continue!");
+  toast.warning("Please login to continue");
+  await signOut({ redirect: false });
   window.location.href = "/authen/login";
 };
 
@@ -118,6 +130,10 @@ const handleUnauthorized = async () => {
 const clearTokenCache = () => {
   cachedToken = null;
   tokenExpiryTime = null;
+  // Clear any token-related cookies
+  Cookies.remove("next-auth.session-token");
+  Cookies.remove("next-auth.callback-url");
+  Cookies.remove("next-auth.csrf-token");
 };
 
 // API request functions

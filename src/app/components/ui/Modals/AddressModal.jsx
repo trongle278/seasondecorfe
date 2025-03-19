@@ -26,6 +26,12 @@ const AdressModal = () => {
   const mutationCreate = useCreateAddress();
   const mutationUpdate = useUpdateAddress();
 
+  // Convert between display values and API values for address type
+  const displayToApiType = (displayType) => {
+    return displayType === "Home" ? 0 : displayType === "Office" ? 1 : null;
+  };
+
+
   const {
     register,
     handleSubmit,
@@ -56,7 +62,7 @@ const AdressModal = () => {
         ...addressModal.editAddress,
       });
 
-      //console.log("editAddress before reset:", addressModal.editAddress);
+      // Convert numeric type to display value
 
       // Reset the form with editAddress data (avoids looping issues)
       reset({
@@ -77,8 +83,12 @@ const AdressModal = () => {
   }, [addressModal.editAddress, reset]);
 
   const onSubmit = async (data) => {
+    // Convert display type to API value
+    const apiType = displayToApiType(data.type);
+
     const payloadToCreate = {
       ...data,
+      type: apiType, // Use numeric value for API
       isDefault: isDefault,
     };
 
@@ -86,6 +96,7 @@ const AdressModal = () => {
 
     const payloadToUpdate = {
       ...data,
+      type: apiType, // Use numeric value for API
       id: addressModal.AddressId,
       isDefault: isDefault,
     };
@@ -205,6 +216,7 @@ const AdressModal = () => {
         value={watch("type") || ""}
         onChange={(type) => {
           setValue("type", type);
+          console.log("Address type set to:", type, "API value:", displayToApiType(type));
         }}
       />
       <CustomCheckBox

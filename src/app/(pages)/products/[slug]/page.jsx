@@ -27,14 +27,23 @@ import { ClipLoader } from "react-spinners";
 import { useAddToCart } from "@/app/queries/cart/cart.query";
 import { useUser } from "@/app/providers/userprovider";
 import { useRouter } from "next/navigation";
+import { IoIosStar } from "react-icons/io";
+import { useAddContact } from "@/app/queries/contact/contact.query";
+import { useQueryClient } from "@tanstack/react-query";
+import useChat from "@/app/hooks/useChat";
+import useChatBox from "@/app/hooks/useChatBox";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const { user } = useUser();
+  const { setSelectedProvider } = useChat();
+  const { onOpen } = useChatBox();
   const router = useRouter();
+  const addContactMutation = useAddContact();
+  const queryClient = useQueryClient();
 
-  const { data: products } = useGetListProduct();
+  const { data: productsData } = useGetListProduct();
   const [productId, setProductId] = React.useState(null);
   const { data: productDetail, isLoading } = useGetProductById(productId);
 
@@ -43,16 +52,16 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = React.useState(1);
 
   React.useEffect(() => {
-    if (products) {
-      console.log(products);
-      const matchedProduct = products.find(
+    if (productsData && productsData.data && Array.isArray(productsData.data)) {
+      //console.log("Products data:", productsData);
+      const matchedProduct = productsData.data.find(
         (p) => generateSlug(p.productName) === slug
       );
       if (matchedProduct) {
         setProductId(matchedProduct.id);
       }
     }
-  }, [products, slug]);
+  }, [productsData, slug]);
 
   const generateSlug = (name) => {
     return name
@@ -100,6 +109,24 @@ const ProductDetail = () => {
       delay: 0,
       smooth: "easeInOutQuart",
       offset: -50,
+    });
+  };
+
+  const handleChatClick = (provider) => {
+    const providerData = {
+      contactId: productDetail.provider.id,
+      contactName: productDetail.provider.businessName,
+      avatar: productDetail.provider.avatar,
+    };
+    addContactMutation.mutate(provider.id, {
+      onSuccess: () => {
+        setSelectedProvider(providerData);
+        onOpen();
+        queryClient.invalidateQueries(["get_list_contact"]);
+      },
+      onError: (error) => {
+        console.error("Error adding contact:", error);
+      },
     });
   };
 
@@ -185,10 +212,12 @@ const ProductDetail = () => {
                   footlabel="Quantity"
                   className="text-lg !mx-0 font-semibold w-40"
                 />
-                <ExampleNumberField
-                  defaultValue={1}
-                  onChange={(value) => setQuantity(value)}
-                />
+                {user?.id !== productDetail.provider.id && (
+                  <ExampleNumberField
+                    defaultValue={1}
+                    onChange={(value) => setQuantity(value)}
+                  />
+                )}
 
                 <FootTypo
                   footlabel={`${productDetail.quantity} pieces available`}
@@ -197,17 +226,21 @@ const ProductDetail = () => {
               </span>
             </div>
             <div className="inline-flex items-center gap-4">
-              <Button
-                label="Add to cart"
-                className="bg-primary !p-3"
-                icon={<BsCartPlus size={20} />}
-                onClick={handleAddToCart}
-              />
-              <Button
-                label="Add to favourite"
-                className="bg-yellow !p-3"
-                icon={<MdFavoriteBorder size={20} />}
-              />
+              {user?.id !== productDetail.provider.id && (
+                <>
+                  <Button
+                    label="Add to cart"
+                    className="bg-primary !p-3"
+                    icon={<BsCartPlus size={20} />}
+                    onClick={handleAddToCart}
+                  />
+                  <Button
+                    label="Add to favourite"
+                    className="bg-yellow !p-3"
+                    icon={<MdFavoriteBorder size={20} />}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -216,22 +249,42 @@ const ProductDetail = () => {
       <BorderBox className="my-5">
         <div className="flex flex-col lg:flex-row gap-20  my-7 px-6 py-5 ">
           <div className="flex flex-row justify-between">
-            <Avatar userImg="" w={96} h={96} className="cursor-pointer mr-3" />
+            <Avatar
+              userImg={productDetail.provider.avatar}
+              w={96}
+              h={96}
+              className="cursor-pointer mr-3"
+            />
             <div className="flex flex-col flex-grow  justify-between items-start">
               <FootTypo
-                footlabel="ten seller"
+                footlabel={productDetail.provider.businessName}
                 className="text-lg !mx-0 font-semibold"
               />
-              <div className="items-center flex">
-                <FootTypo footlabel="Online 1 hours ago" className="text-sm" />
-              </div>
               <div className="items-center flex justify-between gap-2">
-                <Button
-                  label="Chat Now"
-                  icon={<IoChatboxEllipsesOutline />}
-                  className="bg-primary"
-                />
-                <Button label="Browse Shop" icon={<AiOutlineShop />} />
+                {user?.id === productDetail.provider.id ? (
+                  <Button
+                    label="Go to your shop"
+                    icon={<AiOutlineShop />}
+                    className="bg-primary"
+                    onClick={() => router.push("/")}
+                  />
+                ) : (
+                  <>
+                    <Button
+                      label="Chat Now"
+                      icon={<IoChatboxEllipsesOutline />}
+                      className="bg-primary"
+                      onClick={() => handleChatClick(productDetail.provider)}
+                    />
+                    <Button
+                      label="Browse Shop"
+                      icon={<AiOutlineShop />}
+                      onClick={() =>
+                        router.push(`/provider/${productDetail.provider.slug}`)
+                      }
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -239,29 +292,32 @@ const ProductDetail = () => {
             <div className="grid grid-cols-[repeat(3,auto)] gap-7">
               <div className="flex justify-between outline-none overflow-visible relative">
                 <FootTypo footlabel="Rating" className="text-sm !mx-0" />
-                <FootTypo
-                  footlabel="5.0"
-                  className="text-sm !mx-0 text-red font-semibold"
-                />
+                <div className="flex items-center text-red font-semibold">
+                  <FootTypo
+                    footlabel={productDetail.provider.totalRate}
+                    className="text-sm !mx-0 mr-1"
+                  />
+                  <IoIosStar />
+                </div>
               </div>
               <div className="flex justify-between outline-none overflow-visible relative">
                 <FootTypo footlabel="Product" className="text-sm !mx-0" />
                 <FootTypo
-                  footlabel="5.0"
+                  footlabel={productDetail.provider.totalProduct}
                   className="text-sm !mx-0 text-red font-semibold"
                 />
               </div>
               <div className="flex justify-between outline-none overflow-visible relative">
                 <FootTypo footlabel="Followers" className="text-sm !mx-0" />
                 <FootTypo
-                  footlabel="5.0"
+                  footlabel={productDetail.provider.followersCount}
                   className="text-sm !mx-0 text-red font-semibold"
                 />
               </div>
               <div className="flex justify-between outline-none overflow-visible relative">
                 <FootTypo footlabel="Response time" className="text-sm !mx-0" />
                 <FootTypo
-                  footlabel="5.0"
+                  footlabel="80 %"
                   className="text-sm !mx-0 text-red font-semibold"
                 />
               </div>

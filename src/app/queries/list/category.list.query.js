@@ -5,6 +5,7 @@ import "nprogress/nprogress.css";
 
 const SUB_URL1 = `api/ProductCategory`;
 const SUB_URL2 = `api/DecorCategory`;
+const SUB_URL3 = `api/Season`;
 
 export function useGetListProductCategory() {
   return useQuery({
@@ -32,6 +33,16 @@ export function useGetListDecorCategory() {
       } finally {
         nProgress.done();
       }
+    },
+  });
+}
+
+export function useGetListSeason() {
+  return useQuery({
+    queryKey: ["get_list_season"],
+    queryFn: async () => {
+      const res = await BaseRequest.Get(`/${SUB_URL3}`, false);
+      return res.data;
     },
   });
 }

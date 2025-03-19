@@ -76,7 +76,7 @@ const UserFollowers = () => {
               </span>
             </div>
           </div>
-          <div className="mt-3">
+          <div className="mt-3 space-y-4">
             <DataMapper
               data={followers}
               Component={ProviderCard}
