@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuroraBg from "@/app/components/ui/animated/AuroraBg";
-import Input from "@/app/components/ui/inputs/Input";
-import { FcSearch } from "react-icons/fc";
 import { useGetListDecorService } from "@/app/queries/list/service.list.query";
 import DataMapper from "@/app/components/DataMapper";
 import ServiceCard from "@/app/components/ui/card/ServiceCard";
@@ -16,27 +14,12 @@ import { generateSlug } from "@/app/helpers";
 
 const filters = [
   {
-    label: "Season",
+    label: "Sort by",
     options: [
       { id: 0, name: "All" },
-      { id: 1, name: "Winter" },
-      { id: 2, name: "Spring" },
-      { id: 3, name: "Summer" },
-      { id: 4, name: "Autumn" },
-      { id: 5, name: "Christmas" },
-      { id: 6, name: "New Year" },
-    ],
-  },
-  {
-    label: "Category",
-    options: [
-      { id: 0, name: "All" },
-      { id: 1, name: "Living room" },
-      { id: 2, name: "Dining room" },
-      { id: 3, name: "Kitchen" },
-      { id: 4, name: "Bathroom" },
-      { id: 5, name: "Bedroom" },
-      { id: 6, name: "Other" },
+      { id: 1, name: "Newest" },
+      { id: 2, name: "Oldest" },
+      { id: 3, name: "Rating" },
     ],
   },
 ];
@@ -46,7 +29,7 @@ const BookingPage = () => {
     data: listDecorService,
     isLoading: isInitialLoading,
     isError,
-    refetch: refetchInitialList
+    refetch: refetchInitialList,
   } = useGetListDecorService();
 
   // State to hold search results
@@ -62,8 +45,13 @@ const BookingPage = () => {
       setIsSticky(offset > 300);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Set the document title when component mounts
+  useEffect(() => {
+    document.title = "Booking - Explore All Decor Services | SeasonDecor";
   }, []);
 
   // Handle search results
@@ -86,9 +74,9 @@ const BookingPage = () => {
   return (
     <>
       <AuroraBg
-        colorStops={["#0e87eb", "#0e87eb", "#0e87eb"]}
+        colorStops={["#5fc1f1", "#5fc1f1", "#5fc1f1"]}
         blend={1}
-        amplitude={1}
+        amplitude={0}
         speed={0}
       >
         <div className="absolute pb-40 pt-10 md:pt-20 px-2 w-full md:px-4 lg:px-8">
@@ -110,18 +98,20 @@ const BookingPage = () => {
               </h2>
               <div className="flex relative sm:flex-row flex-col space-y-2 justify-center dark:text-white sm:space-y-0 sm:space-x-4 sm:justify-center mb-4 w-full"></div>
 
-              <div className={`flex gap-4 items-center justify-center w-full max-w-[1000px] justify-self-center pb-5 transition-all duration-500 ${
-                isSticky 
-                  ? 'fixed top-1 left-0 right-0 z-[50] bg-transparent dark:bg-black px-4' 
-                  : ''
-              }`}>
-                <MultiSearch 
+              <div
+                className={`flex gap-4 items-center justify-center w-full max-w-[1000px] justify-self-center pb-5 transition-all duration-500 ${
+                  isSticky
+                    ? "fixed top-1 left-0 right-0 z-[50] bg-transparent px-4"
+                    : ""
+                }`}
+              >
+                <MultiSearch
                   onSearchResults={handleSearchResults}
                   onSearch={() => {
                     setIsSearching(true);
                     setHasSearched(false);
                   }}
-                />                
+                />
               </div>
             </div>
           </div>
@@ -132,10 +122,7 @@ const BookingPage = () => {
       <div className="bg-[linear-gradient(to_right,transparent_1%,var(--gray-50)_10%,var(--gray-50)_90%,transparent_99%)] pb-20 dark:bg-[linear-gradient(to_right,transparent_0%,var(--neutral-900)_10%,var(--neutral-900)_90%,transparent_100%)]">
         <Container>
           <div className="mb-20 ">
-            <ListSidebar
-              filters={filters}
-              className="max-w-[450px]"
-            />
+            <ListSidebar filters={filters} className="max-w-[170px]" />
           </div>
           <div className="flex flex-col gap-10 md:gap-20">
             {isLoading ? (
@@ -144,10 +131,18 @@ const BookingPage = () => {
               </div>
             ) : (
               <>
-                {(!displayData || displayData.length === 0) ? (
-                  <EmptyState 
-                    title={hasSearched ? "No services found matching your search" : "No decor services available"} 
-                    description={hasSearched ? "Try adjusting your search criteria" : "Please check back later"}
+                {!displayData || displayData.length === 0 ? (
+                  <EmptyState
+                    title={
+                      hasSearched
+                        ? "No services found matching your search"
+                        : "No decor services available"
+                    }
+                    description={
+                      hasSearched
+                        ? "Try adjusting your search criteria"
+                        : "Please check back later"
+                    }
                   />
                 ) : (
                   <DataMapper

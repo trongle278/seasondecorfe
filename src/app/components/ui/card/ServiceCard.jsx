@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import { MdCelebration } from "react-icons/md";
 import { GiPartyPopper } from "react-icons/gi";
+import { MdLocationOn } from "react-icons/md";
 
 export const seasonConfig = {
   Winter: { icon: <FaSnowflake className="mr-1" />, bgColor: "bg-primary" },
@@ -79,7 +80,10 @@ const ServiceCard = ({
       >
         <div className="order-last md:order-first flex flex-col gap-2 space-y-2">
           <FootTypo footlabel={style} className="!m-0 font-bold text-lg" />
-          <FootTypo footlabel={category} className="!m-0 font-bold text-sm rounded-md bg-gray-800 w-fit p-2 text-white" />
+          <FootTypo
+            footlabel={category}
+            className="!m-0 font-bold text-sm rounded-md bg-gray-800 w-fit p-2 text-white"
+          />
 
           <div className="flex flex-wrap gap-2 items-center">
             <span className="text-sm font-medium">Suitable for :</span>
@@ -96,8 +100,10 @@ const ServiceCard = ({
               );
             })}
           </div>
-          
-          <FootTypo footlabel={province} className="!m-0 font-bold text-sm" />
+          <div className="flex items-center gap-2">
+            <MdLocationOn size={20} />
+            <FootTypo footlabel={province} className="!m-0 font-bold text-sm" />
+          </div>
 
           <Button
             className="mt-4 w-fit"

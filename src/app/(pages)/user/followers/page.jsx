@@ -12,8 +12,10 @@ import EmptyState from "@/app/components/EmptyState";
 import { useFollow, useUnfollow } from "@/app/queries/user/user.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
+import useChatBox from "@/app/hooks/useChatBox";
 
 const UserFollowers = () => {
+  const { onOpen } = useChatBox(); 
   const { data: followers, isLoading } = useGetFollower();
   const { data: followCount } = useGetFollowCount();
 

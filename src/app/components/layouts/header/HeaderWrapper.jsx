@@ -8,6 +8,7 @@ import MinimalHeader from "./minimalHeader/MinimalHeader";
 const HeaderWrapper = () => {
   const pathname = usePathname();
 
+
   if(pathname === ("/seller/registration")){
     return null;
   }
@@ -22,6 +23,10 @@ const HeaderWrapper = () => {
 
   if (pathname === "/authen/login" || pathname === "/authen/signup") {
     return <MinimalHeader />;
+  }
+
+  if (pathname === "/payment/success") {
+    return null;
   }
 
   return <Header />;

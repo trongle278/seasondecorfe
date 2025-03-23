@@ -24,16 +24,20 @@ export const UserMenu = () => {
 
   const mutationChangeStatus = useChangeStatus();
 
-  const onChangeStatus = React.useCallback(() => {
-    mutationChangeStatus.mutate(false, {
-      onSuccess: () => {
-        router.push("/");
-      },
-      onError: () => {
-        console.log("error");
-      },
-    });
-  }, [mutationChangeStatus, router]);
+  const onChangeStatus = React.useCallback(async () => {
+    if (user?.roleId === 1) {
+      await signOut({ callbackUrl: "/authen/login" });
+    } else {
+      mutationChangeStatus.mutate(false, {
+        onSuccess: () => {
+          router.push("/");
+        },
+        onError: () => {
+          console.log("error");
+        },
+      });
+    }
+  }, [mutationChangeStatus, router, user?.roleId]);
 
   const ToggleOpen = React.useCallback(() => {
     setIsOpen((value) => !value);
@@ -88,7 +92,8 @@ export const UserMenu = () => {
                 {user?.lastName}
               </div>
 
-              {!user?.isProvider ? (
+
+              {!user?.isProvider && user?.roleId !== 1 ? (
                 <>
                   <MenuItem
                     onClick={() => router.push("/user/account/profile")}

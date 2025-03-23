@@ -12,7 +12,7 @@ import { BorderBox } from "@/app/components/ui/BorderBox";
 import DetailSection from "../components/sections/DetailSection";
 import DescrriptionSection from "../components/sections/DescriptionSection";
 import ExampleNumberField from "@/app/components/ui/Select/NumberField";
-import CommentSection from "../components/sections/CommentSection";
+import ReviewSection from "@/app/components/ui/review/ReviewSection";
 import { FaDongSign } from "react-icons/fa6";
 import { BsCartPlus } from "react-icons/bs";
 import { useParams } from "next/navigation";
@@ -104,7 +104,7 @@ const ProductDetail = () => {
   };
 
   const handleRatingClick = () => {
-    scroller.scrollTo("commentSection", {
+    scroller.scrollTo("reviewSection", {
       duration: 800,
       delay: 0,
       smooth: "easeInOutQuart",
@@ -266,7 +266,7 @@ const ProductDetail = () => {
                     label="Go to your shop"
                     icon={<AiOutlineShop />}
                     className="bg-primary"
-                    onClick={() => router.push("/")}
+                    onClick={() => router.push(`/provider/${productDetail.provider.slug}`)}
                   />
                 ) : (
                   <>
@@ -327,7 +327,25 @@ const ProductDetail = () => {
       </BorderBox>
       <DetailSection />
       <DescrriptionSection description={productDetail.description} />
-      <CommentSection />
+      {/* Review Section */}
+      <ReviewSection
+        label="PRODUCT REVIEWS"
+        reviews={productDetail.reviews || []}
+        productId={productDetail.id}
+        averageRating={productDetail.averageRating || 0}
+        totalReviews={productDetail.reviews?.length || 0}
+        onAddReview={({ rating, comment, productId }) => {
+          return new Promise((resolve) => {
+            console.log("Submit review:", { rating, comment, productId });
+            setTimeout(() => {
+              queryClient.invalidateQueries({
+                queryKey: ["get_product_by_id", productId],
+              });
+              resolve();
+            }, 1000);
+          });
+        }}
+      />
     </Container>
   );
 };
