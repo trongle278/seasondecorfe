@@ -13,7 +13,7 @@ export function useGetListFavorite() {
     queryFn: async () => {
       try {
         const res = await BaseRequest.Get(
-          `/${SUB_URL}`,
+          `/${SUB_URL}/myfavorite`,
           false
         );
         return res.data;

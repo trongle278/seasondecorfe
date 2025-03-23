@@ -94,7 +94,7 @@ const SellerProductManage = () => {
           <Button
             label="Modify"
             onClick={() =>
-              router.push(`/seller/product/edit/${row.original.id}`)
+              router.push(`/seller/product/update?id=${row.original.id}`)
             }
             className="p-2 bg-primary"
             icon={<FaEdit size={20} />}
@@ -127,23 +127,6 @@ const SellerProductManage = () => {
       console.log("Updated pagination state:", updated);
       return updated;
     });
-  }, []);
-
-  const handleSortingChange = React.useCallback((sorting) => {
-    console.log("Sorting changed:", sorting);
-    if (sorting.length > 0) {
-      setPagination((prev) => ({
-        ...prev,
-        sortBy: sorting[0].id,
-        descending: sorting[0].desc,
-      }));
-    } else {
-      setPagination((prev) => ({
-        ...prev,
-        sortBy: "",
-        descending: false,
-      }));
-    }
   }, []);
 
   // Function to handle search by product name
@@ -212,9 +195,9 @@ const SellerProductManage = () => {
             pageSize={pagination.pageSize}
             initialPageIndex={tablePageIndex}
             manualPagination={true}
+            manualSorting={false}
             pageCount={totalPages}
             onPaginationChange={handlePaginationChange}
-            onSortingChange={handleSortingChange}
             totalCount={totalCount}
           />
         )}

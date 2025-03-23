@@ -1,11 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import Image from "next/image";
 
-const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
+const ImageUpload = ({ onImageChange, existingImages = [], onExistingImagesChange, resetImage, required, className }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [displayImages, setDisplayImages] = useState([]);
+
+  // Initialize displayImages with existingImages if provided
+  useEffect(() => {
+    if (existingImages && existingImages.length > 0) {
+      setDisplayImages([...existingImages]);
+    }
+  }, [existingImages]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -14,7 +22,7 @@ const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
     // Validate selected images
     const validFiles = files.filter((file) => allowedTypes.includes(file.type));
 
-    if (validFiles.length + selectedImages.length > 5) {
+    if (validFiles.length + displayImages.length > 5) {
       setErrorMessage("You can upload up to 5 images only.");
       return;
     }
@@ -23,17 +31,22 @@ const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
       const imagePromises = validFiles.map((file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onload = () => resolve({ file, preview: reader.result });
+          reader.onload = () => resolve({ file, preview: reader.result, isNew: true });
           reader.readAsDataURL(file);
         });
       });
   
       Promise.all(imagePromises).then((newImages) => {
-        const updatedImages = [...selectedImages, ...newImages];
-  
-        setSelectedImages(updatedImages); 
-        onImageChange(updatedImages.map((img) => img.file)); 
-        setErrorMessage(""); 
+        const updatedNewImages = [...selectedImages, ...newImages];
+        setSelectedImages(updatedNewImages);
+        
+        // Update the combined display images
+        const updatedDisplayImages = [...displayImages, ...newImages];
+        setDisplayImages(updatedDisplayImages);
+        
+        // Notify parent about new image files
+        onImageChange(updatedNewImages.map((img) => img.file));
+        setErrorMessage("");
       });
     } else {
       setErrorMessage("Please select valid image files (png, jpg, jpeg)");
@@ -41,9 +54,29 @@ const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
   };
 
   const removeImage = (index) => {
-    const updatedImages = selectedImages.filter((_, i) => i !== index);
-    setSelectedImages(updatedImages);
-    onImageChange(updatedImages.map((img) => img.file));
+    const imageToRemove = displayImages[index];
+    
+    // Remove from the appropriate array
+    if (imageToRemove.isExisting) {
+      // It's an existing image
+      const updatedExistingImages = existingImages.filter(img => img.id !== imageToRemove.id);
+      
+      // Notify parent component about removed existing image
+      if (onExistingImagesChange) {
+        onExistingImagesChange(updatedExistingImages);
+      }
+    } else {
+      // It's a new image
+      const updatedSelectedImages = selectedImages.filter((_, i) => 
+        selectedImages.findIndex(img => img.preview === imageToRemove.preview) !== i
+      );
+      setSelectedImages(updatedSelectedImages);
+      onImageChange(updatedSelectedImages.map((img) => img.file));
+    }
+    
+    // Update the display list
+    const updatedDisplayImages = displayImages.filter((_, i) => i !== index);
+    setDisplayImages(updatedDisplayImages);
   };
 
   return (
@@ -51,7 +84,7 @@ const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
       <div className="extraOutline bg-transparent w-max m-auto rounded-lg">
         <div
           className="file_upload p-5 relative border-4 border-dotted"
-          style={{ width: "300px" }}
+          style={{ width: "600px" }}
         >
           <div className="input_field flex flex-col w-max mx-auto text-center">
             <label className="flex flex-col items-center">
@@ -63,22 +96,22 @@ const ImageUpload = ({ onImageChange, resetImage, required, className }) => {
               />
               <MdOutlineFileUpload size={30} />
               <div className="text-sm bg-primary text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-indigo-500 w-full">
-                Select Images ({selectedImages.length}/5)
+                Select Images ({displayImages.length}/5)
               </div>
             </label>
           </div>
 
-          {/* Display Selected Images */}
+          {/* Display All Images (Existing + New) */}
           <div className="mt-4 flex flex-wrap gap-3 justify-start">
-            {selectedImages.map((image, index) => (
+            {displayImages.map((image, index) => (
               <div
                 key={index}
                 className="relative rounded-md overflow-hidden border border-gray-300 shadow-md"
                 style={{ width: "100px", height: "100px" }} 
               >
                 <Image
-                  src={image.preview}
-                  alt={`Selected Image ${index}`}
+                  src={image.isExisting ? image.url : image.preview}
+                  alt={`Image ${index}`}
                   width={100}
                   height={100}
                   className="w-full h-full object-cover rounded-md"

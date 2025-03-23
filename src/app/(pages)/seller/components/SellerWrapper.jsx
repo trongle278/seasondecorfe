@@ -4,7 +4,7 @@ import {
   Sidebar,
   SidebarBody,
   SidebarLink,
-} from "@/app/components/ui/SellerSidebar/Sidebar";
+} from "@/app/components/ui/sidebar/Sidebar";
 import {
   IconReceipt,
   IconBrandTabler,

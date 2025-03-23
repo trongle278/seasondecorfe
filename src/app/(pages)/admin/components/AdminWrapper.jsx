@@ -4,16 +4,13 @@ import {
   Sidebar,
   SidebarBody,
   SidebarLink,
-} from "@/app/components/ui/SellerSidebar/Sidebar";
+} from "@/app/components/ui/sidebar/Sidebar";
 import {
   IconReceipt,
   IconBrandTabler,
-  IconBuildingStore,
   IconChartBarPopular,
   IconMessages,
-  IconDatabase,
-  IconWorldDollar,
-  IconPackage,
+  IconSettings
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
 
@@ -21,23 +18,23 @@ export default function AdminWrapper({ children }) {
   const links = [
     {
       label: "Overeview System",
-      href: "/seller/dashboard",
+      href: "/admin/dashboard",
       icon: <IconBrandTabler className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "User Management",
-      href: "/seller/order",
+      href: "/admin/manage/account",
       icon: <IconReceipt className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Transaction Management",
-      href: "#",
+      href: "/admin/manage/transaction",
       icon: <IconChartBarPopular className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Settings",
       href: "#",
-      icon: <IconMessages className=" h-5 w-5 flex-shrink-0" />,
+      icon: <IconSettings className=" h-5 w-5 flex-shrink-0" />,
     },
   ];
   const [open, setOpen] = useState(false);

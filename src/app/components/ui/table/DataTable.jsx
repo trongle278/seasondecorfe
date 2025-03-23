@@ -19,6 +19,7 @@ const DataTable = ({
   pageSize,
   initialPageIndex = "",
   manualPagination = false,
+  manualSorting = true,
   pageCount = 0,
   onPaginationChange,
   onSortingChange,
@@ -41,12 +42,12 @@ const DataTable = ({
     }));
   }, [pageSize, initialPageIndex]);
 
-  // Notify parent component about sorting changes
+  // Notify parent component about sorting changes only if manual sorting is enabled
   useEffect(() => {
-    if (onSortingChange && !isInitialMount.current) {
+    if (onSortingChange && manualSorting && !isInitialMount.current) {
       onSortingChange(sorting);
     }
-  }, [sorting, onSortingChange]);
+  }, [sorting, onSortingChange, manualSorting]);
 
   // Notify parent component about pagination changes
   useEffect(() => {
@@ -87,9 +88,9 @@ const DataTable = ({
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: manualPagination ? undefined : getPaginationRowModel(),
-    getSortedRowModel: manualPagination ? undefined : getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel(), // Always include sorted model for client-side sorting
     manualPagination,
-    manualSorting: manualPagination,
+    manualSorting,
     pageCount: manualPagination ? pageCount : undefined,
   });
 
@@ -105,9 +106,9 @@ const DataTable = ({
   };
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow w-full">
+    <div className="overflow-x-auto rounded-lg w-full">
       <table className="w-full text-sm text-left">
-        <thead className="text-xs uppercase bg-gray-50">
+        <thead className="text-xs uppercase">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -156,7 +157,7 @@ const DataTable = ({
             </tr>
           ) : (
             table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50">
+              <tr key={row.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-6 py-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -9,7 +9,12 @@ import { useParams } from "next/navigation";
 import { useGetListDecorService } from "@/app/queries/list/service.list.query";
 import { useGetDecorServiceById } from "@/app/queries/service/service.query";
 import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
-import { MdFavoriteBorder, MdFavorite, MdLocationOn, MdCategory } from "react-icons/md";
+import {
+  MdFavoriteBorder,
+  MdFavorite,
+  MdLocationOn,
+  MdCategory,
+} from "react-icons/md";
 import { IoCallOutline } from "react-icons/io5";
 import { useAddFavoriteDecorService } from "@/app/queries/favorite/favorit.query";
 import { useUser } from "@/app/providers/userprovider";
@@ -17,6 +22,8 @@ import { useGetListFavorite } from "@/app/queries/list/favorite.list.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSeasonConfig } from "@/app/components/ui/card/ServiceCard";
 import { generateSlug } from "@/app/helpers";
+import ReviewSection from "@/app/components/ui/review/ReviewSection";
+
 const ServiceDetail = () => {
   const { slug } = useParams();
   const [serviceId, setServiceId] = React.useState(null);
@@ -53,7 +60,7 @@ const ServiceDetail = () => {
   // Check if the service is already in favorites
   const isInFavorites = React.useMemo(() => {
     if (!favorites || !serviceId) return false;
-    return favorites.some((fav) => fav.decorServiceId === serviceId);
+    return favorites.some((fav) => fav.decorServiceDetails.id === serviceId);
   }, [favorites, serviceId]);
 
   const handleAddToFavorites = () => {
@@ -101,11 +108,13 @@ const ServiceDetail = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-gray-500 p-12 border rounded-lg">No images available</p>
+                <p className="text-center text-gray-500 p-12 border rounded-lg">
+                  No images available
+                </p>
               )}
             </div>
           </div>
-    
+
           <div className="order-1 md:order-2 p-4">
             <div className="space-y-6">
               <h1 className="text-3xl font-bold text-black dark:text-white">
@@ -120,11 +129,16 @@ const ServiceDetail = () => {
 
               {/* Season Tags */}
               <div className="flex flex-wrap gap-2 items-center">
-                <FootTypo footlabel="Suitable for:" className="!m-0 font-bold text-sm" />
+                <FootTypo
+                  footlabel="Suitable for:"
+                  className="!m-0 font-bold text-sm"
+                />
                 <div className="flex flex-wrap gap-2">
                   {serviceDetail.seasons && serviceDetail.seasons.length > 0 ? (
                     serviceDetail.seasons.map((season, index) => {
-                      const { icon, bgColor } = getSeasonConfig(season.seasonName);
+                      const { icon, bgColor } = getSeasonConfig(
+                        season.seasonName
+                      );
                       return (
                         <div
                           key={index}
@@ -150,14 +164,20 @@ const ServiceDetail = () => {
 
               <div className="flex items-center gap-2">
                 <MdFavorite size={20} />
-                <FootTypo footlabel="People liked : " className="!m-0 font-bold text-sm" />
+                <FootTypo
+                  footlabel="People liked : "
+                  className="!m-0 font-bold text-sm"
+                />
                 <span className="text-sm font-medium">
                   {serviceDetail.favoriteCount || "No favorite yet"}
                 </span>
               </div>
 
               <div className="mt-4">
-                <FootTypo footlabel="Description" className="!m-0 font-bold text-lg" />
+                <FootTypo
+                  footlabel="Description"
+                  className="!m-0 font-bold text-lg"
+                />
                 <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                   <p className="whitespace-pre-line text-gray-700 dark:text-gray-300">
                     {serviceDetail.description || "No description available"}
@@ -165,7 +185,6 @@ const ServiceDetail = () => {
                 </div>
               </div>
 
-  
               <div className="pt-6 border-t mt-8">
                 {!isServiceProvider ? (
                   <div className="flex flex-col sm:flex-row gap-4">
@@ -175,9 +194,17 @@ const ServiceDetail = () => {
                       icon={<IoCallOutline size={20} />}
                     />
                     <Button
-                      label={isInFavorites ? "In your wishlist" : "Add to Wishlist"}
+                      label={
+                        isInFavorites ? "In your wishlist" : "Add to Wishlist"
+                      }
                       className={isInFavorites ? "bg-green-600" : "bg-yellow"}
-                      icon={isInFavorites ? <MdFavorite size={20} /> : <MdFavoriteBorder size={20} />}
+                      icon={
+                        isInFavorites ? (
+                          <MdFavorite size={20} />
+                        ) : (
+                          <MdFavoriteBorder size={20} />
+                        )
+                      }
                       onClick={handleAddToFavorites}
                       disabled={isInFavorites || isPending}
                     />
@@ -194,6 +221,26 @@ const ServiceDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Review Section */}
+      <ReviewSection
+        label="SERVICE REVIEWS"
+        reviews={serviceDetail.reviews || []}
+        serviceId={serviceId}
+        averageRating={serviceDetail.averageRating || 0}
+        totalReviews={serviceDetail.reviews?.length || 0}
+        onAddReview={({ rating, comment, serviceId }) => {
+          return new Promise((resolve) => {
+            console.log("Submit review:", { rating, comment, serviceId });
+            setTimeout(() => {
+              queryClient.invalidateQueries({
+                queryKey: ["get_decor_service_by_id", serviceId],
+              });
+              resolve();
+            }, 1000);
+          });
+        }}
+      />
     </Container>
   );
 };

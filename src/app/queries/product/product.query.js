@@ -41,3 +41,24 @@ export function useGetProductById(id) {
     refetchOnWindowFocus: false,
   });
 }
+
+export function useUpdateProduct() {
+  return useMutation({
+    mutationFn: async (data) => {
+      if (!data) throw new Error("No product provided");
+
+      // Get the product ID from the FormData
+      const productId = data.get("id");
+      
+      if (!productId) throw new Error("Product ID is required for updating");
+
+      nProgress.start();
+
+      try {
+        return await BaseRequest.Put(`/${SUB_URL}/updateProduct/${productId}`, data);
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}

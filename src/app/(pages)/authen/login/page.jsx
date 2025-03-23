@@ -16,6 +16,7 @@ import { FcGoogle } from "react-icons/fc";
 import Logo from "@/app/components/Logo";
 import { signIn } from "next-auth/react";
 import { useLogin } from "@/app/queries/user/authen.query";
+import Head from "next/head";
 
 export default function Login() {
   const router = useRouter();
@@ -44,6 +45,10 @@ export default function Login() {
       },
     });
   };
+
+  React.useEffect(() => {
+    document.title = "Login - SeasonDecor";
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden">

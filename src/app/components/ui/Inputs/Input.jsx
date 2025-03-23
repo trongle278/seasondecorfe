@@ -6,7 +6,8 @@ import { Controller } from "react-hook-form";
 
 const formatNumber = (value) => {
   if (!value) return "";
-  return new Intl.NumberFormat("vi-VN").format(value.replace(/\D/g, ""));
+  const valueStr = String(value);
+  return new Intl.NumberFormat("vi-VN").format(valueStr.replace(/\D/g, ""));
 };
 
 const Input = ({
@@ -71,7 +72,10 @@ const Input = ({
                 id={id}
                 disabled={disabled}
                 value={formatNumber(value)}
-                onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
+                onChange={(e) => {
+                  const inputVal = e.target.value || '';
+                  onChange(inputVal.replace(/\D/g, ""));
+                }}
                 placeholder={placeholder}
                 className={cn(
                   `flex h-12 peer p-4 pt-6 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-10 py-2 text-sm

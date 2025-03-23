@@ -6,7 +6,6 @@ import { TfiMoreAlt } from "react-icons/tfi";
 import ThemeSwitch from "../../../ThemeSwitch";
 import Logo from "../../../Logo";
 import RightWrapper from "../RightWrapper";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "../UserMenu";
@@ -119,7 +118,7 @@ export default function Header({ providerRef }) {
                   ]}
                   animationSpeed={3}
                   showBorder={true}
-                  className="p-2 text-sm font-primary"
+                  className="p-2 text-sm font-semibold"
                   onClick={onChangeStatus}
                 >
                   PROVIDER CENTRE
@@ -127,13 +126,13 @@ export default function Header({ providerRef }) {
               </div>
               <Link
                 href="/pricing"
-                className="text-sm font-primary text-white/70 hover:text-primary"
+                className="text-sm font-semibold text-white/70 hover:text-primary"
               >
                 PRICING
               </Link>
               <Link
                 href="/provider"
-                className="text-sm font-primary text-white/70 hover:text-primary "
+                className="text-sm font-semibold text-white/70 hover:text-primary "
               >
                 PROVIDERS
               </Link>
@@ -141,7 +140,7 @@ export default function Header({ providerRef }) {
               
               <Link
                 href="/products"
-                className="text-sm font-primary text-white/70 hover:text-primary"
+                className="text-sm font-semibold text-white/70 hover:text-primary"
               >
                 SHOP
               </Link>

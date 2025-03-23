@@ -60,7 +60,7 @@ export function UserProvider({ children }) {
     if (!roleId === 1 && pathname.startsWith("/admin/dashboard")) {
       router.replace("/authen/login");
     } else if (roleId === 1 && pathname === "/") {
-      router.replace("/admin/dashboard");
+      router.push("/admin/dashboard");
     }
   }, [user, pathname, router]);
 

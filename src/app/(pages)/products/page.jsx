@@ -1,11 +1,13 @@
 "use client";
 
+import * as React from "react";
 import { ListWrapper } from "@/app/components/ui/ListWrapper";
 import DataMapper from "@/app/components/DataMapper";
 import ProductCard from "@/app/components/ui/card/ProductCard";
 import EmptyState from "@/app/components/EmptyState";
 import { useGetListProduct } from "@/app/queries/list/product.list.query";
 import { Skeleton } from "@mui/material";
+import { generateSlug } from "@/app/helpers";
 
 const filters = [
   {
@@ -50,12 +52,10 @@ const ListProductPage = () => {
   
   const products = productsData?.data || [];
 
-  const generateSlug = (name) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  };
+  // Set the document title when component mounts
+  React.useEffect(() => {
+    document.title = "Shop | SeasonDecor";
+  }, []);
 
   return (
     <ListWrapper filters={filters}>

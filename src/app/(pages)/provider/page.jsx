@@ -90,6 +90,10 @@ const ListProviderPage = () => {
     });
   };
 
+  React.useEffect(() => {
+    document.title = "Provider | SeasonDecor";
+  }, []);
+
   return (
     <ListWrapper filters={filters}>
       <DataMapper
