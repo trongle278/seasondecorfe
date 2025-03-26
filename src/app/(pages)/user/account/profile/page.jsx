@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-
+import React, { useCallback, useState } from 'react';
 import { UserWrapper } from "../../components/UserWrapper";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Input from "@/app/components/ui/inputs/Input";
@@ -17,7 +16,7 @@ import { UserProfileUpdate } from "@/app/api/upload";
 const UserProfile = () => {
   const { user, isError } = useUser();
 
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { updateProfile } = UserProfileUpdate();
 
   const genderOptions = [
@@ -47,7 +46,7 @@ const UserProfile = () => {
     setValue("dob", date); //
   };
 
-  const onSubmit = React.useCallback(async (data) => {
+  const onSubmit = useCallback(async (data) => {
 
     const userData = {
       firstName: data.firstName,

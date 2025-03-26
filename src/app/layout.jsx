@@ -9,18 +9,20 @@ import AdressModal from "./components/ui/Modals/AddressModal";
 import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
 import SearchModal from "./components/ui/Modals/SearchModal";
 import ChatBox from "./components/ui/chatBox/ChatBox";
-import { Metadata } from 'next';
 
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
   title: {
-    template: '%s | SeasonDecor',
-    default: 'SeasonDecor',
+    template: '%s | SeasonDecor - A platform for seasonal decoration services',
+    default: 'SeasonDecor - A platform for seasonal decoration services',
   },
   description: 'Find seasonal decoration services for your home',
   metadataBase: new URL('https://www.seasondecor.com'),
+  icons: {
+    icon: '/logo.svg',
+  },
 };
 
 export default function RootLayout({ children }) {

@@ -79,7 +79,7 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     }
     
     if (selectedValues.season && selectedValues.season !== "All") {
-      apiParams.SeasonName = selectedValues.season;
+      apiParams.SeasonNames = selectedValues.season;
       hasAnyParam = true;
     }
     

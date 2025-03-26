@@ -45,6 +45,7 @@
     "framer-motion": "^11.18.0",
     "gsap": "^3.12.7",
     "js-cookie": "^3.0.5",
+    "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
     "mini-svg-data-uri": "^1.4.4",
     "motion": "^11.18.2",

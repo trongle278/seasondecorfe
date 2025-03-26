@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { EditorContent } from "@tiptap/react";
 import { IoSend, IoClose, IoEyeSharp } from "react-icons/io5";
 import { BsImage } from "react-icons/bs";
 import { AiOutlineFileGif } from "react-icons/ai";
 import { ImAttachment } from "react-icons/im";
-import { FaCheckDouble } from "react-icons/fa6";
+import { GoDownload } from "react-icons/go";
+import { FaFilePdf } from "react-icons/fa6";
+import { LuCheck } from "react-icons/lu";
+import { CgSpinner } from "react-icons/cg";
+import fileDownload from "js-file-download";
 
 const ChatView = ({
   messages = [],
@@ -20,6 +24,44 @@ const ChatView = ({
   messagesEndRef,
   isLoading,
 }) => {
+  const [downloadingFiles, setDownloadingFiles] = useState({});
+
+  const isImageFile = (fileName) => {
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+    return imageExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
+  };
+
+  const isPdfFile = (fileName) => {
+    return fileName.toLowerCase().endsWith(".pdf");
+  };
+
+  const getFileIcon = (fileName) => {
+    if (isPdfFile(fileName))
+      return <BsFilePdf className="text-red-500" size={18} />;
+    return <ImAttachment size={18} />;
+  };
+  
+  const handleDownloadFile = async (fileUrl, fileName, fileId) => {
+    try {
+      // Set downloading state for this file
+      setDownloadingFiles(prev => ({ ...prev, [fileId]: true }));
+      
+      const response = await fetch(fileUrl);
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      // For large files, this might take some time
+      const blob = await response.blob();
+      fileDownload(blob, fileName);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      // Fallback to direct download if fetch fails
+      window.open(fileUrl, '_blank');
+    } finally {
+      // Clear downloading state
+      setDownloadingFiles(prev => ({ ...prev, [fileId]: false }));
+    }
+  };
+
   return (
     <>
       {/* Messages Container */}
@@ -52,21 +94,88 @@ const ChatView = ({
                   />
                   {msg.files && msg.files.length > 0 && (
                     <div className="mt-2 space-y-2">
-                      {msg.files.map((file, fileIndex) => (
-                        <div
-                          key={`${msg.id}-${file.fileId || fileIndex}`}
-                          className="flex items-center gap-2 p-2 bg-white/10 rounded"
-                        >
-                          <a
-                            href={file.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs hover:underline truncate max-w-[200px]"
+                      {msg.files.map((file, fileIndex) => {
+                        const fileId = `${msg.id}-${file.fileId || fileIndex}`;
+                        const isDownloading = downloadingFiles[fileId];
+                        
+                        return (
+                          <div
+                            key={fileId}
+                            className="flex flex-col gap-2"
                           >
-                            {file.fileName}
-                          </a>
-                        </div>
-                      ))}
+                            {isImageFile(file.fileName) ? (
+                              <div className="relative group">
+                                <img
+                                  src={file.fileUrl}
+                                  alt={file.fileName}
+                                  className="max-w-full h-auto rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() =>
+                                    window.open(file.fileUrl, "_blank")
+                                  }
+                                />
+                                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {file.fileName}
+                                </div>
+                              </div>
+                            ) : isPdfFile(file.fileName) ? (
+                              <div className="bg-white/10 p-3 rounded-lg border border-gray-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <FaFilePdf className="text-red-500" size={20} />
+                                  <span className="text-xs font-medium truncate max-w-[180px]">
+                                    {file.fileName}
+                                  </span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => 
+                                      handleDownloadFile(file.fileUrl, file.fileName, fileId)
+                                    }
+                                    disabled={isDownloading}
+                                    className={`flex items-center gap-1 ${
+                                      isDownloading 
+                                        ? "bg-gray-200 text-gray-500" 
+                                        : "bg-gray-100 hover:bg-gray-200 text-gray-800"
+                                    } text-xs py-1 px-2 rounded transition-colors`}
+                                  >
+                                    {isDownloading ? (
+                                      <>
+                                        <CgSpinner size={12} className="animate-spin" />
+                                        Downloading...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <GoDownload size={12} />
+                                        Download
+                                      </>
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      window.open(file.fileUrl, "_blank")
+                                    }
+                                    className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs py-1 px-2 rounded transition-colors"
+                                  >
+                                    <IoEyeSharp size={12} />
+                                    View
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 p-2 bg-white/10 rounded">
+                                {getFileIcon(file.fileName)}
+                                <a
+                                  href={file.fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs hover:underline truncate max-w-[200px]"
+                                >
+                                  {file.fileName}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                   <div className="flex flex-col items-start justify-between text-xs opacity-70 mt-2">
@@ -82,7 +191,7 @@ const ChatView = ({
                         {msg.isRead ? (
                           <IoEyeSharp size={12} />
                         ) : (
-                          <FaCheckDouble size={12} />
+                          <LuCheck size={12} />
                         )}
                         {msg.isRead ? "Viewed" : "Sent"}
                       </span>
@@ -126,6 +235,13 @@ const ChatView = ({
                 key={`${file.name}-${index}`}
                 className="flex items-center gap-2 p-2 bg-white rounded-lg shadow-sm border border-gray-200 group hover:border-primary transition-colors"
               >
+                {isImageFile(file.name) ? (
+                  <BsImage size={16} className="text-blue-500" />
+                ) : isPdfFile(file.name) ? (
+                  <FaFilePdf size={16} className="text-red-500" />
+                ) : (
+                  <ImAttachment size={16} className="text-gray-500" />
+                )}
                 <span className="text-xs text-gray-600 truncate max-w-[150px]">
                   {file.name}
                 </span>

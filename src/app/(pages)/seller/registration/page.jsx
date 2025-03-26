@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useCallback } from "react";
 import { Label } from "@/app/components/ui/inputs/Label";
 import Input from "@/app/components/ui/inputs/Input";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
@@ -49,7 +49,7 @@ export default function RegistrationPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = React.useCallback(
+  const onSubmit = useCallback(
     async (data) => {
       const payload = {
         avatar: data.avatar,
@@ -95,7 +95,7 @@ export default function RegistrationPage() {
             <h2 className="text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
               Provide more information
             </h2>
-            <div className="mt-10 w-[60%]">
+            <div className="mt-10 w-[80%]">
               <div className="space-y-6">
                 <EditAvatar
                   userImg={user?.avatar}
@@ -190,7 +190,7 @@ export default function RegistrationPage() {
         </div>
       </main>
 
-      <div className="relative w-full z-20 h-full max-h-[120vh] hidden md:flex border-l border-neutral-100 dark:border-neutral-800 overflow-hidden bg-gray-50 dark:bg-neutral-900 items-center justify-center">
+      <div className="relative w-full z-20 h-full max-h-[150vh] hidden md:flex border-l border-neutral-100 dark:border-neutral-800 overflow-hidden bg-transparent dark:bg-neutral-900 items-center justify-center">
         <InfiniteScroll
           items={items}
           isTilted={true}

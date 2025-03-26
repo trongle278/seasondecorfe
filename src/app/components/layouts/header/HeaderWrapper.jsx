@@ -29,6 +29,10 @@ const HeaderWrapper = () => {
     return null;
   }
 
+  if (pathname === "/pay") {
+    return null;
+  }
+
   return <Header />;
 };
 

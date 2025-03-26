@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { UserWrapper } from "../components/UserWrapper";
 import { useGetFollowCount } from "@/app/queries/list/follow.list.query";
 import { FootTypo } from "@/app/components/ui/Typography";

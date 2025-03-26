@@ -58,7 +58,7 @@ export function useSearchDecorService(params) {
         const queryParams = [];
         if (params.Province) queryParams.push(`Province=${encodeURIComponent(params.Province)}`);
         if (params.CategoryName) queryParams.push(`CategoryName=${encodeURIComponent(params.CategoryName)}`);
-        if (params.SeasonName) queryParams.push(`SeasonName=${encodeURIComponent(params.SeasonName)}`);
+        if (params.SeasonNames) queryParams.push(`SeasonNames=${encodeURIComponent(params.SeasonNames)}`);
         
         const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
         

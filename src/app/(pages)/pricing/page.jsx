@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React from "react";
 import MainWrapper from "@/app/components/MainWrapper";
 import PricingCard from "@/app/components/ui/PricingCard/PricingCard";
 import { toast } from "sonner";
@@ -10,10 +10,6 @@ import { NextSeo } from "next-seo";
 
 
 const PricingPage = () => {
-
-  React.useEffect(() => {
-    document.title = "Pricing | SeasonDecor";
-  }, []);
 
   
   return (
