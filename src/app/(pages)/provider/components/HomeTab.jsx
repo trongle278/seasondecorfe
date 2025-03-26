@@ -31,7 +31,7 @@ const HomeTab = ({ phone, address, bio }) => {
             className="!m-0 text-lg font-semibold"
           />
         </div>
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg whitespace-pre-line">
+        <div className="whitespace-pre-line">
           <FootTypo
             footlabel={bio || "No bio provided."}
             className="!m-0 whitespace-pre-line"

@@ -13,7 +13,7 @@ class SignalRService {
     try {
       if (this.connection) {
         if (this.connection.state === signalR.HubConnectionState.Connected) {
-          //console.log("Already connected to SignalR");
+          console.log("Already connected to SignalR with connectionId:", this.connection);
           return;
         }
         await this.stopConnection();

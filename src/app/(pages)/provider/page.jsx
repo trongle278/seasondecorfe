@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { ListWrapper } from "@/app/components/ui/ListWrapper";
 import ProviderCard from "@/app/components/ui/card/ProviderCard";
 import { useGetListProvider } from "@/app/queries/list/provider.list.query";
@@ -89,10 +89,6 @@ const ListProviderPage = () => {
       },
     });
   };
-
-  React.useEffect(() => {
-    document.title = "Provider | SeasonDecor";
-  }, []);
 
   return (
     <ListWrapper filters={filters}>

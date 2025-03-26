@@ -9,10 +9,16 @@ import { usePathname } from "next/navigation";
 const Footer = () => {
   const pathname = usePathname();
   const isSeller= pathname.startsWith("/seller/");
+  const isPay= pathname === "/pay" || pathname === "/payment/success" ;
 
   if (isSeller) {
     return null;
   }
+
+  if (isPay) {
+    return null;
+  }
+
   return (
     <div className="border-t border-neutral-100 dark:border-white px-8 py-20 bg-white dark:bg-black">
       <div className="max-w-7xl mx-auto text-sm text-neutral-500 flex sm:flex-row flex-col justify-between items-start ">

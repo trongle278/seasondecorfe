@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import Container from "@/app/components/layouts/Container";
 import { HeadTypo, BodyTypo, FootTypo } from "@/app/components/ui/Typography";
 import Button2 from "@/app/components/ui/Buttons/Button2";
@@ -47,7 +47,7 @@ const Cart = () => {
   const handleQuantityChange = React.useRef(
     debounce((newQuantity, productId, accountId, updateQuantity) => {
       updateQuantity({ accountId, productId, quantity: newQuantity });
-    }, 500) 
+    }, 500)
   ).current;
 
   return (

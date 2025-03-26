@@ -39,7 +39,7 @@ const BookingPage = () => {
   const [isSticky, setIsSticky] = useState(false);
 
   // Handle scroll event
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
       setIsSticky(offset > 300);
@@ -47,11 +47,6 @@ const BookingPage = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Set the document title when component mounts
-  useEffect(() => {
-    document.title = "Booking - Explore All Decor Services | SeasonDecor";
   }, []);
 
   // Handle search results

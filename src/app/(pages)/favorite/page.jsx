@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { ListWrapper } from "@/app/components/ui/ListWrapper";
 import DataMapper from "@/app/components/DataMapper";
 import { useGetListFavorite } from "@/app/queries/list/favorite.list.query";
@@ -46,7 +47,10 @@ const FavoritePage = () => {
           seasons: item.decorServiceDetails.seasons,
           isService: true,
           onRemoveFavorite: () => removeFavorite(item.favoriteId),
-          onClick: () => router.push(`/booking/${generateSlug(item.decorServiceDetails.style)}`),
+          onClick: () =>
+            router.push(
+              `/booking/${generateSlug(item.decorServiceDetails.style)}`
+            ),
         })}
       />
     </ListWrapper>

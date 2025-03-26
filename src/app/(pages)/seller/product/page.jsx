@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SellerWrapper from "../components/SellerWrapper";
 import Button from "@/app/components/ui/Buttons/Button";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ const SellerProductManage = () => {
   const router = useRouter();
   const userSlug = useSelector((state) => state.users.userSlug);
 
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 10,
     sortBy: "",
@@ -110,12 +110,12 @@ const SellerProductManage = () => {
     },
   ];
 
-  const handleDeleteProduct = React.useCallback((productId) => {
+  const handleDeleteProduct = useCallback((productId) => {
     // Implement delete functionality here
     console.log("Delete product:", productId);
   }, []);
 
-  const handlePaginationChange = React.useCallback((newPagination) => {
+  const handlePaginationChange = useCallback((newPagination) => {
     console.log("Pagination changed from DataTable:", newPagination);
 
     setPagination((prev) => {
@@ -130,7 +130,7 @@ const SellerProductManage = () => {
   }, []);
 
   // Function to handle search by product name
-  const handleSearch = React.useCallback((productName) => {
+  const handleSearch = useCallback((productName) => {
     setPagination((prev) => ({
       ...prev,
       productName,
@@ -139,7 +139,7 @@ const SellerProductManage = () => {
   }, []);
 
   // Function to handle price filter
-  const handlePriceFilter = React.useCallback((minPrice, maxPrice) => {
+  const handlePriceFilter = useCallback((minPrice, maxPrice) => {
     setPagination((prev) => ({
       ...prev,
       minPrice,

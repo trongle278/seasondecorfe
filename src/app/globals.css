@@ -321,7 +321,7 @@
 }
 
 .ProseMirror {
-  padding: 1px;
+  padding: 5px;
   min-height: 40px;
   max-height: 100px;
   overflow-y: auto;

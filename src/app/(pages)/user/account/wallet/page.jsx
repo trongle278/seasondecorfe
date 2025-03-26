@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { UserWrapper } from "../../components/UserWrapper";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Button from "@/app/components/ui/Buttons/Button";
@@ -30,7 +30,7 @@ const UserWallet = () => {
                 <FaWallet size={20} className="text-primary" />
                 <FootTypo
                   footlabel="My Wallet"
-                  className="!m-0 text-2xl font-semibold"
+                  className="!m-0 text-lg font-semibold"
                 />
               </div>
 

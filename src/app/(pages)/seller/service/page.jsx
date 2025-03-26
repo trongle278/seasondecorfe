@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import SellerWrapper from "../components/SellerWrapper";
 import Button from "@/app/components/ui/Buttons/Button";
 import { useRouter } from "next/navigation";

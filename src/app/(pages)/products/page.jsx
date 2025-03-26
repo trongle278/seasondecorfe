@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { ListWrapper } from "@/app/components/ui/ListWrapper";
 import DataMapper from "@/app/components/DataMapper";
 import ProductCard from "@/app/components/ui/card/ProductCard";
@@ -51,11 +51,6 @@ const ListProductPage = () => {
   const { data: productsData, isLoading, isError } = useGetListProduct();
   
   const products = productsData?.data || [];
-
-  // Set the document title when component mounts
-  React.useEffect(() => {
-    document.title = "Shop | SeasonDecor";
-  }, []);
 
   return (
     <ListWrapper filters={filters}>
