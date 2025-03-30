@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const Footer = () => {
   const pathname = usePathname();
   const isSeller= pathname.startsWith("/seller/");
-  const isPay= pathname === "/pay" || pathname === "/payment/success" ;
+  const isPay= pathname === "/user/account/topup" || pathname === "/payment/success" || pathname === "/payment/failure";
 
   if (isSeller) {
     return null;

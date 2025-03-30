@@ -8,29 +8,67 @@ import { ClipLoader } from "react-spinners";
 import useDeleteConfimModal from "@/app/hooks/useDeleteConfirmModal";
 import { IoWarningOutline } from "react-icons/io5";
 import { useDeleteAddress } from "@/app/queries/user/address.query";
+import { useCancelOrder } from "@/app/queries/order/order.query";
+import { useQueryClient } from "@tanstack/react-query";
 
-const DeleteConfirmModal = ({title}) => {
+const DeleteConfirmModal = () => {
   const deleteConfirmModal = useDeleteConfimModal();
   const deleteMutation = useDeleteAddress();
+  const cancelOrderMutation = useCancelOrder();
+  const queryClient = useQueryClient();
+  // Track loading state for both mutations
+  const isLoading = deleteMutation.isLoading || cancelOrderMutation.isLoading;
 
   const handleDelete = () => {
     if (!deleteConfirmModal.itemToDelete) return;
 
-    deleteMutation.mutate(deleteConfirmModal.itemToDelete, {
-      onSuccess: () => {
-        deleteConfirmModal.onClose();
-      },
-    });
+    // Determine which mutation to use based on the type
+    if (deleteConfirmModal.type === 'address') {
+      deleteMutation.mutate(deleteConfirmModal.itemToDelete, {
+        onSuccess: () => {
+          deleteConfirmModal.onClose();
+        },
+        onError: (error) => {
+          console.error("Error deleting address:", error);
+        }
+      });
+    } 
+    else if (deleteConfirmModal.type === 'order') {
+      cancelOrderMutation.mutate(deleteConfirmModal.itemToDelete, {
+        onSuccess: () => {
+          deleteConfirmModal.onClose();
+        },
+        onError: (error) => {
+          console.error("Error canceling order:", error);
+        }
+      });
+    }
   };
 
-  {
-    /*----------------RENDER INSIDE MODAL COMPONENT WITH PROPS---------*/
-  }
+  // Get appropriate title and action label based on type
+  const getTitle = () => {
+    const type = deleteConfirmModal.type || 'item';
+    const title = deleteConfirmModal.title || type;
+    
+    if (type === 'order') {
+      return `Are you sure you want to cancel this ${title}?`;
+    }
+    
+    return `Are you sure you want to delete this ${title}?`;
+  };
+  
+  const getActionLabel = () => {
+    if (isLoading) {
+      return <ClipLoader size={20} />;
+    }
+    
+    return deleteConfirmModal.type === 'order' ? "Cancel" : "Delete";
+  };
 
   const bodyContent = (
     <div className="flex flex-row gap-4 items-center justify-center">
-    <IoWarningOutline size={30} color="red"/>
-      <Heading title={`Are you sure you want to delete this address ? `}/>
+      <IoWarningOutline size={30} color="red"/>
+      <Heading title={getTitle()} />
     </div>
   );
 
@@ -42,12 +80,12 @@ const DeleteConfirmModal = ({title}) => {
 
   return (
     <Modal
-      disabled={deleteMutation.isLoading}
+      disabled={isLoading}
       isOpen={deleteConfirmModal.isOpen}
       title="Confirmation"
-      actionLabel={deleteMutation.isLoading ? <ClipLoader size={20} /> : "Delete"}
+      actionLabel={getActionLabel()}
       secondaryAction={deleteConfirmModal.onClose}
-      secondaryActionLabel="Cancel"
+      secondaryActionLabel="Go Back"
       onClose={deleteConfirmModal.onClose}
       onSubmit={handleDelete}
       body={bodyContent}

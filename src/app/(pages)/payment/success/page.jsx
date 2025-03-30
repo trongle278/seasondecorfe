@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { FcOk } from "react-icons/fc";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { ButtonInvert2 } from "@/app/components/ui/Buttons/ButtonInvert";
@@ -10,12 +9,7 @@ import { useRouter } from "next/navigation";
 
 const PaymentSuccessPage = () => {
   const router = useRouter();
-  const [isPaymentSuccess, setIsPaymentSuccess] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
 
-  function convert(text) {
-    return encodeURIComponent(text.trim());
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -27,9 +21,9 @@ const PaymentSuccessPage = () => {
             className="text-3xl font-semibold"
           />
           <ButtonInvert2
-            label="Back to home"
+            label="Go Back"
             icon={<FaAngleLeft size={20} />}
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/user/account/wallet")}
           />
         </div>
       </div>

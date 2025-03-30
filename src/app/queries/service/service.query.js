@@ -54,20 +54,37 @@ export function useSearchDecorService(params) {
           };
         }
         
-        // Construct the query string manually to ensure exact parameter format
-        const queryParams = [];
-        if (params.Province) queryParams.push(`Province=${encodeURIComponent(params.Province)}`);
-        if (params.CategoryName) queryParams.push(`CategoryName=${encodeURIComponent(params.CategoryName)}`);
-        if (params.SeasonNames) queryParams.push(`SeasonNames=${encodeURIComponent(params.SeasonNames)}`);
+        // Construct the query string with proper handling of arrays
+        const queryParams = new URLSearchParams();
         
-        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        if (params.Province) {
+          queryParams.append("Province", params.Province);
+        }
         
-        const res = await BaseRequest.Get(`/${SUB_URL}/search${queryString}`, false);
+        if (params.CategoryName) {
+          queryParams.append("CategoryName", params.CategoryName);
+        }
+        
+        // Handle seasons as multiple separate parameters
+        if (params.SeasonNames) {
+          if (Array.isArray(params.SeasonNames)) {
+            // If it's an array, add each season separately
+            params.SeasonNames.forEach(season => {
+              queryParams.append("SeasonNames", season);
+            });
+          } else if (typeof params.SeasonNames === 'string') {
+            // If it's a single string, add it directly
+            queryParams.append("SeasonNames", params.SeasonNames);
+          }
+        }
+        
+        const url = `/${SUB_URL}/search${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        const res = await BaseRequest.Get(url, false);
         return res;
       } finally {
         nProgress.done();
       }
     },
-    enabled: true, // Always enable the query
+    enabled: true,
   });
 }

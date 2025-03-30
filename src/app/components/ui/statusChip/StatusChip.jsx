@@ -9,11 +9,7 @@ const StatusChip = ({ status, className }) => {
   switch (status) {
     case 0:
       statusClass = "bg-yellow";
-      label = "Comming";
-      break;
-    case 1:
-      statusClass = "bg-green";
-      label = "Available";
+      label = "Pending";
       break;
     case 2:
       statusClass = "bg-green";
@@ -23,7 +19,14 @@ const StatusChip = ({ status, className }) => {
       statusClass = "bg-red";
       label = "Unsold";
       break;
-
+    case 4:
+      statusClass = "bg-red";
+      label = "Canceled";
+      break;
+    case 5:
+      statusClass = "bg-red";
+      label = "Canceled";
+      break;
     default:
       statusClass = "bg-gray";
       label = "Unknown";

@@ -9,6 +9,8 @@ import AdressModal from "./components/ui/Modals/AddressModal";
 import DeleteConfirmModal from "./components/ui/Modals/DeleteConfirmModal";
 import SearchModal from "./components/ui/Modals/SearchModal";
 import ChatBox from "./components/ui/chatBox/ChatBox";
+import InformationModal from "./components/ui/Modals/InformationModal";
+import LocationModal from "./components/ui/Modals/LocationModal";
 
 
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -41,9 +43,9 @@ export default function RootLayout({ children }) {
               <DeleteConfirmModal />
               <SearchModal />
               <ChatBox />
-
+              <InformationModal />
               <AdressModal />
-
+              <LocationModal />
               <main className="flex-1">{children}</main>
               <Footer />
             </div>

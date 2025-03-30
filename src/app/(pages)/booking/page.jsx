@@ -11,6 +11,8 @@ import Container from "@/app/components/layouts/Container";
 import { ListSidebar } from "@/app/components/ui/ListWrapper";
 import { MultiSearch } from "@/app/components/ui/search/MultiSearch";
 import { generateSlug } from "@/app/helpers";
+import Button from "@/app/components/ui/Buttons/Button";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 
 const filters = [
   {
@@ -25,18 +27,31 @@ const filters = [
 ];
 
 const BookingPage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; 
+
   const {
     data: listDecorService,
     isLoading: isInitialLoading,
     isError,
     refetch: refetchInitialList,
-  } = useGetListDecorService();
+  } = useGetListDecorService({
+    pageIndex: currentPage,
+    pageSize: pageSize,
+    // Force pagination to be used for all requests
+    forcePagination: true 
+  });
 
   // State to hold search results
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  
+  // Calculate correct total pages based on totalCount and pageSize
+  const calculatedTotalPages = listDecorService?.totalCount 
+    ? Math.ceil(listDecorService.totalCount / pageSize) 
+    : 0;
 
   // Handle scroll event
   useEffect(() => {
@@ -51,20 +66,40 @@ const BookingPage = () => {
 
   // Handle search results
   const handleSearchResults = (results) => {
-    if (results === null) {
-      setSearchResults(null);
-      setHasSearched(false);
-      refetchInitialList();
-    } else {
-      setSearchResults(results);
-      setHasSearched(true);
-    }
     setIsSearching(false);
+    if (results === null) {
+      setHasSearched(false);
+      setSearchResults(null);
+      setCurrentPage(1); // Reset to page 1
+      // Explicitly set page size again when returning to default listing
+      refetchInitialList().then(() => {
+        console.log("Refetched with page size:", pageSize);
+      });
+      return;
+    }
+    setSearchResults(results);
+    setHasSearched(true);
   };
 
-  // Data to display (either search results or initial list)
-  const displayData = hasSearched ? searchResults?.data : listDecorService;
+  // Data to display (either search results or current page data)
+  const displayData = hasSearched 
+    ? searchResults?.data 
+    : listDecorService?.data || [];
+  
   const isLoading = isInitialLoading || isSearching;
+
+  // Pagination controls
+  const handleLoadMore = () => {
+    if (calculatedTotalPages && currentPage < calculatedTotalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
 
   return (
     <>
@@ -140,24 +175,34 @@ const BookingPage = () => {
                     }
                   />
                 ) : (
-                  <DataMapper
-                    data={displayData}
-                    Component={ServiceCard}
-                    getKey={(service) => service.id}
-                    componentProps={(service) => ({
-                      style: service.style,
-                      description: service.description,
-                      images: service.images,
-                      id: service.id,
-                      seasons: service.seasons,
-                      category: service.categoryName,
-                      province: service.province,
-                      href: `/booking/${generateSlug(service.style)}`,
-                    })}
-                  />
+                  <>
+                    <DataMapper
+                      data={displayData}
+                      Component={ServiceCard}
+                      getKey={(service) => service.id}
+                      componentProps={(service) => ({
+                        style: service.style,
+                        description: service.description,
+                        images: service.images,
+                        id: service.id,
+                        seasons: service.seasons,
+                        category: service.categoryName,
+                        province: service.sublocation,
+                        href: `/booking/${generateSlug(service.style)}`,
+                      })}
+                      pageSize={pageSize}
+                      currentPage={currentPage}
+                      enforcePagination={true}
+                    />
+                  </>
                 )}
               </>
             )}
+
+            <div className="flex justify-center gap-4">
+              <Button  onClick={handlePreviousPage} disabled={currentPage === 1} className="text-primary" icon={<MdNavigateBefore size={20} />}/>
+              <Button  onClick={handleLoadMore} disabled={currentPage === calculatedTotalPages} className="text-primary" icon={<MdNavigateNext size={20} />}/>
+            </div>
           </div>
         </Container>
       </div>

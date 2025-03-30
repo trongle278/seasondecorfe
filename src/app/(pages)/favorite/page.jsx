@@ -46,7 +46,7 @@ const FavoritePage = () => {
           slug: item.decorServiceDetails.slug,
           seasons: item.decorServiceDetails.seasons,
           isService: true,
-          onRemoveFavorite: () => removeFavorite(item.favoriteId),
+          onRemoveFavorite: () => removeFavorite(item.decorServiceDetails.id),
           onClick: () =>
             router.push(
               `/booking/${generateSlug(item.decorServiceDetails.style)}`

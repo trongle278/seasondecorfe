@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -62,6 +62,18 @@ export function useUnfollow() {
       } finally {
         nProgress.done();
       }
+    },
+  });
+}
+
+export function useUpdateUserLocation() {
+  const queryClient = useQueryClient();
+    return useMutation({
+    mutationFn: async (data) => {
+      return await BaseRequest.Put(`/${SUB_URL}/update-location`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accountDetails"] });
     },
   });
 }

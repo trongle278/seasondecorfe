@@ -30,7 +30,7 @@ const ReviewSection = () => {
       </div>
       <div className="flex self-center mt-5">
         <FootTypo
-          footlabel="Guest Reviews"
+          footlabel="Customer Reviews"
           className="!m-0 font-bold text-xl"
         />
       </div>

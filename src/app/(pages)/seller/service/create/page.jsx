@@ -19,6 +19,9 @@ import { useRouter } from "next/navigation";
 import ProvinceDistrictWardSelect from "@/app/(pages)/user/components/ProvinceDropdown";
 import { useGetListSeason } from "@/app/queries/list/category.list.query";
 import MultiSelectChip from "@/app/components/ui/chip/Chip";
+import { Calendar } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const ServiceCreate = () => {
   const { user } = useUser();
@@ -29,6 +32,8 @@ const ServiceCreate = () => {
   const { data: dataSeason, isLoading: isLoadingSeason } = useGetListSeason();
 
   const [images, setImages] = React.useState([]);
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [showCalendar, setShowCalendar] = React.useState(false);
 
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = React.useState(null);
@@ -36,6 +41,12 @@ const ServiceCreate = () => {
   const { mutate: mutationCreate, isPending } = useCreateDecorService();
 
   const [selectedSeasons, setSelectedSeasons] = React.useState([]);
+
+  const handleDateSelect = (date) => {
+    setStartDate(date);
+    setValue("startDate", date);
+    setShowCalendar(false);
+  };
 
   const handleImageUpload = (uploadedImages) => {
     setImages(uploadedImages);
@@ -80,6 +91,7 @@ const ServiceCreate = () => {
       province: "",
       categoryId: "",
       seasonIds: [],
+      startDate: new Date(),
     },
   });
 
@@ -101,14 +113,21 @@ const ServiceCreate = () => {
 
       // Province field contains the combined province and district
       console.log("Sending location to API:", data.province);
-      formData.append("Province", data.province);
+      formData.append("Sublocation", data.province);
 
       formData.append("DecorCategoryId", selectedCategoryId);
+
+      // Add start date to form data
+      if (data.startDate) {
+        const formattedDate = data.startDate.toISOString().split("T")[0];
+        console.log("Sending start date to API:", formattedDate);
+        formData.append("StartDate", formattedDate);
+      }
 
       // Handle season tags - append each selected season ID
       if (selectedSeasons.length > 0) {
         console.log("Sending season tags to API:", selectedSeasons);
-        selectedSeasons.forEach(seasonIds => {
+        selectedSeasons.forEach((seasonIds) => {
           formData.append("SeasonIds", seasonIds);
         });
       }
@@ -137,6 +156,7 @@ const ServiceCreate = () => {
   const serviceDescription = watch("description");
   const serviceProvince = watch("province");
   const serviceCategoryId = watch("categoryId");
+  const serviceStartDate = watch("startDate");
 
   // Validation function for Step 1
   const validateStep = (step) => {
@@ -145,14 +165,14 @@ const ServiceCreate = () => {
         !serviceStyle?.trim() ||
         !serviceProvince?.trim() ||
         !selectedCategoryId ||
-        images.length === 0
+        images.length === 0 
       ) {
         console.log(
           "Validation failed",
           serviceStyle,
           serviceProvince,
           selectedCategoryId,
-          images.length
+          images.length,
         );
         alert("Please fill in all fields before proceeding.");
         return false;
@@ -160,7 +180,7 @@ const ServiceCreate = () => {
     }
 
     if (step === 2) {
-      if (!serviceDescription?.trim()) {
+      if (!serviceDescription?.trim() || !startDate) {
         alert("Please fill in all fields before proceeding.");
         return false;
       }
@@ -177,6 +197,15 @@ const ServiceCreate = () => {
     setSelectedSeasons(selectedIds);
     setValue("seasonTagsId", selectedIds);
     console.log("Selected Season IDs:", selectedIds);
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   return (
@@ -267,15 +296,39 @@ const ServiceCreate = () => {
             <div className="w-full">
               {dataSeason ? (
                 <MultiSelectChip
-                  options={dataSeason.map(season => ({
+                  options={dataSeason.map((season) => ({
                     id: season.id,
-                    name: season.seasonName
+                    name: season.seasonName,
                   }))}
                   onChange={handleSeasonChange}
                   label="Select applicable seasons"
                 />
               ) : (
                 <p>Loading seasons...</p>
+              )}
+            </div>
+          </div>
+          <div className="form inline-flex items-start w-full h-full gap-5 my-5">
+            <FootTypo
+              footlabel="Service Start Date :"
+              className="!m-0 text-lg font-semibold w-40"
+            />
+            <div className="relative w-[300px]">
+              <div
+                className="cursor-pointer border border-gray-300 rounded-md p-2 flex justify-between items-center"
+                onClick={() => setShowCalendar(!showCalendar)}
+              >
+                <span>{formatDate(startDate)}</span>
+                <span>📅</span>
+              </div>
+              {showCalendar && (
+                <div className="absolute z-10 mt-1 bg-white shadow-lg rounded-md">
+                  <Calendar
+                    date={startDate}
+                    onChange={handleDateSelect}
+                    minDate={new Date()}
+                  />
+                </div>
               )}
             </div>
           </div>
