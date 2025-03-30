@@ -52,13 +52,21 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   };
 
   const handleSearch = (label, type, value) => {
-    // For season type, value might be an array (multiple selection)
-    setSelectedValues({
-      ...selectedValues,
-      [type]: label,
-      // Use the label directly for the value
-      [`${type}Value`]: label
-    });
+    // For season type, handle multiple selections
+    if (type === 'season') {
+      // If multiple seasons are selected, join them with commas
+      const seasonLabel = Array.isArray(value) ? value.join(', ') : label;
+      setSelectedValues({
+        ...selectedValues,
+        [type]: seasonLabel,
+      });
+    } else {
+      // For other types, use the label directly
+      setSelectedValues({
+        ...selectedValues,
+        [type]: label,
+      });
+    }
     handleCloseModal();
   };
 
@@ -79,7 +87,9 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     }
     
     if (selectedValues.season && selectedValues.season !== "All") {
-      apiParams.SeasonNames = selectedValues.season;
+      // Split the season string if it contains multiple seasons
+      const seasonArray = selectedValues.season.split(',').map(s => s.trim());
+      apiParams.SeasonNames = seasonArray;
       hasAnyParam = true;
     }
     

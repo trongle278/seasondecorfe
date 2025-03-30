@@ -19,12 +19,16 @@ export function useAddFavoriteDecorService() {
 }
 
 export function useRemoveFavoriteDecorService() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (decorServiceId) => {
       const res = await BaseRequest.Delete(
         `/${SUB_URL}/${decorServiceId}`
       );
       return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get_list_favorite"] });
     },
   });
 }

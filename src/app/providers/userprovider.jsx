@@ -6,8 +6,9 @@ import { useGetAccountDetails } from "../queries/user/user.query";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { setUserSlug } from "../lib/redux/reducers/userSlice";
+import { setUserSlug, setUserLocation } from "../lib/redux/reducers/userSlice";
 import Spinner from "../components/Spinner";
+import { useLocationModal } from "../hooks/useLocationModal";
 
 const UserContext = createContext(null);
 
@@ -18,6 +19,7 @@ export function UserProvider({ children }) {
   const roleId = session?.roleId;
   const router = useRouter();
   const pathname = usePathname();
+  const locationModal = useLocationModal();
 
   const { data: user, isLoading, isError } = useGetAccountDetails(accountId);
 
@@ -49,6 +51,14 @@ export function UserProvider({ children }) {
 
     if (isUserSelf) {
       dispatch(setUserSlug(user.slug));
+    }
+
+    if (user.location) {
+      dispatch(setUserLocation(user.location));
+    }
+
+    if (user.location === "") {
+      locationModal.onOpen();
     }
 
     if (!user.isProvider && pathname.startsWith("/seller/dashboard")) {

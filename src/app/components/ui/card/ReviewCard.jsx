@@ -45,7 +45,7 @@ const ReviewCard = ({
                 className={
                   index < review.rating ? "text-black" : "text-gray-300"
                 }
-                size={16}
+                size={9}
               />
             ))}
           </div>

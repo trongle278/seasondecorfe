@@ -38,7 +38,7 @@ const AddressBox = ({
   };
 
   const handleDeleteClick = () => {
-    deleteConfirmModal.onOpen(id, fullName);
+    deleteConfirmModal.onOpen('address', id, 'address');
   };
 
   const handleEditClick = () => {

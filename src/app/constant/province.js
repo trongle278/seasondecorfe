@@ -1,6 +1,6 @@
 export const locations = [
   { label: "Hà Nội", value: "hanoi", description: "Thủ đô Việt Nam (Capital of Vietnam)" },
-  { label: "TP. Hồ Chí Minh", value: "hcmc", description: "Thành phố Hồ Chí Minh (Ho Chi Minh City)" },
+  { label: "Hồ Chí Minh", value: "hcmc", description: "Thành phố Hồ Chí Minh (Ho Chi Minh City)" },
   { label: "An Giang", value: "angiang", description: "Tỉnh An Giang" },
   { label: "Bà Rịa - Vũng Tàu", value: "baria-vungtau", description: "Tỉnh Bà Rịa - Vũng Tàu" },
   { label: "Bắc Giang", value: "bacgiang", description: "Tỉnh Bắc Giang" },

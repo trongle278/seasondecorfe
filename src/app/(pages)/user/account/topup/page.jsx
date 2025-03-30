@@ -15,13 +15,16 @@ import { Divider } from "@mui/material";
 import { VnPayIcon, MomoIcon } from "@/app/components/icons";
 import Button from "@/app/components/ui/Buttons/Button";
 import { MdNavigateNext } from "react-icons/md";
+import { useCreateTopup } from "@/app/queries/topup/topup.query";
 
 const PayPage = () => {
   const [isHover, setIsHover] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useUser();
+  const { mutate: mutateTopup } = useCreateTopup();
 
   const paymentMethods = [
     { id: "vnpay", name: "VNPay", icon: <VnPayIcon /> },
@@ -63,8 +66,52 @@ const PayPage = () => {
   } = useForm({
     defaultValues: {
       ammount: "",
+      transactionType: 0,
+      transactionStatus: 1,
+      customerId: user?.id,
     },
   });
+
+  const onSubmit = async (data) => {
+    setIsProcessing(true);
+    
+    const topupData = {
+      amount: data.ammount,
+      transactionType: 0,
+      transactionStatus: 1,
+      customerId: user?.id,
+      paymentMethod: selectedPayment
+    };
+    
+    mutateTopup(topupData, {
+      onSuccess: (response) => {
+        console.log("success", response);
+        
+        if (selectedPayment === "vnpay") {
+          if (response?.data) {
+            window.location.href = response.data;
+          } else {
+            setIsProcessing(false);
+            alert("Payment URL not found. Please try again or contact support.");
+          }
+        } else if (selectedPayment === "momo") {
+          if (response?.data?.momoUrl) {
+            window.location.href = response.data.momoUrl;
+          } else {
+            setIsProcessing(false);
+            alert("Momo payment link not found. Please try again or contact support.");
+          }
+        } else {
+          setIsProcessing(false);
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+        setIsProcessing(false);
+        alert("An error occurred while processing your payment. Please try again.");
+      },
+    });
+  };
 
   return (
     <div className="w-full min-h-screen grid grid-cols-1 lg:grid-cols-2">
@@ -83,7 +130,7 @@ const PayPage = () => {
               <Logo outsideStyle="!m-0" insideStyle="!m-0" />
             </div>
             <Link
-              href="/"
+              href="/user/account/wallet"
               className={`absolute top-0 left-0 w-full h-full flex items-center justify-center transition-opacity duration-200  ${
                 isHover ? "opacity-100" : "opacity-0"
               }`}
@@ -119,7 +166,7 @@ const PayPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Mobile Payment Options (visible only on small screens) */}
           <div className="w-full mt-8 lg:hidden">
             <Divider className="mb-4" />
@@ -128,7 +175,7 @@ const PayPage = () => {
                 footlabel="Payment Details"
                 className="!m-0 text-lg font-semibold"
               />
-              
+
               <div className="relative w-full" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -193,7 +240,7 @@ const PayPage = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex items-start mt-2">
                 <input
                   type="checkbox"
@@ -208,18 +255,27 @@ const PayPage = () => {
                   </Link>
                 </label>
               </div>
-              
+              {errors.agreePolicy && (
+                <p className="text-red text-sm mt-2">
+                  You must agree to proceed.
+                </p>
+              )}
+
               <Button
-                label="Proceed"
-                disabled={!selectedPayment}
+                label={isProcessing ? "Processing..." : "Proceed"}
+                disabled={!selectedPayment || isProcessing}
                 className="w-full mt-4"
-                icon={<MdNavigateNext size={20} />}
+                icon={isProcessing ? 
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div> : 
+                  <MdNavigateNext size={20} />
+                }
+                onClick={handleSubmit(onSubmit)}
               />
             </div>
           </div>
         </div>
       </main>
-      
+
       {/* Desktop payment section - hidden on mobile */}
       <div className="relative w-full z-20 h-full hidden lg:flex border-l border-gray-50 shadow-xl dark:border-neutral-800 overflow-hidden bg-transparent dark:bg-neutral-900 rounded-2xl">
         <BorderBox className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -322,13 +378,19 @@ const PayPage = () => {
             </div>
 
             {errors.agreePolicy && (
-              <></>
+              <p className="text-red text-sm mt-2">
+                You must agree to proceed.
+              </p>
             )}
             <Button
-              label="Proceed"
-              disabled={!selectedPayment}
+              label={isProcessing ? "Processing..." : "Proceed"}
+              disabled={!selectedPayment || isProcessing}
               className="self-start mt-2"
-              icon={<MdNavigateNext size={20} />}
+              icon={isProcessing ? 
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div> : 
+                <MdNavigateNext size={20} />
+              }
+              onClick={handleSubmit(onSubmit)}
             />
           </div>
         </BorderBox>

@@ -25,11 +25,11 @@ const HeaderWrapper = () => {
     return <MinimalHeader />;
   }
 
-  if (pathname === "/payment/success") {
+  if (pathname === "/payment/success" || pathname === "/payment/failure") {
     return null;
   }
 
-  if (pathname === "/pay") {
+  if (pathname === "/user/account/topup") {
     return null;
   }
 

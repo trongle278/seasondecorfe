@@ -21,6 +21,7 @@ const Modal = ({
   icon,
   loading = false,
   isSearch = false,
+  forceOpen = false,
 }) => {
   const [showModal, setShowModal] = React.useState(isOpen);
   const modalRef = React.useRef(null);
@@ -30,7 +31,7 @@ const Modal = ({
   }, [isOpen]);
 
   const handleClose = React.useCallback(() => {
-    if (disabled) {
+    if (disabled || forceOpen) {
       return;
     }
 
@@ -38,7 +39,7 @@ const Modal = ({
     setTimeout(() => {
       onClose();
     }, 300);
-  }, [disabled, onClose]);
+  }, [disabled, onClose, forceOpen]);
 
   const handleSubmit = React.useCallback(() => {
     if (disabled) {
@@ -55,7 +56,9 @@ const Modal = ({
     secondaryAction();
   }, [disabled, secondaryAction]);
 
-  useOutsideClick(modalRef, handleClose);
+  // Only apply outside click handler if not forceOpen
+  const applyOutsideClick = !forceOpen;
+  useOutsideClick(modalRef, applyOutsideClick ? handleClose : () => {});
 
   if (!isOpen) {
     return null;
@@ -78,13 +81,15 @@ const Modal = ({
             <div className="translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white dark:bg-neutral-800 outline-none focus:outline-none ">
               {/*----------MODAL HEADER HERE----------------------*/}
               <div className="flex items-center p-6 rounded-t justify-center relative border-b-[1px] sm:hidden">
-                <button
-                  onClick={handleClose}
-                  className="p-1 border-0 hover:opacity-70 transition absolute left-9"
-                  disabled={loading}
-                >
-                  <IoMdClose size={18} />
-                </button>
+                {!forceOpen && (
+                  <button
+                    onClick={handleClose}
+                    className="p-1 border-0 hover:opacity-70 transition absolute left-9"
+                    disabled={loading}
+                  >
+                    <IoMdClose size={18} />
+                  </button>
+                )}
                 <div className="text-lg font-semibold">{title}</div>
               </div>
               {/*----------------MODAL BODY HERE----------------*/}
@@ -95,7 +100,7 @@ const Modal = ({
               {!isSearch && (
               <div className="flex flex-col gap-2 p-6">
                 <div className="flex flex-row items-center justify-center gap-4 w-full">
-                  {secondaryAction && secondaryActionLabel && (
+                  {secondaryAction && secondaryActionLabel && !forceOpen && (
                     <Button2
                       outline
                       disable={disabled || loading}

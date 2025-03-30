@@ -202,7 +202,7 @@ const ChatView = ({
             ))
           ) : (
             <div className="flex items-center justify-center h-full">
-              <span>No messages to display.</span>
+              <span>Start chatting today !</span>
             </div>
           )}
           <div ref={messagesEndRef} />

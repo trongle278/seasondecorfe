@@ -9,6 +9,7 @@ import StatusChip from "../StatusChip/StatusChip";
 import { FaTrashAlt } from "react-icons/fa";
 import ExampleNumberField from "../Select/NumberField";
 import { FaDongSign } from "react-icons/fa6";
+import { formatCurrency } from "@/app/helpers";
 
 const CartItem = ({
   id,
@@ -36,8 +37,8 @@ const CartItem = ({
           <Link href="#" className="shrink-0 md:order-1">
             <Image
               src={image}
-              width={150}
-              height={150}
+              width={120}
+              height={120}
               priority
               alt="Product image"
               className="rounded-lg object-cover w-full"
@@ -73,8 +74,7 @@ const CartItem = ({
               onChange={handleQuantityChange}
             />
             <p className="text-xl font-bold text-gray-900 dark:text-white inline-flex items-center">
-              <FaDongSign />
-              {new Intl.NumberFormat("vi-VN").format(price)}
+              {formatCurrency(price)}
             </p>
           </div>
         </div>

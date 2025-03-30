@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@/app/components/layouts/Container";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Button from "@/app/components/ui/Buttons/Button";
@@ -25,16 +25,38 @@ import { generateSlug } from "@/app/helpers";
 import ReviewSection from "@/app/components/ui/review/ReviewSection";
 import OverallRating from "@/app/components/ui/review/OverallRating";
 import ReviewCard from "@/app/components/ui/card/ReviewCard";
-import { BiPhotoAlbum } from "react-icons/bi";
-import { BorderBox } from "@/app/components/ui/BorderBox";
 import { FaFlag } from "react-icons/fa";
 import Link from "next/link";
+import HostSection from "@/app/(pages)/booking/components/HostSection";
+import { Skeleton } from "@mui/material";
+import useInfoModal from "@/app/hooks/useInfoModal";
+import PickDate from "@/app/(pages)/booking/components/PickDate";
+import { useBookService } from "@/app/queries/book/book.query";
+import { useForm } from "react-hook-form";
+import DropdownSelectReturnObj from "@/app/components/ui/Select/DropdownObject";
+import { useGetAllAddress } from "@/app/queries/user/address.query";
+import { useRouter } from "next/navigation";
 
 const ServiceDetail = () => {
+  const router = useRouter();
   const { slug } = useParams();
   const [serviceId, setServiceId] = React.useState(null);
   const { user } = useUser();
   const queryClient = useQueryClient();
+  const infoModal = useInfoModal();
+  const { mutate: bookService, isPending: isBookingPending } = useBookService();
+  const [selectedBookingData, setSelectedBookingData] = React.useState(null);
+  const { data: addressData, isLoading: addressLoading } = useGetAllAddress();
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const { data: serviceDetail, isLoading } = useGetDecorServiceById(serviceId);
   const { data: favorites, isLoading: isLoadingFavorites } =
@@ -43,19 +65,30 @@ const ServiceDetail = () => {
   const { mutate: addFavoriteDecorService, isPending } =
     useAddFavoriteDecorService();
 
-  const { data: services } = useGetListDecorService();
+  // Use pagination to prevent loading all services at once
+  const { data: listDecorService } = useGetListDecorService({
+    pageIndex: 1,
+    pageSize: 10,
+    forcePagination: true,
+  });
 
-  React.useEffect(() => {
-    if (services) {
-      console.log(services);
-      const matchedService = services.find(
+  useEffect(() => {
+    setSelectedAddress(null);
+    reset();
+
+    if (listDecorService?.data) {
+      const matchedService = listDecorService.data.find(
         (p) => generateSlug(p.style) === slug
       );
       if (matchedService) {
         setServiceId(matchedService.id);
+      } else {
+        // If not found in first page, fetch the service by slug directly
+        // This should be implemented in a real API endpoint
+        console.log("Service not found in first page");
       }
     }
-  }, [services, slug]);
+  }, [listDecorService, slug]);
 
   // Check if the current user is the service provider
   const isServiceProvider = React.useMemo(() => {
@@ -83,6 +116,65 @@ const ServiceDetail = () => {
     });
   };
 
+  const formatAddress = (address) => {
+    if (!address) return "No address available";
+
+    const parts = [];
+    // if (address.detail) parts.push(address.detail);
+    if (address.street) parts.push(address.street);
+    if (address.ward) parts.push(address.ward);
+    if (address.district) parts.push(address.district);
+    if (address.province) parts.push(address.province);
+
+    return parts.join(", ");
+  };
+
+  const addressOptions =
+    addressData?.map((address) => ({
+      value: address.id,
+      label: formatAddress(address),
+      isDefault: address.isDefault,
+    })) || [];
+
+  const handleAddressChange = (selected) => {
+    console.log("Address selection changed:", selected);
+    if (selected) {
+      setSelectedAddress(selected);
+      setValue("addressId", selected.value);
+      console.log("Selected Address ID:", selected.value);
+    }
+  };
+
+  const onSubmit = (data) => {
+    if (!selectedAddress || !selectedBookingData) {
+      alert("Please select both an address and a date before booking");
+      return;
+    }
+
+    console.log("Selected booking data:", selectedBookingData);
+
+    const bookingData = {
+      decorServiceId: serviceDetail.id,
+      addressId: selectedAddress.value,
+      surveyDate: selectedBookingData.date,
+    };
+
+    console.log("Booking data being sent:", bookingData);
+
+    bookService(bookingData, {
+      onSuccess: () => {
+        console.log("Booking successful");
+        alert(
+          `Booking successful! Your survey is scheduled for ${selectedBookingData.formattedDate}`
+        );
+      },
+      onError: (error) => {
+        console.error("Error booking service:", error);
+        alert("Failed to book service. Please try again.");
+      },
+    });
+  };
+
   if (!serviceDetail) {
     return (
       <div className="text-center mt-20">
@@ -91,12 +183,30 @@ const ServiceDetail = () => {
     );
   }
 
+  if (isLoading) {
+    return <Skeleton variant="rectangular" width="100%" height="100%" />;
+  }
+
   return (
     <Container>
       <div className="my-7">
         <MuiBreadcrumbs />
       </div>
-      <div className="mx-auto w-full min-w-0 md:px-0 mt-10">
+      <div
+        className={`mx-auto w-full min-w-0 md:px-0 mt-10 relative ${
+          isServiceProvider ? "pointer-events-none" : ""
+        }`}
+      >
+        {isServiceProvider && (
+          <div className="absolute inset-[-20] bg-white/50 dark:bg-black/50 backdrop-blur-sm z-10 rounded-lg">
+            <div className="flex flex-col items-center justify-center h-full">
+              <FootTypo
+                footlabel="You are the provider of this service"
+                className="font-bold text-2xl bg-primary text-white rounded-lg p-2"
+              />
+            </div>
+          </div>
+        )}
         {/* Service Name */}
         <div className="mb-6">
           <FootTypo
@@ -109,12 +219,14 @@ const ServiceDetail = () => {
         {serviceDetail.images?.length > 0 ? (
           <div className="relative mb-10 cursor-pointer">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="relative aspect-[4/3] md:aspect-[4/3] overflow-hidden rounded-lg">
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-lg">
                 <Image
                   src={serviceDetail.images[0]?.imageURL}
                   alt="Primary image"
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                 />
               </div>
 
@@ -123,13 +235,14 @@ const ServiceDetail = () => {
                 {serviceDetail.images.slice(1, 5).map((img, index) => (
                   <div
                     key={index}
-                    className="relative aspect-square overflow-hidden rounded-lg"
+                    className="relative h-[244px] overflow-hidden rounded-lg"
                   >
                     <Image
                       src={img.imageURL}
                       alt={`Room image ${index + 2}`}
                       fill
                       className="object-cover hover:scale-105 transition-transform duration-700"
+                      sizes="25vw"
                     />
                   </div>
                 ))}
@@ -140,22 +253,19 @@ const ServiceDetail = () => {
                 {serviceDetail.images.slice(1, 4).map((img, index) => (
                   <div
                     key={index}
-                    className="relative aspect-square overflow-hidden rounded-lg"
+                    className="relative h-[120px] overflow-hidden rounded-lg"
                   >
                     <Image
                       src={img.imageURL}
                       alt={`Room image ${index + 2}`}
                       fill
                       className="object-cover"
+                      sizes="33vw"
                     />
                   </div>
                 ))}
               </div>
             </div>
-            <button className="absolute bottom-3 right-3 bg-white text-black hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium shadow-md flex items-center gap-2 transition-colors">
-              <BiPhotoAlbum size={18} />
-              Show all photos
-            </button>
           </div>
         ) : (
           <div className="text-center text-gray-500 p-12 border rounded-lg mb-10">
@@ -166,7 +276,14 @@ const ServiceDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
           <div className="space-y-6">
             <div className="flex items-center gap-2 mb-4">
-              <MdCategory size={20} />
+              <span className="flex flex-row items-center gap-2">
+                <MdCategory size={20} />
+                <FootTypo
+                  footlabel="This service is suitable for"
+                  className="!m-0 font-bold text-sm"
+                />
+              </span>
+
               <div className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm font-medium">
                 {serviceDetail.categoryName || "Uncategorized"}
               </div>
@@ -202,7 +319,7 @@ const ServiceDetail = () => {
             <div className="flex items-center gap-2">
               <MdLocationOn size={20} />
               <span className="text-sm font-medium">
-                {serviceDetail.province || "Location not specified"}
+                {serviceDetail.sublocation || "Location not specified"}
               </span>
             </div>
 
@@ -223,9 +340,22 @@ const ServiceDetail = () => {
                   className="!m-0 font-bold text-lg"
                 />
                 <div className="mt-3 rounded-lg">
-                  <p className="whitespace-pre-line text-gray-700 dark:text-gray-300">
+                  <p className="whitespace-pre-line break-words line-clamp-6 text-gray-700 dark:text-gray-300 pb-3">
                     {serviceDetail.description || "No description available"}
                   </p>
+                  <button
+                    className="text-primary font-semibold underline"
+                    onClick={() =>
+                      infoModal.onOpen({
+                        title: `${serviceDetail.style}`,
+                        description:
+                          serviceDetail.description ||
+                          "No description available",
+                      })
+                    }
+                  >
+                    Read more
+                  </button>
                 </div>
               </div>
 
@@ -236,6 +366,8 @@ const ServiceDetail = () => {
                       label="Book now"
                       className="bg-primary"
                       icon={<IoCallOutline size={20} />}
+                      disabled={!selectedAddress || !selectedBookingData}
+                      onClick={handleSubmit(onSubmit)}
                     />
                     <Button
                       label={
@@ -264,14 +396,46 @@ const ServiceDetail = () => {
             </div>
           </div>
           <div>
-            <BorderBox className="shadow-xl">
+            <div className="space-y-5 mb-5 max-w-md">
               <FootTypo
-                footlabel="Service available"
+                footlabel="Where to survey"
                 className="!m-0 font-bold text-lg"
               />
-            </BorderBox>
+              {addressLoading ? (
+                <Skeleton height={56} animation="wave" />
+              ) : addressOptions.length > 0 ? (
+                <DropdownSelectReturnObj
+                  options={addressOptions}
+                  value={selectedAddress}
+                  onChange={handleAddressChange}
+                  labelKey="label"
+                  valueKey="value"
+                  returnObject={true}
+                  lisboxClassName="mt-11"
+                  placeholder="Select a shipping address"
+                />
+              ) : (
+                <button
+                  onClick={() => router.push("/user/account/address")}
+                  className="py-2 text-gray-500 bg-primary text-white rounded-md px-4"
+                >
+                  Add new address
+                </button>
+              )}
+            </div>
 
-            <Link href="/report" className="flex items-center gap-2 mt-10">
+            <PickDate
+              availableDates={serviceDetail.availableDates || []}
+              onDateSelect={(dateData) => {
+                console.log("Selected date data:", dateData);
+                setSelectedBookingData(dateData);
+              }}
+            />
+
+            <Link
+              href="/report"
+              className="flex items-center justify-center gap-2 mt-10"
+            >
               <FaFlag size={14} />
               <FootTypo
                 footlabel="Report this service"
@@ -283,7 +447,7 @@ const ServiceDetail = () => {
       </div>
 
       {/* Ratings and Reviews Section */}
-      <div className="mt-16 border-t pt-8">
+      <section className="mt-16 border-t pt-8">
         <FootTypo
           footlabel="Ratings, reviews, and reliability"
           className="!m-0 text-2xl font-bold mb-8"
@@ -299,7 +463,7 @@ const ServiceDetail = () => {
           location={4.9}
           value={4.8}
         />
-      </div>
+      </section>
 
       {/* Full ReviewSection with form (can be kept or removed) */}
       <div className="mt-10">
@@ -328,6 +492,16 @@ const ServiceDetail = () => {
         <div className="col-span-2 text-center py-10">
           <p className="text-gray-500">No reviews yet</p>
         </div>
+      </div>
+
+      <div className="mt-10">
+        <HostSection
+          //href={`/provider/${serviceDetail.provider.slug}`}
+          avatar={serviceDetail.provider.avatar}
+          name={serviceDetail.provider.businessName}
+          joinDate={serviceDetail.provider.joinedDate}
+          followers={serviceDetail.provider.followersCount}
+        />
       </div>
     </Container>
   );

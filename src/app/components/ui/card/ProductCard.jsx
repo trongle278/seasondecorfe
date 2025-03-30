@@ -6,6 +6,7 @@ import { CardContainer, CardBody, CardItem } from "./components/3dCard";
 import { TbCurrencyDong } from "react-icons/tb";
 import { FootTypo } from "../Typography";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/app/helpers";
 
 const ProductCard = ({ image, productName, rate, price, totalSold, href }) => {
   const router = useRouter();
@@ -17,9 +18,11 @@ const ProductCard = ({ image, productName, rate, price, totalSold, href }) => {
     }
   };
 
-
   return (
-    <CardContainer className="inter-var flex cursor-pointer" onClick={handleClick} >
+    <CardContainer
+      className="inter-var flex cursor-pointer"
+      onClick={handleClick}
+    >
       <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] max-w-[300px] sm:w-[30rem] h-auto rounded-xl p-2 border  ">
         <CardItem translateZ="100" className="w-full relative">
           <Image
@@ -47,9 +50,7 @@ const ProductCard = ({ image, productName, rate, price, totalSold, href }) => {
             <span className="inline-flex items-center justify-between text-primary">
               <TbCurrencyDong />
 
-              {new Intl.NumberFormat("vi-VN", {
-                currency: "VND",
-              }).format(price)}
+              {formatCurrency(price)}
             </span>
             <FootTypo
               footlabel={`${totalSold} sold`}

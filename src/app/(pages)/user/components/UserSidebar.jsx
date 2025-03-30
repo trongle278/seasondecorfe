@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { FaRegUser } from "react-icons/fa";
 import { IoWalletOutline } from "react-icons/io5";
-import { IoNotificationsSharp } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { GoPackage } from "react-icons/go";
-import { FaLocationDot } from "react-icons/fa6";
 import { PiShoppingBag } from "react-icons/pi";
 import { GiShadowFollower } from "react-icons/gi";
 import { RiUserFollowLine } from "react-icons/ri";
+import { GoLocation } from "react-icons/go";
 
 const Sidebar = ({ selectedPath, userId, userRole }) => {
   return (
@@ -37,7 +37,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
                 : "inline-flex gap-2 items-start"
             }`}
           >
-            <FaLocationDot size={20} /> Address
+            <GoLocation size={20} /> Address
           </Link>
         </li>
 
@@ -62,7 +62,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
                 : "inline-flex gap-2 items-center"
             }`}
           >
-            <IoNotificationsSharp size={20} />
+            <IoNotificationsOutline size={20} />
             Notifications
           </Link>
         </li>
