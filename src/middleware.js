@@ -2,8 +2,10 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 const protectedRoutes = [
+  { path: "/user", allowedRoles: [2, 3] },
   { path: "/admin", allowedRoles: [1] },
   { path: "/seller", allowedRoles: [2, 3] },
+  { path: "/booking/request", allowedRoles: [2, 3] },
 ];
 
 export async function middleware(req) {
@@ -47,5 +49,11 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/seller/:path*", "/authen/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/seller/:path*",
+    "/authen/:path*",
+    "/user/:path*",
+    "/booking/request/:path*",
+  ],
 };

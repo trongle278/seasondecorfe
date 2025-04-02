@@ -22,6 +22,7 @@ const Avatar = ({ userImg, className, h = 120, w = 120}) => {
         alt="User Avatar"
         src={userImg || defaultAvatar}
         priority 
+        draggable={false}
       />
     </div>
   );

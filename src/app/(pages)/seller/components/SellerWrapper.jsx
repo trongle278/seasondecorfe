@@ -27,13 +27,13 @@ export default function SellerWrapper({ children }) {
       icon: <IconBrandTabler className=" h-5 w-5 flex-shrink-0" />,
     },
     {
-      label: "Order Management",
-      href: "/seller/order",
+      label: "Request Management",
+      href: "/seller/request",
       icon: <IconReceipt className=" h-5 w-5 flex-shrink-0" />,
     },
     {
-      label: "Marketing Channel",
-      href: "#",
+      label: "Quotation Management",
+      href: "/seller/quotation",
       icon: <IconChartBarPopular className=" h-5 w-5 flex-shrink-0" />,
     },
     {

@@ -23,6 +23,7 @@
     "@mui/icons-material": "^6.3.1",
     "@mui/material": "^6.3.1",
     "@mui/x-date-pickers": "^7.26.0",
+    "@nutrient-sdk/viewer": "^1.1.0",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-popover": "^1.1.6",
     "@reduxjs/toolkit": "^2.5.0",

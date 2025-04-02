@@ -4,19 +4,19 @@ import React, { useState, useEffect } from "react";
 import { useLocationModal } from "@/app/hooks/useLocationModal";
 import Modal from "../Modal";
 import Heading from "./components/Heading";
-import Button from "../Buttons/Button";
 import { FootTypo } from "../Typography";
 import { getProvinces } from "vn-provinces";
 import { IoIosArrowDown } from "react-icons/io";
 import { useUpdateUserLocation } from "@/app/queries/user/user.query";
 import { IoLocation } from "react-icons/io5";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 const LocationModal = () => {
   const locationModal = useLocationModal();
   const [provinces, setProvinces] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState("");
 
   const {
     register,
@@ -27,6 +27,7 @@ const LocationModal = () => {
   } = useForm({
     defaultValues: {
       location: "",
+      code: "",
     },
   });
 
@@ -50,25 +51,34 @@ const LocationModal = () => {
     }
   }, [locationModal.isOpen]);
 
-  const handleProvinceSelect = (provinceName) => {
-    setValue("location", provinceName, {
+  const handleProvinceSelect = (province) => {
+    setValue("location", province.name, {
       shouldValidate: true,
       shouldDirty: true,
     });
+    setValue("code", province.code, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setSelectedProvinceCode(province.code);
     setIsOpen(false);
   };
 
   const onSubmit = (data) => {
+    // Find the selected province object to get its code
+    const selectedProvince = provinces.find((p) => p.name === data.location);
+
+    // Update backend via API
     updateLocation(
       {
         location: data.location,
+        provinceCode: data.code,
       },
       {
         onSuccess: (response) => {
           console.log("Location updated successfully:", response);
-
-          localStorage.setItem("userProvince", data.location);
-
+          localStorage.setItem("userProvince", selectedProvince.name);
+          localStorage.setItem("userProvinceCode", selectedProvince.code);
           locationModal.onSuccessUpdate();
         },
         onError: (error) => {
@@ -112,7 +122,7 @@ const LocationModal = () => {
                 <div
                   key={p.code}
                   className="p-3 hover:bg-gray-100 cursor-pointer transition"
-                  onClick={() => handleProvinceSelect(p.name)}
+                  onClick={() => handleProvinceSelect(p)}
                 >
                   {p.name}
                 </div>

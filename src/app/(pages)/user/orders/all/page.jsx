@@ -6,8 +6,10 @@ import OrderCard from "../components/OrderCard";
 import DataMapper from "@/app/components/DataMapper";
 import useInfoModal from "@/app/hooks/useInfoModal";
 import useDeleteConfirmModal from "@/app/hooks/useDeleteConfirmModal";
+import { useRouter } from "next/navigation";
 
 const AllTabs = () => {
+  const router = useRouter();
   const { data: ordersList, isLoading } = useGetOrderList();
   const infoModal = useInfoModal();
   const deleteConfirmModal = useDeleteConfirmModal();
@@ -27,6 +29,7 @@ const AllTabs = () => {
           orderDate: order.orderDate,
           isPending: order.status === 0,
           cancelClick: () => deleteConfirmModal.onOpen('order', order.id, 'order'),
+          procceedClick: () => router.push(`/payment/${order.id}`),
           detailClick: () =>
             infoModal.onOpen({
               title: "Order Details",
