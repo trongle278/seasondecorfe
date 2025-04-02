@@ -57,8 +57,8 @@ export function useSearchDecorService(params) {
         // Construct the query string with proper handling of arrays
         const queryParams = new URLSearchParams();
         
-        if (params.Province) {
-          queryParams.append("Province", params.Province);
+        if (params.Sublocation) {
+          queryParams.append("Sublocation", params.Sublocation);
         }
         
         if (params.CategoryName) {

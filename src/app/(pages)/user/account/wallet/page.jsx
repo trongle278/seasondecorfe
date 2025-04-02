@@ -6,7 +6,6 @@ import { FootTypo } from "@/app/components/ui/Typography";
 import Button from "@/app/components/ui/Buttons/Button";
 import { FaRegEye, FaWallet, FaHistory } from "react-icons/fa";
 import ShinyCard from "@/app/components/ui/animated/ShinyCard";
-import { FaDongSign } from "react-icons/fa6";
 import { MdPayments } from "react-icons/md";
 import { FcPlus } from "react-icons/fc";
 import { FcMinus } from "react-icons/fc";

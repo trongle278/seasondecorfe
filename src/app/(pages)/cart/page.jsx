@@ -24,7 +24,7 @@ import DropdownSelectReturnObj from "@/app/components/ui/Select/DropdownObject";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useCreateOrder } from "@/app/queries/order/order.query";
-
+import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
 
 const Cart = () => {
   const router = useRouter();
@@ -70,23 +70,22 @@ const Cart = () => {
     }
   }, [cartData, setValue]);
 
-
   const onSubmit = (data) => {
     console.log("Form data for order:", data);
-    
+
     // Validate data before submitting
     if (!data.cartId) {
       console.error("Cart ID is missing");
       alert("Cart ID is missing. Please try again.");
       return;
     }
-    
+
     if (!data.addressId) {
       console.error("Address ID is missing");
       alert("Please select a shipping address.");
       return;
     }
-    
+
     // Create FormData object for the API request
     const formData = new FormData();
     formData.append("id", data.cartId);
@@ -150,6 +149,7 @@ const Cart = () => {
 
   return (
     <Container>
+      <MuiBreadcrumbs />
       <section className="w-full min-h-screen mx-auto 2xl:px-0">
         <BodyTypo bodylabel="Cart item" />
         <main className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
@@ -211,7 +211,6 @@ const Cart = () => {
                     returnObject={true}
                     lisboxClassName="mt-11"
                     placeholder="Select a shipping address"
-                    
                   />
                 ) : (
                   <button
@@ -255,7 +254,9 @@ const Cart = () => {
                   onClick={handleSubmit(onSubmit)}
                   btnClass="w-full"
                   labelClass="justify-center p-3 z-0"
-                  disabled={!selectedAddress || isCreatingOrder || !cartData?.id}
+                  disabled={
+                    !selectedAddress || isCreatingOrder || !cartData?.id
+                  }
                   loading={isCreatingOrder}
                 />
                 <div className="flex items-center justify-center gap-2">

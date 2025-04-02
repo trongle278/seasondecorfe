@@ -6,7 +6,7 @@ import { useGetAccountDetails } from "../queries/user/user.query";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { setUserSlug, setUserLocation } from "../lib/redux/reducers/userSlice";
+import { setUserSlug, setUserLocationCode, setUserLocationProvince } from "../lib/redux/reducers/userSlice";
 import Spinner from "../components/Spinner";
 import { useLocationModal } from "../hooks/useLocationModal";
 
@@ -53,12 +53,13 @@ export function UserProvider({ children }) {
       dispatch(setUserSlug(user.slug));
     }
 
-    if (user.location) {
-      dispatch(setUserLocation(user.location));
-    }
-
     if (user.location === "") {
       locationModal.onOpen();
+    }
+
+    if (user.location && user.provinceCode) {
+      dispatch(setUserLocationProvince(user.location));
+      dispatch(setUserLocationCode(user.provinceCode));
     }
 
     if (!user.isProvider && pathname.startsWith("/seller/dashboard")) {

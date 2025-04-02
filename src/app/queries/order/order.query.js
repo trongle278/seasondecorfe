@@ -6,6 +6,7 @@ import "nprogress/nprogress.css";
 const SUB_URL = `api/Order`;
 
 export function useCreateOrder() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["create_order"],
     mutationFn: async (data) => {
@@ -28,6 +29,9 @@ export function useCreateOrder() {
         nProgress.done();
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get_list_cart"] });
+    },
   });
 }
 
@@ -47,5 +51,45 @@ export function useCancelOrder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["order_list"] });
     },
+  });
+}
+
+export function usePayOrder() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["pay_order"],
+    mutationFn: async (id) => {
+      nProgress.start();
+
+      try {
+        return await BaseRequest.Post(`/${SUB_URL}/payment/${id}`);
+      } finally {
+        nProgress.done();
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["order_list"], queryKey: ["get_wallet"] });
+
+    },
+  });
+}
+
+export function useGetOrderDetail(id) {
+  return useQuery({
+    queryKey: ["order_detail", id],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const response = await BaseRequest.Get(`/${SUB_URL}/getById/${id}`, false);
+        return response.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+    enabled: !!id,
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 }

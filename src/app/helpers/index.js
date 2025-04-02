@@ -100,5 +100,52 @@ export const formatDate = (date, format = 'full', locale = 'en-US') => {
 
 // Keep the original formatDateVN function for backward compatibility
 export const formatDateVN = (date, format = 'full') => {
-  return formatDate(date, format, 'vi-VN');
+  return formatDate(date, format, 'en-US');
 };
+
+/**
+ * Get background color for a season value
+ * @param {string} seasonValue - The season value to get background color for
+ * @returns {string} Tailwind background color class
+ */
+export const getBgColorForSeason = (seasonValue) => {
+  const colorMap = {
+    'spring': 'bg-green',
+    'summer': 'bg-yellow',
+    'autumn': 'bg-orange',
+    'winter': 'bg-primary',
+    'christmas': 'bg-red',
+    'new-year': 'bg-purple'
+  };
+
+  return colorMap[seasonValue] || 'bg-primary';
+};
+
+/**
+ * Get season configuration including icon and background color
+ * @param {string} seasonName - The name of the season to get configuration for
+ * @param {Array} seasons - Array of season objects from constants
+ * @returns {Object} Season configuration with icon and background color
+ */
+export const getSeasonConfig = (seasonName, seasons) => {
+  // Find the matching season from constants
+  const season = seasons.find(
+    s => s.label.toLowerCase() === seasonName.toLowerCase() ||
+    s.value.toLowerCase() === seasonName.toLowerCase()
+  );
+
+  if (season) {
+    return {
+      icon: season.icon,
+      bgColor: getBgColorForSeason(season.value)
+    };
+  }
+
+  // Default configuration if no match found
+  return {
+    icon: seasons[0].icon,
+    bgColor: "bg-primary"
+  };
+};
+
+

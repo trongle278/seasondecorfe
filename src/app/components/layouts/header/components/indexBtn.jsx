@@ -34,6 +34,7 @@ export const CartBtn = ({ cartClick }) => {
           badgeContent={isLoading ? <ClipLoader size={10} /> : cartItemCount}
           color="error"
           overlap="circular"
+          max={99}
         >
           <MdOutlineShoppingCart size={20} className="dark:text-white" />
         </Badge>

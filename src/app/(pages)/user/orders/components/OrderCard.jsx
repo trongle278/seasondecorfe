@@ -8,9 +8,9 @@ import Button from "@/app/components/ui/Buttons/Button";
 import { TbCreditCardPay } from "react-icons/tb";
 import { TbCancel } from "react-icons/tb";
 
-const OrderCard = ({ name, code, price, status, orderDate, isPending, detailClick, cancelClick, procceedClick }) => {
+const OrderCard = ({ name, code, price, status, orderDate, isPending, detailClick, cancelClick, procceedClick, isPaid }) => {
   return (
-    <div className="bg-transparent rounded-lg shadow-lg p-5">
+    <div className="bg-transparent rounded-lg shadow-lg p-5 border dark:border-gray-50">
       <div className="flex items-center gap-4 justify-between">
         <div className="flex flex-col justify-between gap-3 font-semibold ">
           <div className="inline-flex items-center gap-2">

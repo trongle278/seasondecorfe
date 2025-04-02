@@ -14,17 +14,22 @@ import { categories } from "@/app/constant/decorCategories";
 import { seasons } from "@/app/constant/season";
 import { useSearchDecorService } from "@/app/queries/service/service.query";
 import { IoIosClose } from "react-icons/io";
-import clsx from "clsx";
+import { useSelector } from "react-redux";
+import { getDistricts } from "vn-provinces";
 
 export const MultiSearch = ({ onSearch, onSearchResults }) => {
   const router = useRouter();
   const [activeModal, setActiveModal] = React.useState(null);
   const [selectedValues, setSelectedValues] = React.useState({
-    location: "",
+    sublocation: "",
     category: "",
     season: ""
   });
   const [searchParams, setSearchParams] = React.useState(null);
+  const [districtSuggestions, setDistrictSuggestions] = React.useState([]);
+  
+  // Get user location from Redux
+  const userLocation = useSelector((state) => state.users.userLocation);
   
   // Refs for each search section
   const locationRef = React.useRef(null);
@@ -33,6 +38,41 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   
   // Query for search results
   const { data: searchResults, isLoading, error } = useSearchDecorService(searchParams);
+
+  React.useEffect(() => {
+    if (userLocation && userLocation.code) {
+      try {
+        const allDistricts = getDistricts();
+        
+        const provinceDistricts = allDistricts.filter(
+          district => district.provinceCode === userLocation.code
+        );
+        
+        const formattedDistricts = provinceDistricts.map(district => ({
+          id: district.code,
+          label: district.name,
+          value: district.name,
+          description: `District in ${userLocation.province}`
+        }));
+        
+        // Set district suggestions
+        setDistrictSuggestions(formattedDistricts);
+        
+        console.log(`Loaded ${formattedDistricts.length} districts for province: ${userLocation.province} (${userLocation.code})`);
+      } catch (error) {
+        console.error("Error loading districts:", error);
+      }
+    } else {
+      setDistrictSuggestions([]);
+    }
+  }, [userLocation]);
+
+  // Effect to check and handle empty userLocation values
+  React.useEffect(() => {
+    if (!userLocation || !userLocation.province) {
+      setDistrictSuggestions([]);
+    }
+  }, [userLocation]);
 
   // Effect to handle search results
   React.useEffect(() => {
@@ -76,8 +116,15 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     let hasAnyParam = false;
     
     // Process selected values for API
-    if (selectedValues.location && selectedValues.location !== "All") {
-      apiParams.Province = selectedValues.location;
+    if (selectedValues.sublocation && selectedValues.sublocation !== "All") {
+      // Check if searching by district or province
+      if (districtSuggestions.length > 0 && districtSuggestions.some(d => d.label === selectedValues.sublocation)) {
+        // If it's a district, use it as Sublocation
+        apiParams.Sublocation = selectedValues.sublocation;
+      } else {
+        // Otherwise use province
+        apiParams.Province = selectedValues.sublocation;
+      }
       hasAnyParam = true;
     }
     
@@ -93,6 +140,8 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
       hasAnyParam = true;
     }
     
+    console.log("Search parameters:", apiParams);
+    
     // Set search parameters for API
     setSearchParams(hasAnyParam ? apiParams : null);
     
@@ -105,7 +154,7 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   const resetSearch = () => {
     // Reset all selected values
     setSelectedValues({
-      location: "",
+      sublocation: "",
       category: "",
       season: ""
     });
@@ -126,7 +175,7 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   // Get the current anchor ref based on active modal
   const getCurrentAnchorRef = () => {
     switch (activeModal) {
-      case 'location': return locationRef.current;
+      case 'sublocation': return locationRef.current;
       case 'category': return categoryRef.current;
       case 'season': return seasonRef.current;
       default: return null;
@@ -140,16 +189,19 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
         <div 
           ref={locationRef}
           className="flex-1 w-full md:w-auto relative cursor-pointer hover:bg-gray-100 hover:rounded-full"
-          onClick={() => handleOpenModal('location')}
+          onClick={() => handleOpenModal('sublocation')}
         >
           <div className="p-4 flex items-center">
             <div className="mr-3">
               <FaMapMarkerAlt size={20} />
             </div>
             <div>
-              <FootTypo footlabel="Where" className="text-sm font-semibold" />
+              <FootTypo 
+                footlabel={userLocation && userLocation.province ? `Where in ${userLocation.province}` : "Where"} 
+                className="text-sm font-semibold" 
+              />
               <FootTypo
-                footlabel={selectedValues.location || "Search by location"}
+                footlabel={selectedValues.sublocation || (districtSuggestions.length > 0 ? "Search by district" : "Search by location")}
                 className="text-sm"
               />
             </div>
@@ -202,7 +254,7 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
         </div>
 
         <div className="flex items-center p-2 md:pr-3 gap-2">
-          {(selectedValues.location || selectedValues.category || selectedValues.season) && (
+          {(selectedValues.sublocation || selectedValues.category || selectedValues.season) && (
             <button
               className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors"
               onClick={resetSearch}
@@ -229,12 +281,12 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
       </div>
 
       <SearchModal
-        isOpen={activeModal === 'location'}
+        isOpen={activeModal === 'sublocation'}
         onClose={handleCloseModal}
-        searchType="location"
-        onSearch={handleSearch}
-        suggestions={locations}
-        title="Search by Location"
+        searchType="sublocation"
+        onSearch={(label, type) => handleSearch(label, 'sublocation')}
+        suggestions={districtSuggestions.length > 0 ? districtSuggestions : locations}
+        title={districtSuggestions.length > 0 ? (userLocation && userLocation.province ? `Districts in ${userLocation.province}` : "Districts") : "Search by Location"}
         icon={FaMapMarkerAlt}
         anchorEl={getCurrentAnchorRef()}
       />
@@ -263,9 +315,3 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     </div>
   );
 };
-
-
-
-
-
-

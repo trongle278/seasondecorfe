@@ -20,8 +20,7 @@ import { useAddFavoriteDecorService } from "@/app/queries/favorite/favorit.query
 import { useUser } from "@/app/providers/userprovider";
 import { useGetListFavorite } from "@/app/queries/list/favorite.list.query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSeasonConfig } from "@/app/components/ui/card/ServiceCard";
-import { generateSlug } from "@/app/helpers";
+import { generateSlug, getSeasonConfig } from "@/app/helpers";
 import ReviewSection from "@/app/components/ui/review/ReviewSection";
 import OverallRating from "@/app/components/ui/review/OverallRating";
 import ReviewCard from "@/app/components/ui/card/ReviewCard";
@@ -36,8 +35,17 @@ import { useForm } from "react-hook-form";
 import DropdownSelectReturnObj from "@/app/components/ui/Select/DropdownObject";
 import { useGetAllAddress } from "@/app/queries/user/address.query";
 import { useRouter } from "next/navigation";
+import { seasons } from "@/app/constant/season";
+import { useGetPaginatedBookingsForCustomer } from "@/app/queries/list/booking.list.query";
+import { CgSpinner } from "react-icons/cg";
+import { FcFolder } from "react-icons/fc";
+import { BorderBox } from "@/app/components/ui/BorderBox";
 
 const ServiceDetail = () => {
+  const pagination = {
+    pageIndex: 1,
+    pageSize: 10,
+  };
   const router = useRouter();
   const { slug } = useParams();
   const [serviceId, setServiceId] = React.useState(null);
@@ -47,6 +55,8 @@ const ServiceDetail = () => {
   const { mutate: bookService, isPending: isBookingPending } = useBookService();
   const [selectedBookingData, setSelectedBookingData] = React.useState(null);
   const { data: addressData, isLoading: addressLoading } = useGetAllAddress();
+  const { data: bookings, isLoading: isBookingsLoading } =
+    useGetPaginatedBookingsForCustomer(pagination);
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
@@ -101,6 +111,12 @@ const ServiceDetail = () => {
     if (!favorites || !serviceId) return false;
     return favorites.some((fav) => fav.decorServiceDetails.id === serviceId);
   }, [favorites, serviceId]);
+
+  // Check if the service is already in booking
+  const isBooked = React.useMemo(() => {
+    if (!bookings?.data || !serviceId) return false;
+    return bookings?.data.some((fav) => fav.decorService.id === serviceId);
+  }, [bookings, serviceId]);
 
   const handleAddToFavorites = () => {
     if (isInFavorites) return;
@@ -298,12 +314,13 @@ const ServiceDetail = () => {
                 {serviceDetail.seasons && serviceDetail.seasons.length > 0 ? (
                   serviceDetail.seasons.map((season, index) => {
                     const { icon, bgColor } = getSeasonConfig(
-                      season.seasonName
+                      season.seasonName,
+                      seasons
                     );
                     return (
                       <div
                         key={index}
-                        className={`flex items-center text-white ${bgColor} rounded-xl py-1 px-3 text-xs font-medium`}
+                        className={`flex items-center gap-2 text-white ${bgColor} rounded-xl py-1 px-3 text-xs font-medium`}
                       >
                         {icon}
                         {season.seasonName}
@@ -363,10 +380,18 @@ const ServiceDetail = () => {
                 {!isServiceProvider ? (
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      label="Book now"
-                      className="bg-primary"
-                      icon={<IoCallOutline size={20} />}
-                      disabled={!selectedAddress || !selectedBookingData}
+                      label={isBooked ? "Waiting for confirmation" : "Book now"}
+                      className={`${isBooked ? "bg-yellow" : "bg-primary"}`}
+                      icon={
+                        isBooked ? (
+                          <CgSpinner className="animate-spin" size={20} />
+                        ) : (
+                          <IoCallOutline size={20} />
+                        )
+                      }
+                      disabled={
+                        isBooked || !selectedAddress || !selectedBookingData
+                      }
                       onClick={handleSubmit(onSubmit)}
                     />
                     <Button
@@ -386,7 +411,7 @@ const ServiceDetail = () => {
                     />
                   </div>
                 ) : (
-                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center">
+                  <div className="p-4 rounded-lg text-center">
                     <p className="text-gray-500 italic">
                       You are the provider of this service
                     </p>
@@ -396,41 +421,65 @@ const ServiceDetail = () => {
             </div>
           </div>
           <div>
-            <div className="space-y-5 mb-5 max-w-md">
-              <FootTypo
-                footlabel="Where to survey"
-                className="!m-0 font-bold text-lg"
-              />
-              {addressLoading ? (
-                <Skeleton height={56} animation="wave" />
-              ) : addressOptions.length > 0 ? (
-                <DropdownSelectReturnObj
-                  options={addressOptions}
-                  value={selectedAddress}
-                  onChange={handleAddressChange}
-                  labelKey="label"
-                  valueKey="value"
-                  returnObject={true}
-                  lisboxClassName="mt-11"
-                  placeholder="Select a shipping address"
-                />
+            <div className="space-y-5 mb-5 w-full">
+              {isBooked ? (
+                <BorderBox>
+                  <div className="flex flex-row items-center gap-2 rounded-lg mb-4">
+                    <FcFolder size={20} />
+                    <FootTypo
+                      footlabel="You have a pending booking for this service"
+                      className="!m-0 font-semibold"
+                    />
+                  </div>
+                  <Link
+                    href="/booking/request"
+                    className="font-semibold underline"
+                  >
+                    View my booking
+                  </Link>
+                </BorderBox>
               ) : (
-                <button
-                  onClick={() => router.push("/user/account/address")}
-                  className="py-2 text-gray-500 bg-primary text-white rounded-md px-4"
-                >
-                  Add new address
-                </button>
+                <>
+                  <FootTypo
+                    footlabel="Where to survey"
+                    className="!m-0 font-bold text-lg"
+                  />
+                  {addressLoading ? (
+                    <Skeleton height={56} animation="wave" />
+                  ) : addressOptions.length > 0 ? (
+                    <DropdownSelectReturnObj
+                      options={addressOptions}
+                      value={selectedAddress}
+                      onChange={handleAddressChange}
+                      labelKey="label"
+                      valueKey="value"
+                      returnObject={true}
+                      lisboxClassName="mt-11"
+                      placeholder="Select a shipping address"
+                      isDisabled={isBooked}
+                    />
+                  ) : (
+                    <button
+                      onClick={() => router.push("/user/account/address")}
+                      className="py-2 text-gray-500 bg-primary text-white rounded-md px-4"
+                      disabled={isBooked}
+                    >
+                      Add new address
+                    </button>
+                  )}
+                </>
               )}
             </div>
 
-            <PickDate
-              availableDates={serviceDetail.availableDates || []}
-              onDateSelect={(dateData) => {
-                console.log("Selected date data:", dateData);
-                setSelectedBookingData(dateData);
-              }}
-            />
+            {!isBooked && (
+              <PickDate
+                availableDates={serviceDetail.availableDates || []}
+                onDateSelect={(dateData) => {
+                  console.log("Selected date data:", dateData);
+                  setSelectedBookingData(dateData);
+                }}
+              />
+            )}
 
             <Link
               href="/report"

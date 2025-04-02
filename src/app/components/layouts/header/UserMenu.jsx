@@ -102,9 +102,9 @@ export const UserMenu = () => {
                     icon={<FaRegUser />}
                   />
                   <MenuItem
-                    onClick={() => {}}
+                    onClick={() => router.push("/booking/request")}
                     closeMenu={closeMenu}
-                    label="My purchase"
+                    label="My booking"
                     icon={<RiListUnordered />}
                   />
                   <MenuItem

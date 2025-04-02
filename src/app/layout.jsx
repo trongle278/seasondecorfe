@@ -11,19 +11,19 @@ import SearchModal from "./components/ui/Modals/SearchModal";
 import ChatBox from "./components/ui/chatBox/ChatBox";
 import InformationModal from "./components/ui/Modals/InformationModal";
 import LocationModal from "./components/ui/Modals/LocationModal";
-
+import Script from "next/script";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
   title: {
-    template: '%s | SeasonDecor - A platform for seasonal decoration services',
-    default: 'SeasonDecor - A platform for seasonal decoration services',
+    template: "%s | SeasonDecor - A platform for seasonal decoration services",
+    default: "SeasonDecor - A platform for seasonal decoration services",
   },
-  description: 'Find seasonal decoration services for your home',
-  metadataBase: new URL('https://www.seasondecor.com'),
+  description: "Find seasonal decoration services for your home",
+  metadataBase: new URL("https://www.seasondecor.com"),
   icons: {
-    icon: '/logo.svg',
+    icon: "/logo.svg",
   },
 };
 
@@ -34,6 +34,12 @@ export default function RootLayout({ children }) {
       className={`!scroll-smooth ${montserrat.className}`}
       suppressHydrationWarning
     >
+      <head>
+        <Script
+          src="/nutrient-viewer/nutrient-viewer.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className="antialiased overflow-auto">
         <AppProviders>
           <ClientOnly>

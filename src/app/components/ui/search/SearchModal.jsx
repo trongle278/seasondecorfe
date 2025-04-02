@@ -10,6 +10,7 @@ const SearchModal = ({
   searchType,
   onSearch,
   suggestions = [],
+  title,
   icon: Icon,
   anchorEl,
 }) => {
@@ -23,8 +24,14 @@ const SearchModal = ({
   useEffect(() => {
     if (!isOpen) {
       setSelectedItems([]);
+      setSearchTerm("");
     }
   }, [isOpen]);
+
+  // Update filtered suggestions when suggestions prop changes
+  useEffect(() => {
+    setFilteredSuggestions(suggestions);
+  }, [suggestions]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -154,13 +161,17 @@ const SearchModal = ({
             }}
           >
             <div className="p-3">
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+                {Icon && <Icon className="mr-2" size={16} />}
+                {title || `Search by ${searchType === 'sublocation' ? 'Location' : searchType}`}
+              </h3>
               <form onSubmit={handleSubmit}>
                 <div className="relative">
                   <input
                     ref={inputRef}
                     type="text"
                     className="w-full px-4 py-2 pl-10 pr-10 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                    placeholder={`Search for ${searchType}...`}
+                    placeholder={`Search for ${searchType === 'sublocation' ? 'location' : searchType}...`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />

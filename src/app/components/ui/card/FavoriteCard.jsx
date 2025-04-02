@@ -9,8 +9,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FootTypo } from "../Typography";
 import { MdLocationOn } from "react-icons/md";
-import { getSeasonConfig } from "./ServiceCard";
+import { getSeasonConfig } from "@/app/helpers";
 import { CiSquareRemove } from "react-icons/ci";
+import { seasons } from "@/app/constant/season";
 
 const FavoriteCard = ({
   image,
@@ -23,7 +24,7 @@ const FavoriteCard = ({
   slug,
   onRemove,
   isService,
-  seasons = [],
+  season,
   onRemoveFavorite,
   onClick,
 }) => {
@@ -52,16 +53,15 @@ const FavoriteCard = ({
         <div className="absolute top-0 left-0 w-fit rounded-full p-1">
           <CiSquareRemove size={30} className="hover:bg-rose-500 hover:text-white transition-all duration-300 rounded-lg" onClick={onRemoveFavorite} />
         </div>
-      {isService ? (
-        <div className="absolute top-0 right-0 w-fit bg-yellow rounded-bl-lg p-1">
-          <FootTypo
-            footlabel="Service"
-            className=" !m-0 text-sm font-semibold"
-          />
-        </div>
-      ) : (
-        <></>
-      )}</div>
+        {isService ? (
+          <div className="absolute top-0 right-0 w-fit bg-yellow rounded-bl-lg p-1">
+            <FootTypo
+              footlabel="Service"
+              className=" !m-0 text-sm font-semibold"
+            />
+          </div>
+        ) : null}
+      </div>
       
       <div className="flex flex-col h-full" onClick={onClick}>
         <div className="relative w-full h-48 overflow-hidden">
@@ -95,27 +95,27 @@ const FavoriteCard = ({
               footlabel={name}
               className="!m-0 font-semibold text-lg mb-1 line-clamp-1"
             />
-            <div className="flex flex-wrap gap-2 overflow-x-auto items-center">
-              <div className="flex flex-wrap gap-2">
-                {seasons && seasons.length > 0 ? (
-                  seasons.map((season, index) => {
-                    const { icon, bgColor } = getSeasonConfig(
-                      season.seasonName
-                    );
-                    return (
-                      <div
-                        key={index}
-                        className={`flex items-center text-white ${bgColor} rounded-xl py-1 px-3 text-xs font-medium`}
-                      >
-                        {icon}
-                        {season.seasonName}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <span className="text-gray-500 text-sm">All seasons</span>
-                )}
-              </div>
+            <div className="flex flex-wrap gap-2 items-center">
+              {Array.isArray(season) && season.length > 0 ? (
+                season.map((seasonItem, index) => {
+                  if (!seasonItem || !seasonItem.seasonName) return null;
+                  const { icon, bgColor } = getSeasonConfig(
+                    seasonItem.seasonName,
+                    seasons
+                  );
+                  return (
+                    <div
+                      key={index}
+                      className={`flex items-center gap-2 text-white ${bgColor} rounded-xl py-1 px-3 text-xs font-medium`}
+                    >
+                      {icon}
+                      <span>{seasonItem.seasonName}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <span className="text-gray-500 text-sm">All seasons</span>
+              )}
             </div>
 
             <FootTypo
