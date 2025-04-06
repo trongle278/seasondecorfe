@@ -26,7 +26,7 @@ const filters = [
 
 const BookingRequestPage = () => {
   const router = useRouter();
-  const { onOpen } = useInfoModal();
+  const { onOpen, onClose } = useInfoModal();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const {
@@ -71,6 +71,7 @@ const BookingRequestPage = () => {
           status: booking.status,
           createdDate: booking.createdAt,
           isPending: booking.status === 0,
+          address: booking.address,
           detailClick: () =>
             onOpen({
               isBooking: true,
@@ -87,6 +88,7 @@ const BookingRequestPage = () => {
               providerName: booking.provider.businessName,
               profileClick: () => {
                 router.push(`/provider/${booking.provider.slug}`);
+                onClose();
               },
             }),
           cancelClick: () => {},

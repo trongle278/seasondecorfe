@@ -101,6 +101,7 @@ const ListProviderPage = () => {
         componentProps={(provider) => ({
           id: provider.id,
           slug: provider.slug,
+          status: provider.providerStatus,
           name: provider.businessName,
           onFollowClick: () => handleFollowToggle(provider.id),
           href: `provider/${provider.slug}`,

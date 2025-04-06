@@ -64,7 +64,7 @@ export function useGetPaginatedBookingsForCustomer(paginationParams = {}) {
     keepPreviousData: true,
     staleTime: 30000,
   });
-};
+}
 
 export function useGetPaginatedBookingsForProvider(paginationParams = {}) {
   const params = {
@@ -76,20 +76,21 @@ export function useGetPaginatedBookingsForProvider(paginationParams = {}) {
     queryFn: async () => {
       nProgress.start();
       try {
-        let url = `/${SUB_URL}/getPaginatedBookingsForProvider`;
+        let url = `/${SUB_URL}/getPaginatedBookingsForProvider?`;
 
-        url += `?PageIndex=${params.pageIndex}`;
+        const queryParams = [];
 
-        url += `&PageSize=${params.pageSize}`;
+        queryParams.push(`PageIndex=${params.pageIndex}`);
+        queryParams.push(`PageSize=${params.pageSize}`);
 
-        if (params.status)
-          url += `&Status=${encodeURIComponent(params.status)}`;
+        if (params.status) queryParams.push(`Status=${params.status}`);
         if (params.decorServiceId)
-          url += `&DecorServiceId=${params.decorServiceId}`;
-        if (params.sortBy)
-          url += `&SortBy=${encodeURIComponent(params.sortBy)}`;
+          queryParams.push(`DecorServiceId=${params.decorServiceId}`);
+        if (params.sortBy) queryParams.push(`SortBy=${params.sortBy}`);
         if (params.descending !== undefined)
-          url += `&Descending=${params.descending}`;
+          queryParams.push(`Descending=${params.descending}`);
+
+        url += queryParams.join("&");
 
         const res = await BaseRequest.Get(url, false);
 
@@ -116,4 +117,4 @@ export function useGetPaginatedBookingsForProvider(paginationParams = {}) {
     keepPreviousData: true,
     staleTime: 30000,
   });
-};
+}

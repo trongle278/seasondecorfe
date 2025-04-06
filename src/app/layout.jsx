@@ -11,7 +11,7 @@ import SearchModal from "./components/ui/Modals/SearchModal";
 import ChatBox from "./components/ui/chatBox/ChatBox";
 import InformationModal from "./components/ui/Modals/InformationModal";
 import LocationModal from "./components/ui/Modals/LocationModal";
-import Script from "next/script";
+
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -34,12 +34,6 @@ export default function RootLayout({ children }) {
       className={`!scroll-smooth ${montserrat.className}`}
       suppressHydrationWarning
     >
-      <head>
-        <Script
-          src="/nutrient-viewer/nutrient-viewer.js"
-          strategy="beforeInteractive"
-        />
-      </head>
       <body className="antialiased overflow-auto">
         <AppProviders>
           <ClientOnly>

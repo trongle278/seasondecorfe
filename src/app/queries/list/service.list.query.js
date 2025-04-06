@@ -5,7 +5,6 @@ import "nprogress/nprogress.css";
 
 const SUB_URL = `api/DecorService`;
 
-
 const defaultPagination = {
   pageIndex: 1,
   pageSize: 1,
@@ -14,10 +13,8 @@ const defaultPagination = {
   maxPrice: "",
   sortBy: "",
   descending: false,
-  forcePagination: false
+  forcePagination: false,
 };
-
-
 
 export function useGetListDecorService(paginationParams = defaultPagination) {
   const params = {
@@ -31,31 +28,30 @@ export function useGetListDecorService(paginationParams = defaultPagination) {
       nProgress.start();
       try {
         // Always use the paginated endpoint
-        const endpoint = `/${SUB_URL}/getPaginated`;
+        let url = `/${SUB_URL}/getPaginated?`;
 
-        const queryParams = new URLSearchParams({
-          PageIndex: params.pageIndex || 1,  // Ensure we have a valid page index
-          PageSize: params.pageSize || 1     // Ensure we have a valid page size
-        });
+        const queryParams = [];
+
+        queryParams.push(`PageIndex=${params.pageIndex}`);
+        queryParams.push(`PageSize=${params.pageSize}`);
 
         if (params.productName) {
-          queryParams.append("ProductName", params.productName);
+          queryParams.push(`ProductName=${params.productName}`);
         }
         if (params.minPrice) {
-          queryParams.append("MinPrice", params.minPrice);
+          queryParams.push(`MinPrice=${params.minPrice}`);
         }
         if (params.maxPrice) {
-          queryParams.append("MaxPrice", params.maxPrice);
+          queryParams.push(`MaxPrice=${params.maxPrice}`);
         }
         if (params.sortBy) {
-          queryParams.append("SortBy", params.sortBy);
+          queryParams.push(`SortBy=${params.sortBy}`);
         }
         if (params.descending !== undefined) {
-          queryParams.append("Descending", params.descending);
+          queryParams.push(`Descending=${params.descending}`);
         }
 
-        const url = `${endpoint}?${queryParams.toString()}`;
-        console.log("API Request URL:", url);
+        url += queryParams.join("&");
         const res = await BaseRequest.Get(url, false);
 
         if (res?.data) {
@@ -64,16 +60,16 @@ export function useGetListDecorService(paginationParams = defaultPagination) {
             totalCount: res.data.totalCount || 0,
             totalPages: res.data.totalPages || 0,
             pageIndex: res.data.pageIndex || params.pageIndex,
-            pageSize: res.data.pageSize || params.pageSize
+            pageSize: res.data.pageSize || params.pageSize,
           };
         }
-        
+
         return {
           data: [],
           totalCount: 0,
           totalPages: 0,
           pageIndex: params.pageIndex,
-          pageSize: params.pageSize
+          pageSize: params.pageSize,
         };
       } finally {
         nProgress.done();
@@ -84,20 +80,18 @@ export function useGetListDecorService(paginationParams = defaultPagination) {
   });
 }
 
-
-
-export function useGetDecorServiceByProvider(slug, paginationParams = {}) {
+export function useGetDecorServiceListByProvider(paginationParams = {}) {
   const params = {
     ...defaultPagination,
     ...paginationParams,
   };
 
   return useQuery({
-    queryKey: ["decor_service_list_by_provider", slug, params],
+    queryKey: ["decor_service_list_by_provider", params],
     queryFn: async () => {
       nProgress.start();
       try {
-        let url = `/${SUB_URL}/getDecorServiceByProvider?Slug=${slug}`;
+        let url = `/${SUB_URL}/getDecorServiceListByProvider?`;
 
         url += `&PageIndex=${params.pageIndex}`;
 
@@ -114,29 +108,27 @@ export function useGetDecorServiceByProvider(slug, paginationParams = {}) {
 
         const res = await BaseRequest.Get(url, false);
 
-
-        if (res && typeof res === 'object') {
+        if (res && typeof res === "object") {
           if (res.data) {
             return res.data;
           } else if (Array.isArray(res)) {
             return {
               data: res,
               totalCount: res.length,
-              totalPages: Math.ceil(res.length / params.pageSize)
+              totalPages: Math.ceil(res.length / params.pageSize),
             };
           }
         }
         return {
           data: [],
           totalCount: 0,
-          totalPages: 0
+          totalPages: 0,
         };
       } finally {
         nProgress.done();
       }
     },
-    enabled: !!slug,
-    keepPreviousData: true, 
-    staleTime: 30000, 
+    keepPreviousData: true,
+    staleTime: 30000,
   });
 }

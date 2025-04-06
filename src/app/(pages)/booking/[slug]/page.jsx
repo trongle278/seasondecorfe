@@ -40,6 +40,7 @@ import { useGetPaginatedBookingsForCustomer } from "@/app/queries/list/booking.l
 import { CgSpinner } from "react-icons/cg";
 import { FcFolder } from "react-icons/fc";
 import { BorderBox } from "@/app/components/ui/BorderBox";
+import { toast } from "sonner";
 
 const ServiceDetail = () => {
   const pagination = {
@@ -185,8 +186,8 @@ const ServiceDetail = () => {
         );
       },
       onError: (error) => {
+        toast.error(error.message);
         console.error("Error booking service:", error);
-        alert("Failed to book service. Please try again.");
       },
     });
   };
@@ -398,7 +399,7 @@ const ServiceDetail = () => {
                       label={
                         isInFavorites ? "In your wishlist" : "Add to Wishlist"
                       }
-                      className={isInFavorites ? "bg-green-600" : "bg-yellow"}
+                      className={isInFavorites ? "bg-rose-600" : "bg-rose-500"}
                       icon={
                         isInFavorites ? (
                           <MdFavorite size={20} />

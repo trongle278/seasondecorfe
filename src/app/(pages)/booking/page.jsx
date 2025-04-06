@@ -106,8 +106,8 @@ const BookingPage = () => {
       <AuroraBg
         colorStops={["#5fc1f1", "#5fc1f1", "#5fc1f1"]}
         blend={1}
-        amplitude={0}
-        speed={0}
+        amplitude={1}
+        speed={1}
       >
         <div className="absolute pb-40 pt-10 md:pt-20 px-2 w-full md:px-4 lg:px-8">
           <div className="relative pb-4 md:pb-20 flex flex-col items-center justify-center px-8 md:px-8 w-full">

@@ -176,14 +176,14 @@ const SellerProductManage = () => {
           <Skeleton animation="wave" variant="text" width="100%" height={40} />
         ) : error ? (
           <div className="bg-red-100 text-red-700 p-4 rounded">
-            Error loading products: {error.message}
+            Error loading services: {error.message}
           </div>
         ) : products.length === 0 && !isLoading ? (
           <div className="p-4 bg-white rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">No Products Found</h2>
+            <h2 className="text-xl font-semibold mb-4">No Services Found</h2>
             <p>
-              You don't have any products yet. Start selling by adding your
-              first product.
+              You don't have any services yet. Start selling by adding your
+              first service.
             </p>
           </div>
         ) : (

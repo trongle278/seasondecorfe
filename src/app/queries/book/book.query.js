@@ -6,6 +6,7 @@ import "nprogress/nprogress.css";
 const SUB_URL = `api/Booking`;
 
 export function useBookService() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
       nProgress.start();
@@ -14,6 +15,11 @@ export function useBookService() {
       } finally {
         nProgress.done();
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["booking-list-for-customer"],
+      });
     },
   });
 }
@@ -37,6 +43,25 @@ export function useCancelBooking() {
   });
 }
 
+export function useApproveBooking() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      nProgress.start();
+      try {
+        return await BaseRequest.Put(`/${SUB_URL}/status/${id}`);
+      } finally {
+        nProgress.done();
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["booking-list-for-provider"],
+      });
+    },
+  });
+}
+
 export function useRejectBooking() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -44,6 +69,41 @@ export function useRejectBooking() {
       nProgress.start();
       try {
         return await BaseRequest.Put(`/${SUB_URL}/reject/${id}`);
+      } finally {
+        nProgress.done();
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["booking-list-for-provider"],
+      });
+    },
+  });
+}
+
+
+export function useGetBookingDetailForProvider(bookingCode) {
+  return useQuery({
+    queryKey: ["booking-detail-for-provider", bookingCode],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(`/${SUB_URL}/getBookingDetailsForProvider/${bookingCode}`, false);
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+
+export function useChangeBookingStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (bookingCode) => {
+      nProgress.start();
+      try {
+        return await BaseRequest.Put(`/${SUB_URL}/status/${bookingCode}`);
       } finally {
         nProgress.done();
       }

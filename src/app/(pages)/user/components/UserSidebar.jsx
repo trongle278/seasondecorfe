@@ -9,8 +9,14 @@ import { PiShoppingBag } from "react-icons/pi";
 import { GiShadowFollower } from "react-icons/gi";
 import { RiUserFollowLine } from "react-icons/ri";
 import { GoLocation } from "react-icons/go";
+import { FaShieldAlt } from "react-icons/fa";
 
-const Sidebar = ({ selectedPath, userId, userRole }) => {
+const Sidebar = ({ selectedPath}) => {
+  // Helper function to check if current path starts with the given path
+  const isPathActive = (path) => {
+    return selectedPath === path || selectedPath.startsWith(`${path}/`);
+  };
+
   return (
     <div className="w-full md:w-1/4 mb-6 md:mb-0 dark:text-white">
       <ul className="space-y-6">
@@ -19,7 +25,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
             //href={`/accounts/settings/account/${userId}`}
             href={`/user/account/profile`}
             className={`${
-              selectedPath === `/user/account/profile`
+              isPathActive(`/user/account/profile`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-start"
             }`}
@@ -32,7 +38,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
             //href={`/accounts/settings/account/${userId}`}
             href={`/user/account/address`}
             className={`${
-              selectedPath === `/user/account/address`
+              isPathActive(`/user/account/address`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-start"
             }`}
@@ -45,7 +51,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/account/wallet`}
             className={`${
-              selectedPath === `/user/account/wallet`
+              isPathActive(`/user/account/wallet`)
                 ? "text-red font-semibold inline-flex gap-2 items-center "
                 : "inline-flex gap-2 items-center"
             }`}
@@ -57,7 +63,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/notifications`}
             className={`${
-              selectedPath === `/user/notifications`
+              isPathActive(`/user/notifications`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-center"
             }`}
@@ -70,7 +76,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/orders`}
             className={`${
-              selectedPath === `/user/orders`
+              isPathActive(`/user/orders`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-center"
             }`}
@@ -82,7 +88,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/membership`}
             className={`${
-              selectedPath === `/user/membership`
+              isPathActive(`/user/membership`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-center"
             }`}
@@ -94,7 +100,7 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/followers`}
             className={`${
-              selectedPath === `/user/followers`
+              isPathActive(`/user/followers`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-center"
             }`}
@@ -107,12 +113,24 @@ const Sidebar = ({ selectedPath, userId, userRole }) => {
           <Link
             href={`/user/following`}
             className={`${
-              selectedPath === `/user/following`
+              isPathActive(`/user/following`)
                 ? "text-red font-semibold inline-flex gap-2 items-center"
                 : "inline-flex gap-2 items-center"
             }`}
           >
             <RiUserFollowLine size={20} /> Following
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`/user/account/reputation`}
+            className={`${
+              isPathActive(`/user/account/reputation`)
+                ? "text-red font-semibold inline-flex gap-2 items-center"
+                : "inline-flex gap-2 items-center"
+            }`}
+          >
+            <FaShieldAlt size={20} /> Reputation
           </Link>
         </li>
       </ul>

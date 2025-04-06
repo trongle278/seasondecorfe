@@ -56,7 +56,7 @@ const CartItem = ({
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-2 text-gray-700 dark:text-gray-300">
                 <LuBox size={20} /> Status:
-                <StatusChip status={1} className="text-sm" />
+                {/* <StatusChip status={1} className="text-sm" /> */}
               </span>
               <FaTrashAlt
                 size={20}

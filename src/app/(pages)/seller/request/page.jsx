@@ -13,18 +13,22 @@ import { IoEyeOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { useRejectBooking } from "@/app/queries/book/book.query";
 import Avatar from "@/app/components/ui/Avatar/Avatar";
+import { useApproveBooking } from "@/app/queries/book/book.query";
+import { TbReportAnalytics } from "react-icons/tb";
+import { useChangeBookingStatus } from "@/app/queries/book/book.query";
+import { MdOutlineEditNote } from "react-icons/md";
 
 const SellerOrderManage = () => {
   const router = useRouter();
-  const { mutate: rejectBooking } = useRejectBooking();
+  const { mutate: rejectBooking, isPending: isRejecting } = useRejectBooking();
+  const { mutate: approveBooking, isPending: isApproving } =
+    useApproveBooking();
+
+  const { mutate: changeBookingStatus, isPending: isChangingStatus } =
+    useChangeBookingStatus();
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 10,
-    sortBy: "",
-    descending: false,
-    productName: "",
-    minPrice: "",
-    maxPrice: "",
   });
 
   const { data: bookingsData, isLoading } =
@@ -39,18 +43,14 @@ const SellerOrderManage = () => {
       header: "ID",
       accessorKey: "id",
       cell: ({ row }) => (
-        <span className="font-bold">
-          {row.original.bookingId}
-        </span>
+        <span className="font-bold">{row.original.bookingId}</span>
       ),
     },
     {
       header: "Code",
       accessorKey: "Code",
       cell: ({ row }) => (
-        <span className="font-bold">
-          {row.original.bookingCode}
-        </span>
+        <span className="font-bold">{row.original.bookingCode}</span>
       ),
     },
     {
@@ -65,42 +65,105 @@ const SellerOrderManage = () => {
     {
       header: "Status",
       accessorKey: "status",
-      cell: ({ row }) => <StatusChip status={row.original.status} />,
+      cell: ({ row }) => (
+        <StatusChip status={row.original.status} isBooking={true} />
+      ),
     },
-    {header: "From",
+    {
+      header: "From",
       accessorKey: "from",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          <Avatar userImg={row.original.customer.avatar} alt={row.original.customer.businessName} w={40} h={40} />
+          <Avatar
+            userImg={row.original.customer.avatar}
+            alt={row.original.customer.businessName}
+            w={40}
+            h={40}
+          />
           <span>{row.original.customer.email}</span>
         </div>
       ),
     },
+
     {
       header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            label="Approved"
-            onClick={() => handleAcceptOrder(row.original.id)}
-            className="bg-green"
-            icon={<FaCheck size={20} />}
-          />
-          <Button
-            label="Reject"
-            onClick={() => rejectBooking(row.original.bookingId)}
-            className="bg-red"
-            icon={<MdCancel size={20} />}
-          />
-        </div>
-      ),  
+      cell: ({ row }) => {
+        if (row.original.status === 1) {
+          return (
+            <Button
+              label="Create Quotation"
+              onClick={() => {
+                changeBookingStatus(row.original.bookingCode, {
+                  onSuccess: () => {
+                    router.push(
+                      `/seller/quotation/create/${
+                        row.original.bookingCode
+                      }?fullName=${encodeURIComponent(
+                        row.original.customer.fullName ||
+                          row.original.customer.businessName
+                      )}&email=${encodeURIComponent(
+                        row.original.customer.email
+                      )}`
+                    );
+                  },
+                });
+              }}
+              className="bg-yellow"
+              icon={<TbReportAnalytics size={20} />}
+              isLoading={isChangingStatus}
+            />
+          );
+        }
+
+        if (row.original.status === 2) {
+          return (
+            <Button
+              label="Edit Quotation"
+              onClick={() => {
+                router.push(
+                  `/seller/quotation/create/${
+                    row.original.bookingCode
+                  }?fullName=${encodeURIComponent(
+                    row.original.customer.fullName ||
+                      row.original.customer.businessName
+                  )}&email=${encodeURIComponent(row.original.customer.email)}`
+                );
+              }}
+              className="bg-yellow"
+              icon={<MdOutlineEditNote size={20} />}
+              isLoading={isChangingStatus}
+            />
+          );
+        }
+
+        return (
+          <div className="flex gap-2">
+            <Button
+              label="Approved"
+              onClick={() => approveBooking(row.original.bookingCode)}
+              className="bg-green"
+              icon={<FaCheck size={20} />}
+              isLoading={isApproving}
+            />
+            <Button
+              label="Reject"
+              onClick={() => rejectBooking(row.original.bookingCode)}
+              className="bg-red"
+              icon={<MdCancel size={20} />}
+              isLoading={isRejecting}
+            />
+          </div>
+        );
+      },
     },
     {
       header: "Detail",
       cell: ({ row }) => (
         <div className="flex gap-2">
           <button
-            onClick={() => router.push(`/seller/request/${row.original.bookingId}`)}
+            onClick={() =>
+              router.push(`/seller/request/${row.original.bookingCode}`)
+            }
             className="inline-flex items-center gap-2 underline"
           >
             <IoEyeOutline size={20} />
@@ -137,7 +200,11 @@ const SellerOrderManage = () => {
       <h1 className="text-2xl font-bold mb-6">Request Management</h1>
 
       {isLoading && bookings.length === 0 ? (
-        <Skeleton animation="wave" variant="text" width="100%" height={40} />
+        <>
+          <Skeleton animation="wave" width="100%" />
+          <Skeleton animation="wave" variant="text" width="100%" />
+          <Skeleton animation="wave" variant="text" width="100%" />
+        </>
       ) : bookings.length === 0 && !isLoading ? (
         <div className="p-4 bg-white rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">No Orders Found</h2>
