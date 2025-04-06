@@ -23,8 +23,8 @@ export function useCreateDecorService() {
 
 export function useGetDecorServiceById(id) {
   return useQuery({
-    queryKey: ["decor-service", id],
-    queryFn: async (style, province, category, season) => {
+    queryKey: ["get_decor_service_by_id", id],
+    queryFn: async () => {
       if (!id) throw new Error("No id provided");
 
       nProgress.start();
@@ -36,6 +36,7 @@ export function useGetDecorServiceById(id) {
         nProgress.done();
       }
     },
+    enabled: !!id,
   });
 }
 
@@ -57,10 +58,17 @@ export function useSearchDecorService(params) {
         // Construct the query string with proper handling of arrays
         const queryParams = new URLSearchParams();
         
+        // Handle sublocation parameter
         if (params.Sublocation) {
           queryParams.append("Sublocation", params.Sublocation);
         }
         
+        // Handle province parameter
+        if (params.Province) {
+          queryParams.append("Province", params.Province);
+        }
+        
+        // Handle category parameter
         if (params.CategoryName) {
           queryParams.append("CategoryName", params.CategoryName);
         }
@@ -79,6 +87,7 @@ export function useSearchDecorService(params) {
         }
         
         const url = `/${SUB_URL}/search${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        console.log("Search URL:", url);
         const res = await BaseRequest.Get(url, false);
         return res;
       } finally {

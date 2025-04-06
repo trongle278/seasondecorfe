@@ -5,7 +5,7 @@ import Avatar from "@/app/components/ui/Avatar/Avatar";
 import { useRouter } from "next/navigation";
 
 
-const ProviderCard = ({id,avatar, name, onFollowClick, onChatClick, slug, href, isFollowed, isLoading}) => {
+const ProviderCard = ({id,avatar, name, onFollowClick, onChatClick, slug, href, isFollowed, isLoading, status}) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -21,7 +21,7 @@ const ProviderCard = ({id,avatar, name, onFollowClick, onChatClick, slug, href, 
       <GlowingCard
         id={id}  
         onClick={handleClick}
-        icon={<Avatar userImg={avatar} w={72} h={72} className="cursor-pointer"/>}
+        icon={<Avatar userImg={avatar} w={72} h={72} className="cursor-pointer" isProvider={true} status={status}/>}
         userDetails={name}
         slug={slug}
         onFollowClick={onFollowClick}

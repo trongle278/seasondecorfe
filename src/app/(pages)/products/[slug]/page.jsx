@@ -34,6 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useChat from "@/app/hooks/useChat";
 import useChatBox from "@/app/hooks/useChatBox";
 import { toast } from "sonner";
+import { generateSlug } from "@/app/helpers";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -62,13 +63,6 @@ const ProductDetail = () => {
       }
     }
   }, [productsData, slug]);
-
-  const generateSlug = (name) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  };
 
   if (!productDetail) {
     return (

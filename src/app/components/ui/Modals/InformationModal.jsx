@@ -103,7 +103,7 @@ const InformationModal = () => {
           </div>
           <div className="flex flex-row items-center gap-2">
             <FootTypo footlabel="Status" className="!m-0 text-sm" />
-            <StatusChip status={status} />
+            <StatusChip status={status} isBooking={true} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <FootTypo footlabel="About the service" className="!m-0 text-sm" />

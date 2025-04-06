@@ -5,7 +5,6 @@ import "nprogress/nprogress.css";
 
 const SUB_URL = `api/Product`;
 
-
 const defaultPagination = {
   pageIndex: 1,
   pageSize: 10,
@@ -13,7 +12,7 @@ const defaultPagination = {
   minPrice: "",
   maxPrice: "",
   sortBy: "",
-  descending: false
+  descending: false,
 };
 
 export function useGetListProduct(paginationParams = {}) {
@@ -26,47 +25,45 @@ export function useGetListProduct(paginationParams = {}) {
     queryFn: async () => {
       nProgress.start();
       try {
-        let url = `/${SUB_URL}/getPaginatedList`;
+        let url = `/${SUB_URL}/getPaginatedList?`;
 
-        url += `?PageIndex=${params.pageIndex}`;
+        const queryParams = [];
 
-        url += `&PageSize=${params.pageSize}`;
+        queryParams.push(`PageIndex=${params.pageIndex}`);
+        queryParams.push(`PageSize=${params.pageSize}`);
 
-        if (params.productName)
-          url += `&ProductName=${encodeURIComponent(params.productName)}`;
-        if (params.minPrice) url += `&MinPrice=${params.minPrice}`;
-        if (params.maxPrice) url += `&MaxPrice=${params.maxPrice}`;
-        if (params.sortBy)
-          url += `&SortBy=${encodeURIComponent(params.sortBy)}`;
-        if (params.descending !== undefined)
-          url += `&Descending=${params.descending}`;
+        if (params.productName) queryParams.push(`ProductName=${params.productName}`);
+        if (params.minPrice) queryParams.push(`MinPrice=${params.minPrice}`);
+        if (params.maxPrice) queryParams.push(`MaxPrice=${params.maxPrice}`);
+        if (params.sortBy) queryParams.push(`SortBy=${params.sortBy}`);
+        if (params.descending !== undefined) queryParams.push(`Descending=${params.descending}`);
 
+        url += queryParams.join('&');
 
         const res = await BaseRequest.Get(url, false);
 
-
-        if (res && typeof res === 'object') {
+        if (res && typeof res === "object") {
           if (res.data) {
             return res.data;
           } else if (Array.isArray(res)) {
             return {
               data: res,
               totalCount: res.length,
-              totalPages: Math.ceil(res.length / params.pageSize)
+              totalPages: Math.ceil(res.length / params.pageSize),
             };
           }
         }
         return {
           data: [],
           totalCount: 0,
-          totalPages: 0
+          totalPages: 0,
         };
       } finally {
         nProgress.done();
       }
     },
-    keepPreviousData: true, 
-    staleTime: 30000, 
+    keepPreviousData: true,
+    staleTime: 30000,
   });
 }
 
@@ -95,35 +92,32 @@ export function useGetProductByCategoryId(categoryId, paginationParams = {}) {
         if (params.descending !== undefined)
           url += `&Descending=${params.descending}`;
 
-
         const res = await BaseRequest.Get(url, false);
 
-
-        if (res && typeof res === 'object') {
+        if (res && typeof res === "object") {
           if (res.data) {
             return res.data;
           } else if (Array.isArray(res)) {
             return {
               data: res,
               totalCount: res.length,
-              totalPages: Math.ceil(res.length / params.pageSize)
+              totalPages: Math.ceil(res.length / params.pageSize),
             };
           }
         }
         return {
           data: [],
           totalCount: 0,
-          totalPages: 0
+          totalPages: 0,
         };
       } finally {
         nProgress.done();
       }
     },
-    keepPreviousData: true, 
-    staleTime: 30000, 
+    keepPreviousData: true,
+    staleTime: 30000,
   });
 }
-
 
 export function useGetProductByProvider(slug, paginationParams = {}) {
   const params = {
@@ -153,29 +147,28 @@ export function useGetProductByProvider(slug, paginationParams = {}) {
 
         const res = await BaseRequest.Get(url, false);
 
-
-        if (res && typeof res === 'object') {
+        if (res && typeof res === "object") {
           if (res.data) {
             return res.data;
           } else if (Array.isArray(res)) {
             return {
               data: res,
               totalCount: res.length,
-              totalPages: Math.ceil(res.length / params.pageSize)
+              totalPages: Math.ceil(res.length / params.pageSize),
             };
           }
         }
         return {
           data: [],
           totalCount: 0,
-          totalPages: 0
+          totalPages: 0,
         };
       } finally {
         nProgress.done();
       }
     },
     enabled: !!slug,
-    keepPreviousData: true, 
-    staleTime: 30000, 
+    keepPreviousData: true,
+    staleTime: 30000,
   });
 }

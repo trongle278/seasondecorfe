@@ -116,6 +116,8 @@ const ProviderDetailPage = () => {
                 w={72}
                 h={72}
                 className="cursor-pointer"
+                isProvider={true}
+                status={provider.providerStatus}
               />
             }
             slug={slug}

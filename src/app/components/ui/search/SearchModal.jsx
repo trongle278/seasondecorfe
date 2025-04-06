@@ -47,7 +47,7 @@ const SearchModal = ({
       setFilteredSuggestions(suggestions);
     } else {
       const filtered = suggestions.filter((suggestion) =>
-        suggestion.label.toLowerCase().includes(searchTerm.toLowerCase())
+        suggestion.label?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredSuggestions(filtered);
     }
@@ -137,7 +137,7 @@ const SearchModal = ({
       window.removeEventListener("keydown", handleEsc);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [anchorEl]);
+  }, [anchorEl, onClose]);
 
   return (
     <AnimatePresence>
@@ -163,7 +163,7 @@ const SearchModal = ({
             <div className="p-3">
               <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
                 {Icon && <Icon className="mr-2" size={16} />}
-                {title || `Search by ${searchType === 'sublocation' ? 'Location' : searchType}`}
+                {title}
               </h3>
               <form onSubmit={handleSubmit}>
                 <div className="relative">

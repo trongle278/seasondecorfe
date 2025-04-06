@@ -30,7 +30,7 @@ export function useCreateOrder() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get_list_cart"] });
+      queryClient.invalidateQueries({ queryKey: ["get_list_cart"], queryKey: ["order_list"] });
     },
   });
 }

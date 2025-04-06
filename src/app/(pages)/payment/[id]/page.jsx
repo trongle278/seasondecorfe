@@ -46,7 +46,7 @@ const PaymentDetailPage = () => {
       router.push("/user/account/wallet");
     } else {
       payOrder(id);
-      router.push("/user/account/order");
+      router.push("/user/orders/completed");
     }
   };
 

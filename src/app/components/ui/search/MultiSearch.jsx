@@ -15,7 +15,6 @@ import { seasons } from "@/app/constant/season";
 import { useSearchDecorService } from "@/app/queries/service/service.query";
 import { IoIosClose } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { getDistricts } from "vn-provinces";
 
 export const MultiSearch = ({ onSearch, onSearchResults }) => {
   const router = useRouter();
@@ -26,10 +25,6 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     season: ""
   });
   const [searchParams, setSearchParams] = React.useState(null);
-  const [districtSuggestions, setDistrictSuggestions] = React.useState([]);
-  
-  // Get user location from Redux
-  const userLocation = useSelector((state) => state.users.userLocation);
   
   // Refs for each search section
   const locationRef = React.useRef(null);
@@ -38,41 +33,6 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   
   // Query for search results
   const { data: searchResults, isLoading, error } = useSearchDecorService(searchParams);
-
-  React.useEffect(() => {
-    if (userLocation && userLocation.code) {
-      try {
-        const allDistricts = getDistricts();
-        
-        const provinceDistricts = allDistricts.filter(
-          district => district.provinceCode === userLocation.code
-        );
-        
-        const formattedDistricts = provinceDistricts.map(district => ({
-          id: district.code,
-          label: district.name,
-          value: district.name,
-          description: `District in ${userLocation.province}`
-        }));
-        
-        // Set district suggestions
-        setDistrictSuggestions(formattedDistricts);
-        
-        console.log(`Loaded ${formattedDistricts.length} districts for province: ${userLocation.province} (${userLocation.code})`);
-      } catch (error) {
-        console.error("Error loading districts:", error);
-      }
-    } else {
-      setDistrictSuggestions([]);
-    }
-  }, [userLocation]);
-
-  // Effect to check and handle empty userLocation values
-  React.useEffect(() => {
-    if (!userLocation || !userLocation.province) {
-      setDistrictSuggestions([]);
-    }
-  }, [userLocation]);
 
   // Effect to handle search results
   React.useEffect(() => {
@@ -117,14 +77,8 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
     
     // Process selected values for API
     if (selectedValues.sublocation && selectedValues.sublocation !== "All") {
-      // Check if searching by district or province
-      if (districtSuggestions.length > 0 && districtSuggestions.some(d => d.label === selectedValues.sublocation)) {
-        // If it's a district, use it as Sublocation
-        apiParams.Sublocation = selectedValues.sublocation;
-      } else {
-        // Otherwise use province
-        apiParams.Province = selectedValues.sublocation;
-      }
+      // Use province directly
+      apiParams.Province = selectedValues.sublocation;
       hasAnyParam = true;
     }
     
@@ -197,11 +151,11 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
             </div>
             <div>
               <FootTypo 
-                footlabel={userLocation && userLocation.province ? `Where in ${userLocation.province}` : "Where"} 
+                footlabel="Where" 
                 className="text-sm font-semibold" 
               />
               <FootTypo
-                footlabel={selectedValues.sublocation || (districtSuggestions.length > 0 ? "Search by district" : "Search by location")}
+                footlabel={selectedValues.sublocation || "Search by location"}
                 className="text-sm"
               />
             </div>
@@ -285,8 +239,8 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
         onClose={handleCloseModal}
         searchType="sublocation"
         onSearch={(label, type) => handleSearch(label, 'sublocation')}
-        suggestions={districtSuggestions.length > 0 ? districtSuggestions : locations}
-        title={districtSuggestions.length > 0 ? (userLocation && userLocation.province ? `Districts in ${userLocation.province}` : "Districts") : "Search by Location"}
+        suggestions={locations}
+        title="Search by Province"
         icon={FaMapMarkerAlt}
         anchorEl={getCurrentAnchorRef()}
       />
