@@ -8,6 +8,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { MdLocationOn } from "react-icons/md";
 import { seasons } from "@/app/constant/season";
 import { getSeasonConfig } from "@/app/helpers";
+import StatusChip from "../statusChip/StatusChip";
 
 const ServiceCard = ({
   href = "",
@@ -16,6 +17,7 @@ const ServiceCard = ({
   images = [],
   seasons: serviceSeasons = [],
   category,
+  isAvailable = false,
 }) => {
   const displayedImages = [...images, ...images, ...images].slice(0, 3);
 
@@ -35,7 +37,10 @@ const ServiceCard = ({
           <div className="flex flex-wrap gap-2 items-center">
             <span className="text-sm font-medium">Suitable for :</span>
             {serviceSeasons.map((season, index) => {
-              const { icon, bgColor } = getSeasonConfig(season.seasonName, seasons);
+              const { icon, bgColor } = getSeasonConfig(
+                season.seasonName,
+                seasons
+              );
               return (
                 <div
                   key={index}
@@ -51,12 +56,15 @@ const ServiceCard = ({
             <MdLocationOn size={20} />
             <FootTypo footlabel={province} className="!m-0 font-bold text-sm" />
           </div>
-
-          <Button
-            className="mt-4 w-fit"
-            label="View details"
-            icon={<IoIosArrowForward size={20} />}
-          />
+          {isAvailable ? (
+            <StatusChip status={isAvailable} isService={true} />
+          ) : (
+            <Button
+              className="mt-4 w-fit"
+              label="View details"
+              icon={<IoIosArrowForward size={20} />}
+            />
+          )}
         </div>
 
         {displayedImages.map((img, index) => (

@@ -21,6 +21,7 @@ import { PiSealWarning } from "react-icons/pi";
 import { BsThreeDots } from "react-icons/bs";
 import { IoLocationOutline } from "react-icons/io5";
 import { HiOutlineStatusOnline } from "react-icons/hi";
+import { formatCurrency } from "@/app/helpers";
 
 
 const RequestDetail = () => {
@@ -46,7 +47,7 @@ const RequestDetail = () => {
         <FootTypo footlabel="Go Back" className="!m-0" />
       </button>
       <BodyTypo bodylabel="Request Details" className="!m-0" />
-      <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full font-semibold mt-5">
+      <div className="grid grid-cols-2 grid-rows-1 gap-4 w-full font-semibold my-5">
         <BorderBox className="flex flex-col gap-2 border shadow-xl">
           <FootTypo footlabel="Information" className="!m-0 text-lg" />
           <div className="flex flex-row gap-3 items-center">
@@ -111,11 +112,11 @@ const RequestDetail = () => {
             className="w-fit bg-primary text-white"
           />
         </BorderBox>
-
-        <BorderBox className="flex flex-col gap-2 border shadow-xl w-full col-span-2">
+      </div>
+      <BorderBox className="flex flex-col gap-2 border shadow-xl w-full col-span-2 font-semibold">
           <FootTypo footlabel="Service Details" className="!m-0 text-lg" />
           <div className="flex flex-row gap-3 items-center">
-            <FootTypo footlabel="Service" className="!m-0 text-sm" />
+            <FootTypo footlabel="Service name" className="!m-0 text-sm" />
             <FootTypo
               footlabel={bookingsData.decorService.style}
               className="!m-0 underline"
@@ -130,18 +131,49 @@ const RequestDetail = () => {
           </div>
 
           {bookingsData.bookingDetails.length > 0 ? (
-            <div>have data</div>
+            <div className="flex flex-col gap-4 ">
+              {bookingsData.bookingDetails.map((detail, index) => (
+                <div key={detail.id} className="flex flex-col gap-2 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <FootTypo 
+                      footlabel={detail.serviceItem} 
+                      className="!m-0 font-semibold text-primary"
+                    />
+                  </div>
+                  <div className="flex flex-row gap-3 items-center">
+                    <FootTypo footlabel="Cost:" className="!m-0 text-sm" />
+                    <FootTypo
+                      footlabel={formatCurrency(detail.cost)}
+                      className="!m-0 font-semibold text-lg"
+                    />
+                  </div>
+                  <div className="flex flex-row gap-3 items-center">
+                    <FootTypo footlabel="Estimated Completion:" className="!m-0 text-sm" />
+                    {bookingsData.status === 7 ? (
+                    <FootTypo
+                      footlabel={formatDate(detail.estimatedCompletion)}
+                      className="!m-0 text-sm"
+                    />
+                    ): (
+                      <FootTypo
+                        footlabel="Updating ..."
+                        className="!m-0 text-lg animate-pulse"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="bg-white/50 w-full h-full z-30 flex gap-2 items-center justify-start animate-pulse overflow-hidden">
               <FootTypo
-                footlabel="Waiting for proceeding of the quotaion"
+                footlabel="Waiting for proceeding of the quotation"
                 className="!m-0 text-sm"
               />
               <BsThreeDots size={30} />
             </div>
           )}
         </BorderBox>
-      </div>
     </SellerWrapper>
   );
 };

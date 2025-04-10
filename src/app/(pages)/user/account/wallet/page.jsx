@@ -107,7 +107,7 @@ const UserWallet = () => {
               />
             </div>
             
-            <div className="shadow-sm  overflow-hidden">
+            <div className="overflow-hidden">
               {(!latestTransactions || latestTransactions.length === 0) ? (
                 <div className="p-6 text-center text-gray-500">
                   No transactions found

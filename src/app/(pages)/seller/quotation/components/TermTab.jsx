@@ -2,13 +2,15 @@
 import { Label } from "@/app/components/ui/inputs/Label";
 import { Field, Textarea } from "@headlessui/react";
 import Input from "@/app/components/ui/inputs/Input";
+import { FaPercent } from "react-icons/fa6";
+import { IoWarning } from "react-icons/io5";
 
-const Term = ({ 
-  register, 
-  value = "", 
-  depositPercentage = 30, 
-  onTermsChange, 
-  onDepositChange 
+const Term = ({
+  register,
+  value = "",
+  depositPercentage = 20,
+  onTermsChange,
+  onDepositChange,
 }) => {
   return (
     <div className="space-y-4">
@@ -32,26 +34,27 @@ const Term = ({
             rows={7}
           />
         </Field>
-        <div className="mt-5">
+        <div className="flex flex-row items-center mt-5 gap-3">
           <Label htmlFor="depositPercentage">Deposit Percentage</Label>
           <Input
             id="depositPercentage"
             name="depositPercentage"
             defaultValue={depositPercentage}
             onChange={onDepositChange}
-            {...register("depositPercentage", { 
-              required: true,
-              valueAsNumber: true,
-              min: 0,
-              max: 100
-            })}
+            register={register}
             placeholder="Deposit Percentage"
-            type="number"
+            type="text"
             min="0"
-            max="100"
-            className="pl-3"
+            max="20"
+            maxLength={2}
+            className="pl-3 max-w-20"
           />
+          <FaPercent size={20} />
         </div>
+        <span className="text-sm flex flex-row items-center gap-2 text-rose-600 mt-3">
+          <IoWarning size={20} />
+          The deposit percentage must be between 0 and 20.
+        </span>
       </div>
     </div>
   );

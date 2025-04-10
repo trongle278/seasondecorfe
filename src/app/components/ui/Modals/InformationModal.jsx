@@ -1,6 +1,8 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
 
 import Modal from "../Modal";
 import Heading from "./components/Heading";
@@ -17,10 +19,14 @@ import { RiProfileLine } from "react-icons/ri";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
 const InformationModal = () => {
+  const [isChecked, setIsChecked] = useState(false);
   const infoModal = useInfoModal();
   const {
     isOrder,
     isBooking,
+    isDescription,
+    isTerms,
+    isContract,
     description,
     title,
     orderCode,
@@ -39,18 +45,56 @@ const InformationModal = () => {
     providerName,
     profileClick,
     chatClick,
+    buttonLabel,
+    onSubmit,
+    contractFilePath,
   } = infoModal.data || {};
 
+  const handleSubmit = () => {
+    if (isChecked && onSubmit) {
+      onSubmit();
+    }
+    infoModal.onClose();
+  };
+  
+
   const bodyContent = (
-    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto ">
+    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
       <div className="flex items-center gap-2">
         <Heading title={title} />
       </div>
-      {!isOrder && (
+      {isTerms && (
         <div className="mt-4">
-          <p className="whitespace-pre-line text-gray-700 dark:text-gray-300">
-            {description || ""}
-          </p>
+          {description && (
+            <div className="">
+              <div className="space-y-4">
+                {description.split("\n").map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className="font-medium leading-relaxed"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-6 mx-2 border-t border-gray-200 dark:border-gray-700 pt-4">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={(e) => setIsChecked(e.target.checked)}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <span className="text-sm">
+                      I have read and agree to the terms and conditions
+                    </span>
+                  }
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
       {isOrder && (
@@ -170,22 +214,45 @@ const InformationModal = () => {
               A service from
             </span>
             <div className="flex flex-row items-center gap-2">
-              <Avatar userImg={providerImage} alt={providerName} w={40} h={40} />
+              <Avatar
+                userImg={providerImage}
+                alt={providerName}
+                w={40}
+                h={40}
+              />
               <FootTypo footlabel={providerName} className="!m-0 text-lg" />
             </div>
             <div className="flex flex-row items-center gap-2">
               <Button
-              label="View Profile"
-              onClick={profileClick}
-              icon={<RiProfileLine />}
-            />
-            <Button
+                label="View Profile"
+                onClick={profileClick}
+                icon={<RiProfileLine />}
+              />
+              <Button
                 label="Chat now"
                 onClick={chatClick}
                 icon={<IoChatboxEllipsesOutline />}
               />
             </div>
           </div>
+        </div>
+      )}
+
+      {isDescription && (
+        <div className="mt-4">
+          <p className="whitespace-pre-line text-gray-700 dark:text-gray-300">
+            {description || ""}
+          </p>
+        </div>
+      )}
+
+      {isContract && (
+        <div className="h-[800px] flex flex-col">
+          <iframe
+            src={contractFilePath}
+            className="w-full h-full rounded-md border-0"
+            title="Contract PDF"
+          />
         </div>
       )}
     </div>
@@ -203,9 +270,10 @@ const InformationModal = () => {
       title={title || "Description"}
       secondaryAction={infoModal.onClose}
       onClose={infoModal.onClose}
-      actionLabel="Done"
-      onSubmit={infoModal.onClose}
+      actionLabel={buttonLabel}
+      onSubmit={handleSubmit}
       body={bodyContent}
+      //disabled={!isChecked}
       footer={footerContent}
     />
   );

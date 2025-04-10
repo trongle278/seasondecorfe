@@ -100,7 +100,7 @@ export default function RegistrationPage() {
                 <EditAvatar
                   userImg={user?.avatar}
                   className="justify-center"
-                  childStyle="left-40"
+                  childStyle="left-60"
                 />
 
                 <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">

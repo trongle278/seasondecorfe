@@ -11,6 +11,11 @@ import useInfoModal from "@/app/hooks/useInfoModal";
 import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
 import { BodyTypo } from "@/app/components/ui/Typography";
 import { useRouter } from "next/navigation";
+import PopoverComponent from "@/app/components/ui/popover/Popover";
+import { useGetListQuotationForCustomer } from "@/app/queries/list/quotation.js";
+import QuotationCard from "@/app/components/ui/card/QuotationCard";
+import { IoIosArrowForward } from "react-icons/io";
+
 const filters = [
   {
     label: "Sort by Status",
@@ -28,6 +33,7 @@ const BookingRequestPage = () => {
   const router = useRouter();
   const { onOpen, onClose } = useInfoModal();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState(0);
   const pageSize = 10;
   const {
     data: bookingsData,
@@ -38,7 +44,20 @@ const BookingRequestPage = () => {
     pageSize: pageSize,
   });
 
+  const {
+    data: quotationsData,
+    isLoading: isQuotationsLoading,
+    refetch: refetchQuotations,
+  } = useGetListQuotationForCustomer({
+    pageIndex: currentPage,
+    pageSize: pageSize,
+    status: selectedStatus,
+  });
+
   const bookings = bookingsData?.data || [];
+  const quotations = quotationsData?.data || [];
+
+  const quotationItemCount = quotationsData?.totalCount || 0;
 
   const handleLoadMore = () => {
     if (calculatedTotalPages && currentPage < calculatedTotalPages) {
@@ -55,10 +74,39 @@ const BookingRequestPage = () => {
   return (
     <Container>
       <MuiBreadcrumbs />
-      <BodyTypo bodylabel="Booking Request" />
-      <div className="flex justify-center w-fit my-5">
-        <ListSidebar filters={filters} />
-      </div>
+      <section className="flex flex-row justify-between items-center my-5">
+        <BodyTypo bodylabel="Booking Request" />
+        <div className="flex flex-row gap-4">
+          <PopoverComponent
+            buttonLabel="Pending Quotations"
+            itemCount={quotationItemCount}
+          >
+            <DataMapper
+              data={quotations}
+              Component={QuotationCard}
+              emptyStateComponent={<EmptyState title="No quotations found" />}
+              loading={isQuotationsLoading}
+              getKey={(item) => item.quotationCode}
+              componentProps={(item) => ({
+                quotationCode: item.quotationCode,
+                createdDate: item.createdAt,
+                status: item.status,
+                serviceName: item.style,
+                onClick: () => {
+                  router.push(`/quotation/${item.quotationCode}`);
+                },
+              })}
+            />
+          </PopoverComponent>
+          <button onClick={() => router.push("/quotation")} className="flex items-center gap-2 px-4 py-2 hover:translate-x-3 transition-all duration-300">
+            <IoIosArrowForward size={20} />
+            View All
+          </button>
+        </div>
+      </section>
+      <section className="flex flex-row justify-between items-center my-5">
+        <ListSidebar filters={filters} className="max-w-[200px]" />
+      </section>
 
       <DataMapper
         data={bookings}
@@ -71,10 +119,16 @@ const BookingRequestPage = () => {
           status: booking.status,
           createdDate: booking.createdAt,
           isPending: booking.status === 0,
+          isContracting: booking.status === 3,
           address: booking.address,
+          providerAvatar: booking.provider.avatar,
+          providerName: booking.provider.businessName,
+          serviceName: booking.decorService.style,
+
           detailClick: () =>
             onOpen({
               isBooking: true,
+              buttonLabel: "Done",
               title: "Booking Details",
               bookingCode: booking.bookingCode,
               status: booking.status,

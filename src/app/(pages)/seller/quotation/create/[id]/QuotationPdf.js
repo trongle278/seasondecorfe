@@ -1,10 +1,173 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { PDFViewer, PDFDownloadLink, Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer';
+import { PDFViewer, PDFDownloadLink, Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/renderer';
 import Button from "@/app/components/ui/Buttons/Button";
 import { IoDownloadOutline } from "react-icons/io5";
-import { styles } from '../../style';
+import { styles as baseStyles } from '../../style';
+
+// Enhanced styles for a more attractive PDF
+const styles = {
+  ...baseStyles,
+  page: {
+    ...baseStyles.page,
+    padding: 25,
+    backgroundColor: '#fff',
+    fontFamily: 'Helvetica',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderBottom: '2px solid #FF385C',
+    paddingBottom: 8,
+  },
+  logo: {
+    width: 100,
+    height: 50,
+    objectFit: 'contain',
+  },
+  headerRight: {
+    alignItems: 'flex-end',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF385C',
+    textTransform: 'uppercase',
+  },
+  subtitle: {
+    fontSize: 10,
+    color: '#666',
+    marginTop: 2,
+  },
+  section: {
+    ...baseStyles.section,
+    marginBottom: 10,
+    padding: 8,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    borderLeft: '3px solid #FF385C',
+  },
+  sectionTitle: {
+    ...baseStyles.sectionTitle,
+    fontSize: 14,
+    color: '#333',
+    borderBottom: '1px solid #ddd',
+    paddingBottom: 4,
+    marginBottom: 6,
+  },
+  text: {
+    ...baseStyles.text,
+    fontSize: 9,
+    lineHeight: 1.3,
+    color: '#555',
+  },
+  tableContainer: {
+    ...baseStyles.tableContainer,
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  tableTitle: {
+    ...baseStyles.tableTitle,
+    color: '#FF385C',
+    fontWeight: 'bold',
+    fontSize: 11,
+    marginBottom: 3,
+  },
+  table: {
+    ...baseStyles.table,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  tableHeader: {
+    ...baseStyles.tableHeader,
+    backgroundColor: '#FF385C',
+    color: '#fff',
+    minHeight: 18,
+  },
+  tableRow: {
+    ...baseStyles.tableRow,
+    minHeight: 22,
+    borderBottomColor: '#e1e1e1',
+  },
+  tableCell: {
+    ...baseStyles.tableCell,
+    padding: 4,
+    fontSize: 8,
+  },
+  subtotal: {
+    ...baseStyles.subtotal,
+    backgroundColor: '#f5f5f5',
+    padding: 5,
+    marginTop: 3,
+    borderRadius: 4,
+  },
+  total: {
+    ...baseStyles.total,
+    marginTop: 8,
+    padding: 6,
+    backgroundColor: '#FF385C',
+    color: 'white',
+    borderRadius: 4,
+  },
+  totalLabel: {
+    ...baseStyles.totalLabel,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  totalValue: {
+    ...baseStyles.totalValue,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  infoBox: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  infoColumn: {
+    flex: 1,
+    padding: 6,
+  },
+  infoLabel: {
+    fontSize: 8,
+    color: '#777',
+    marginBottom: 1,
+  },
+  infoValue: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  footer: {
+    ...baseStyles.footer,
+    marginTop: 10,
+    paddingTop: 8,
+    borderTop: '1px solid #e1e1e1',
+    alignItems: 'center',
+    paddingBottom: 0,
+  },
+  footerText: {
+    color: '#888',
+    fontSize: 8,
+    marginBottom: 2,
+  },
+  highlight: {
+    color: '#FF385C',
+    fontWeight: 'bold',
+  },
+  infoGroup: {
+    marginTop: 4,
+  },
+  compactRows: {
+    maxHeight: 200,
+  },
+  termsText: {
+    fontSize: 8,
+    lineHeight: 1.2,
+  }
+};
 
 // Create a local currency formatter function that works with PDF
 const formatVND = (value) => {
@@ -81,7 +244,8 @@ const QuotationDocument = ({ data = {} }) => {
     serviceItems = [],
     materials = [],
     constructionTasks = [],
-    depositPercentage = 30
+    depositPercentage = 20,
+    logoUrl = '/logo/logo-white.png' // Default logo URL
   } = data;
 
   // Ensure materials and constructionTasks are arrays
@@ -122,62 +286,80 @@ const QuotationDocument = ({ data = {} }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
+        {/* Header with Logo */}
         <View style={styles.header}>
-          <Text style={styles.title}>#{quotationCode}</Text>
-          <Text style={styles.subtitle}>Created: {new Date().toLocaleDateString()}</Text>
+          <Image
+            src={logoUrl || "/logo/logo-white.png"} 
+            style={styles.logo}
+            alt="logo"
+          />
+          <View style={styles.headerRight}>
+            <Text style={styles.title}>QUOTATION #{quotationCode}</Text>
+          </View>
         </View>
 
-        {/* Client Information */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Customer Information</Text>
-          <Text style={styles.text}>Name: {customerName}</Text>
-          <Text style={styles.text}>Email: {customerEmail}</Text>
+        {/* Client & Event Information */}
+        <View style={styles.infoBox}>
+          <View style={styles.infoColumn}>
+            <Text style={styles.sectionTitle}>Customer Details</Text>
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoLabel}>Name</Text>
+              <Text style={styles.infoValue}>{customerName}</Text>
+            </View>
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoLabel}>Email</Text>
+              <Text style={styles.infoValue}>{customerEmail}</Text>
+            </View>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.sectionTitle}>Quotation Details</Text>
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoLabel}>Created Date</Text>
+              <Text style={styles.infoValue}>{new Date().toLocaleDateString()}</Text>
+            </View>
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoLabel}>Quotation Code</Text>
+              <Text style={styles.infoValue}>{quotationCode}</Text>
+            </View>
+          </View>
         </View>
 
         {/* Service Details */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quotation Details</Text>
+          <Text style={styles.sectionTitle}>Quotation Breakdown</Text>
           
           {/* Materials Table */}
           <View style={styles.tableContainer}>
             <Text style={styles.tableTitle}>Materials</Text>
-            <View style={styles.table}>
+            <View style={[styles.table, styles.compactRows]}>
               {/* Table Header */}
               <View style={[styles.tableRow, styles.tableHeader]}>
                 <View style={[styles.tableCell, { flex: 3 }]}>
-                  <Text>Material Name</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Material Name</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 1 }]}>
-                  <Text>Quantity</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Quantity</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 1 }]}>
-                  <Text>Cost</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Cost</Text>
                 </View>
               </View>
               
-              {/* Materials Rows */}
+              {/* Materials Rows - limit to at most 3 rows */}
               {safetyMaterials.length > 0 ? (
-                safetyMaterials.map((item, index) => {
-                  console.log("Rendering material:", item);
-                  // Display raw cost for debugging
-                  console.log(`Raw cost for ${item.materialName || 'unknown'}:`, item.cost);
-                  
-                  // Special handling for Input component with formatPrice property
-                  let costValue = item.cost;
-                  
-                  // If the cost is a DOM element event or something unexpected from Input component
-                  if (costValue && costValue._reactName) {
-                    console.warn(`Got React event instead of value:`, costValue);
-                    costValue = 0;
-                  }
-                  
+                safetyMaterials.slice(0, 3).map((item, index) => {
                   // Parse formatted numbers for display
-                  const parsedCost = parseFormattedNumber(costValue);
-                  console.log(`Parsed cost:`, parsedCost);
+                  const parsedCost = parseFormattedNumber(item.cost);
+                  const isEvenRow = index % 2 === 0;
                   
                   return (
-                    <View key={`material-${index}`} style={styles.tableRow}>
+                    <View 
+                      key={`material-${index}`} 
+                      style={[
+                        styles.tableRow, 
+                        { backgroundColor: isEvenRow ? '#fff' : '#f5f9ff' }
+                      ]}
+                    >
                       <View style={[styles.tableCell, { flex: 3 }]}>
                         <Text>{item.materialName || 'N/A'}</Text>
                       </View>
@@ -207,50 +389,43 @@ const QuotationDocument = ({ data = {} }) => {
           </View>
           
           {/* Construction Tasks Table */}
-          <View style={[styles.tableContainer, { marginTop: 20 }]}>
+          <View style={[styles.tableContainer, { marginTop: 8 }]}>
             <Text style={styles.tableTitle}>Construction Tasks</Text>
-            <View style={styles.table}>
+            <View style={[styles.table, styles.compactRows]}>
               {/* Table Header */}
               <View style={[styles.tableRow, styles.tableHeader]}>
                 <View style={[styles.tableCell, { flex: 3 }]}>
-                  <Text>Task Name</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Task Name</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 1 }]}>
-                  <Text>Cost</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Cost</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 1 }]}>
-                  <Text>Unit</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Unit</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 0.8 }]}>
-                  <Text>Length</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Length</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 0.8 }]}>
-                  <Text>Width</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Width</Text>
                 </View>
               </View>
               
-              {/* Construction Task Rows */}
+              {/* Construction Task Rows - limit to at most 3 rows */}
               {safetyTasks.length > 0 ? (
-                safetyTasks.map((item, index) => {
-                  console.log("Rendering task:", item);
-                  // Display raw cost for debugging
-                  console.log(`Raw cost for ${item.taskName || 'unknown'}:`, item.cost);
-                  
-                  // Special handling for Input component with formatPrice property
-                  let costValue = item.cost;
-                  
-                  // If the cost is a DOM element event or something unexpected from Input component
-                  if (costValue && costValue._reactName) {
-                    console.warn(`Got React event instead of value:`, costValue);
-                    costValue = 0;
-                  }
-                  
+                safetyTasks.slice(0, 3).map((item, index) => {
                   // Parse formatted numbers for display
-                  const parsedCost = parseFormattedNumber(costValue);
-                  console.log(`Parsed cost:`, parsedCost);
+                  const parsedCost = parseFormattedNumber(item.cost);
+                  const isEvenRow = index % 2 === 0;
                   
                   return (
-                    <View key={`task-${index}`} style={styles.tableRow}>
+                    <View 
+                      key={`task-${index}`} 
+                      style={[
+                        styles.tableRow, 
+                        { backgroundColor: isEvenRow ? '#fff' : '#f5f9ff' }
+                      ]}
+                    >
                       <View style={[styles.tableCell, { flex: 3 }]}>
                         <Text>{item.taskName || 'N/A'}</Text>
                       </View>
@@ -285,27 +460,29 @@ const QuotationDocument = ({ data = {} }) => {
             </View>
           </View>
 
-          {/* Grand Total and Deposit */}
-          <View style={styles.total}>
-            <Text style={styles.totalLabel}>Grand Total:</Text>
-            <Text style={styles.totalValue}>{formatVND(grandTotal)}</Text>
-          </View>
-          <View style={styles.total}>
-            <Text style={styles.totalLabel}>Deposit ({depositPercent}%):</Text>
-            <Text style={styles.totalValue}>{formatVND(depositAmount)}</Text>
+          {/* Grand Total and Deposit - Inline */}
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: 8}}>
+            <View style={[styles.total, {flex: 1}]}>
+              <Text style={[styles.totalLabel, { color: 'white' }]}>Grand Total:</Text>
+              <Text style={[styles.totalValue, { color: 'white' }]}>{formatVND(grandTotal)}</Text>
+            </View>
+            <View style={[styles.total, { backgroundColor: '#333', flex: 1 }]}>
+              <Text style={[styles.totalLabel, { color: 'white' }]}>Deposit ({depositPercent}%):</Text>
+              <Text style={[styles.totalValue, { color: 'white' }]}>{formatVND(depositAmount)}</Text>
+            </View>
           </View>
         </View>
 
-        {/* Terms & Conditions */}
-        <View style={styles.section}>
+        {/* Terms & Conditions - more compact */}
+        <View style={[styles.section, {marginBottom: 0}]}>
           <Text style={styles.sectionTitle}>Terms and Conditions</Text>
-          <Text style={styles.text}>{terms || 'Standard terms apply'}</Text>
+          <Text style={styles.termsText}>{terms || 'Payment due within 30 days. Cancellation policy: 50% refund if canceled 30 days before the event.'}</Text>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text>Thank you for your business!</Text>
-          <Text>Season Decor - Event Decoration Services</Text>
+          <Text style={[styles.footerText, styles.highlight]}>Season Decor - A Decoration Platform</Text>
+          <Text style={styles.footerText}>www.seasondecor.com | info@seasondecor.com | +84 123 456 789</Text>
         </View>
       </Page>
     </Document>

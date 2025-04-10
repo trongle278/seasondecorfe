@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
         .join(' ');
   
       return {
-        title: `${readableTitle} | Season Decor`,
+        title: `${readableTitle} - A decoration service | Season Decor`,
         description: `View details for ${readableTitle}`,
       };
     } catch (error) {

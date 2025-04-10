@@ -11,7 +11,7 @@ import Button from "@/app/components/ui/Buttons/Button";
 import { IoCalendarOutline } from "react-icons/io5";
 
 // Custom styles to override default react-date-range styles
-const customCalendarStyles = `
+export const customCalendarStyles = `
   .rdrCalendarWrapper {
     width: 100%;
     font-size: 14px;
@@ -63,10 +63,9 @@ const PickDate = ({ availableDates = [], onDateSelect }) => {
     // For demonstration, we'll make specific dates unavailable
     const currentDate = new Date();
     const dateToCheck = new Date(date);
-    const day = dateToCheck.getDay();
-
-    // Make weekends and dates before today unavailable
-    return dateToCheck >= currentDate && day !== 0;
+    
+    // Only make dates before today unavailable
+    return dateToCheck >= currentDate;
   };
 
   // Custom rendering for dates
@@ -76,12 +75,11 @@ const PickDate = ({ availableDates = [], onDateSelect }) => {
     const isToday =
       new Date().setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0);
 
-    // Style similar to the image with red dates for available dates
     return (
       <div
         className={`h-full w-full flex items-center justify-center ${
           isAvailable ? "text-black font-medium" : "text-gray-300 line-through"
-        } ${isToday ? "bg-rose-500 rounded-full" : ""}`}
+        } ${isToday ? "bg-rose-500 rounded-full text-white" : ""}`}
       >
         {dayNum}
       </div>

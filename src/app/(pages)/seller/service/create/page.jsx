@@ -245,7 +245,7 @@ const ServiceCreate = () => {
                 id="style"
                 placeholder="Service's style"
                 required
-                className=""
+                className="pl-3"
                 register={register}
               />
             </div>

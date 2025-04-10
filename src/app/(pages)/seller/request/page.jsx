@@ -17,6 +17,8 @@ import { useApproveBooking } from "@/app/queries/book/book.query";
 import { TbReportAnalytics } from "react-icons/tb";
 import { useChangeBookingStatus } from "@/app/queries/book/book.query";
 import { MdOutlineEditNote } from "react-icons/md";
+import { FootTypo } from "@/app/components/ui/Typography";
+import { FaFileContract } from "react-icons/fa";
 
 const SellerOrderManage = () => {
   const router = useRouter();
@@ -88,6 +90,23 @@ const SellerOrderManage = () => {
     {
       header: "Actions",
       cell: ({ row }) => {
+        if (row.original.status === 3 && row.original.isQuoteExisted) {
+          return (
+            <FootTypo
+              footlabel="Preparing Contract"
+              className="!m-0 text-green font-medium"
+            />
+          );
+        }
+        if (row.original.isQuoteExisted) {
+          return (
+            <FootTypo
+              footlabel="Confirmation pending"
+              className="!m-0 text-yellow font-medium"
+            />
+          );
+        }
+
         if (row.original.status === 1) {
           return (
             <Button
