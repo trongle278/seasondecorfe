@@ -9,10 +9,13 @@ const Avatar = ({ userImg, className, h = 120, w = 120, isProvider = false, stat
 
   // Function to determine badge color based on status
   const getBadgeColor = (status) => {
-    switch(status) {
-      case 1:
+    // Convert status to number to handle numeric strings
+    const numericStatus = Number(status);
+    
+    switch(numericStatus) {
+      case 0:
         return 'success';
-      case 2:
+      case 1:
         return 'error';
       default:
         return 'default';
@@ -28,7 +31,7 @@ const Avatar = ({ userImg, className, h = 120, w = 120, isProvider = false, stat
       )}
       style={{ width: `${w}px`, height: `${h}px` }}
     >
-      {isProvider && status ? (
+      {isProvider && (status !== undefined && status !== null) ? (
         <Badge
           overlap="circular"
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

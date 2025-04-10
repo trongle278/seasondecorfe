@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Head from 'next/head';
+import Head from "next/head";
 import Container from "@/app/components/layouts/Container";
 import ImageSlider from "@/app/components/ui/slider/ImageSlider";
 import Avatar from "@/app/components/ui/Avatar/Avatar";
@@ -21,7 +21,7 @@ import { FcShipped } from "react-icons/fc";
 import { FcApproval } from "react-icons/fc";
 import { useGetProductById } from "@/app/queries/product/product.query";
 import { useGetListProduct } from "@/app/queries/list/product.list.query";
-import { MdFavoriteBorder } from "react-icons/md";
+import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
 import { scroller } from "react-scroll";
 import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
 import { ClipLoader } from "react-spinners";
@@ -35,6 +35,11 @@ import useChat from "@/app/hooks/useChat";
 import useChatBox from "@/app/hooks/useChatBox";
 import { toast } from "sonner";
 import { generateSlug } from "@/app/helpers";
+import {
+  useAddFavoriteDecorProduct,
+  useRemoveFavoriteDecorProduct,
+} from "@/app/queries/favorite/favorit.query";
+import { useGetListFavoriteProduct } from "@/app/queries/list/favorite.list.query";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -44,14 +49,24 @@ const ProductDetail = () => {
   const router = useRouter();
   const addContactMutation = useAddContact();
   const queryClient = useQueryClient();
+  const { data: favorites } = useGetListFavoriteProduct();
+  const { mutate: addFavoriteDecorProduct } = useAddFavoriteDecorProduct();
+  const { mutate: removeFavoriteDecorProduct } =
+    useRemoveFavoriteDecorProduct();
 
   const { data: productsData } = useGetListProduct();
   const [productId, setProductId] = useState(null);
   const { data: productDetail, isLoading } = useGetProductById(productId);
 
-  const { mutate: addToCart, isLoading: isAddingToCart } = useAddToCart();
+  const { mutate: addToCart, isPending } = useAddToCart();
 
   const [quantity, setQuantity] = useState(1);
+
+  // Check if the product is already in favorites
+  const isInFavorites = React.useMemo(() => {
+    if (!favorites || !productId) return false;
+    return favorites.some((fav) => fav.productDetail.id === productId);
+  }, [favorites, productId]);
 
   useEffect(() => {
     if (productsData && productsData.data && Array.isArray(productsData.data)) {
@@ -71,6 +86,7 @@ const ProductDetail = () => {
       </p>
     );
   }
+
 
   const handleAddToCart = () => {
     if (!user?.id) {
@@ -95,6 +111,22 @@ const ProductDetail = () => {
         },
       }
     );
+  };
+
+  const handleAddToFavorites = () => {
+    if (isInFavorites) return;
+
+    addFavoriteDecorProduct(productId, {
+      onSuccess: () => {
+        console.log("Added to favorite");
+        queryClient.invalidateQueries({
+          queryKey: ["get_list_favorite_product"],
+        });
+      },
+      onError: (error) => {
+        console.log("Error adding to favorite:", error);
+      },
+    });
   };
 
   const handleRatingClick = () => {
@@ -230,14 +262,24 @@ const ProductDetail = () => {
                   <>
                     <Button
                       label="Add to cart"
-                      className="bg-primary !p-3"
+                      className="bg-primary"
                       icon={<BsCartPlus size={20} />}
                       onClick={handleAddToCart}
                     />
                     <Button
-                      label="Add to favourite"
-                      className="bg-yellow !p-3"
-                      icon={<MdFavoriteBorder size={20} />}
+                      label={
+                        isInFavorites ? "In your wishlist" : "Add to Wishlist"
+                      }
+                      className={isInFavorites ? "bg-rose-600" : "bg-rose-500"}
+                      icon={
+                        isInFavorites ? (
+                          <MdFavorite size={20} />
+                        ) : (
+                          <MdFavoriteBorder size={20} />
+                        )
+                      }
+                      onClick={handleAddToFavorites}
+                      disabled={isInFavorites || isPending}
                     />
                   </>
                 )}
@@ -266,7 +308,9 @@ const ProductDetail = () => {
                       label="Go to your shop"
                       icon={<AiOutlineShop />}
                       className="bg-primary"
-                      onClick={() => router.push(`/provider/${productDetail.provider.slug}`)}
+                      onClick={() =>
+                        router.push(`/provider/${productDetail.provider.slug}`)
+                      }
                     />
                   ) : (
                     <>
@@ -280,7 +324,9 @@ const ProductDetail = () => {
                         label="Browse Shop"
                         icon={<AiOutlineShop />}
                         onClick={() =>
-                          router.push(`/provider/${productDetail.provider.slug}`)
+                          router.push(
+                            `/provider/${productDetail.provider.slug}`
+                          )
                         }
                       />
                     </>
@@ -315,7 +361,10 @@ const ProductDetail = () => {
                   />
                 </div>
                 <div className="flex justify-between outline-none overflow-visible relative">
-                  <FootTypo footlabel="Response time" className="text-sm !mx-0" />
+                  <FootTypo
+                    footlabel="Response time"
+                    className="text-sm !mx-0"
+                  />
                   <FootTypo
                     footlabel="80 %"
                     className="text-sm !mx-0 text-red font-semibold"

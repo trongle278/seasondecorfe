@@ -1,4 +1,4 @@
-import React, { useState, Children, useRef, useLayoutEffect } from "react";
+import React, { useState, Children, useRef, useLayoutEffect, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Stepper({
@@ -16,6 +16,7 @@ export default function Stepper({
   backButtonText = "Back",
   nextButtonText = "Continue",
   disableStepIndicators = true,
+  isContractStep = false,
   renderStepIndicator,
   ...rest
 }) {
@@ -25,6 +26,10 @@ export default function Stepper({
   const totalSteps = stepsArray.length;
   const isCompleted = currentStep > totalSteps;
   const isLastStep = currentStep === totalSteps;
+
+  useEffect(() => {
+    setCurrentStep(initialStep);
+  }, [initialStep]);
 
   const updateStep = (newStep) => {
     setCurrentStep(newStep);
@@ -111,7 +116,7 @@ export default function Stepper({
                 currentStep !== 1 ? "justify-between" : "justify-end"
               }`}
             >
-              {currentStep !== 1 && (
+              {currentStep !== 1 && !isContractStep && (
                 <button
                   onClick={handleBack}
                   className={`duration-350 rounded px-2 py-1 transition ${

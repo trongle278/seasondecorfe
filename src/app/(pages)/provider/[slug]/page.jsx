@@ -26,6 +26,7 @@ import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
 import { useFollow, useUnfollow } from "@/app/queries/user/user.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
+import { formatDateVN } from "@/app/helpers";
 
 const tabs = [
   { icon: IoMdHome, name: "Home", component: HomeTab },
@@ -56,7 +57,7 @@ const ProviderDetailPage = () => {
   if (isError || !provider) {
     return (
       <Container>
-        <div className="text-center text-red-500">
+        <div className="text-center text-red">
           Error loading provider details.
         </div>
       </Container>
@@ -149,7 +150,7 @@ const ProviderDetailPage = () => {
               <StatItem
                 icon={<LuUsers />}
                 label="Joined"
-                value={provider.joinedDate}
+                value={formatDateVN(provider.joinedDate)}
               />
             </div>
           </section>

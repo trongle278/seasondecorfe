@@ -206,9 +206,7 @@ const ServiceDetail = () => {
 
   return (
     <Container>
-      <div className="my-7">
-        <MuiBreadcrumbs />
-      </div>
+      <MuiBreadcrumbs />
       <div
         className={`mx-auto w-full min-w-0 md:px-0 mt-10 relative ${
           isServiceProvider ? "pointer-events-none" : ""
@@ -369,6 +367,8 @@ const ServiceDetail = () => {
                         description:
                           serviceDetail.description ||
                           "No description available",
+                        buttonLabel: "Done",
+                        isDescription: true,
                       })
                     }
                   >

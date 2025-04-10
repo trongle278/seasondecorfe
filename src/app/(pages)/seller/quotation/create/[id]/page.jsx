@@ -18,6 +18,7 @@ import { useUploadQuotationFile } from "@/app/queries/quotation/quotation.query"
 import { AiOutlineUpload } from "react-icons/ai";
 import { TbArrowLeft } from "react-icons/tb";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const QuotationPage = () => {
   const router = useRouter();
@@ -76,7 +77,7 @@ const QuotationPage = () => {
   useEffect(() => {
     // Register terms and deposit percentage
     setValue("terms", quotationData.terms);
-    setValue("depositPercentage", quotationData.depositPercentage || 30);
+    setValue("depositPercentage", quotationData.depositPercentage || 20);
 
     // Register material fields
     quotationData.materials.forEach((material, index) => {
@@ -363,11 +364,11 @@ const QuotationPage = () => {
       const depositPercentage =
         parseInt(formData.depositPercentage) ||
         currentState.depositPercentage ||
-        30;
+        20;
 
       // Use the current state data for API submission
       const quotationPayload = {
-        bookingCode: id, // Using id as bookingCode
+        bookingCode: id, 
         materials: currentState.materials,
         constructionTasks: currentState.constructionTasks,
         depositPercentage: depositPercentage,
@@ -393,12 +394,14 @@ const QuotationPage = () => {
                 onSuccess: (uploadResponse) => {
                   console.log("PDF uploaded successfully:", uploadResponse);
                   setIsProcessing(false);
-                  alert("Quotation submitted and PDF uploaded successfully!");
+                  toast.success("Quotation submitted and PDF uploaded successfully!");
+                  // Navigate back to seller requests page
+                  router.push('/seller/request');
                 },
                 onError: (error) => {
                   console.error("Error uploading PDF:", error);
                   setIsProcessing(false);
-                  alert(
+                  toast.error(
                     "Quotation was created but PDF upload failed. Please try again."
                   );
                 },
@@ -407,13 +410,13 @@ const QuotationPage = () => {
             .catch((error) => {
               console.error("Error generating PDF:", error);
               setIsProcessing(false);
-              alert("Error generating PDF. Please try again.");
+              toast.error("Error generating PDF. Please try again.");
             });
         },
         onError: (error) => {
           console.error("Error creating quotation:", error);
           setIsProcessing(false);
-          alert(
+          toast.error(
             "Failed to create quotation. Please check your data and try again."
           );
         },
@@ -421,7 +424,7 @@ const QuotationPage = () => {
     } catch (error) {
       console.error("Unexpected error:", error);
       setIsProcessing(false);
-      alert("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -671,7 +674,7 @@ const QuotationPage = () => {
               </div>
             </BorderBox>
           ) : (
-            <div className="bg-white rounded-lg shadow-lg p-4 h-[800px]">
+            <div className="bg-transparent h-[800px]">
               {isPdfReady ? (
                 <PdfPreview
                   quotationData={quotationData}
