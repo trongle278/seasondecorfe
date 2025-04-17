@@ -14,6 +14,7 @@ import { useGetWallet } from "@/app/queries/wallet/wallet.query";
 import { useGetTransaction } from "@/app/queries/wallet/wallet.query";
 import { encryptWalletId } from "@/app/helpers";
 import { formatCurrency } from "@/app/helpers";
+import { BsClock } from "react-icons/bs";
 
 const UserWallet = () => {
   const router = useRouter();
@@ -33,6 +34,27 @@ const UserWallet = () => {
       })
       .slice(0, 3); // Take only the first 3
   }, [transactionData]);
+
+  // Format date and time
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString || Date.now());
+    
+    // Format date as DD/MM/YYYY
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    
+    // Format time as HH:MM (24-hour format)
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    return { date: formattedDate, time: formattedTime };
+  };
 
   if (isLoadingWallet || isLoadingTransaction) {
     return (
@@ -113,31 +135,38 @@ const UserWallet = () => {
                   No transactions found
                 </div>
               ) : (
-                latestTransactions.map((transaction) => (
-                  <div 
-                    key={transaction.id || transaction.transactionId} 
-                    className="flex justify-between items-center p-4 border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${transaction.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                        {transaction.amount > 0 ? (
-                          <FcPlus size={20} />
-                        ) : (
-                          <FcMinus size={20} />
-                        )}
+                latestTransactions.map((transaction) => {
+                  const { date, time } = formatDateTime(transaction.transactionDate || transaction.date);
+                  return (
+                    <div 
+                      key={transaction.id || transaction.transactionId} 
+                      className="flex justify-between items-center p-4 border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-full ${transaction.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                          {transaction.amount > 0 ? (
+                            <FcPlus size={20} />
+                          ) : (
+                            <FcMinus size={20} />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{transaction.transactionType || 'Transaction'}</h3>
+                          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                            <span>{date}</span>
+                            <div className="flex items-center gap-1 ml-2">
+                              <BsClock size={14} />
+                              <span>{time}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium">{transaction.transactionType || 'Transaction'}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(transaction.transactionDate || transaction.date || Date.now()).toLocaleDateString()}
-                        </p>
+                      <div className={`font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        {transaction.amount > 0 ? '+' : ''}{formatCurrency(transaction.amount || 0)}
                       </div>
                     </div>
-                    <div className={`font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                      {transaction.amount > 0 ? '+' : ''}{formatCurrency(transaction.amount || 0)}
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
               
               {latestTransactions && latestTransactions.length > 0 && (

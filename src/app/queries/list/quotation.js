@@ -8,6 +8,7 @@ const SUB_URL = `api/Quotation`;
 const defaultPagination = {
   pageIndex: 1,
   pageSize: 10,
+  quotationCode: "",
   status: "",
   sortBy: "",
   descending: false,
@@ -30,14 +31,18 @@ export function useGetListQuotationForCustomer(paginationParams = {}) {
         queryParams.push(`PageIndex=${params.pageIndex}`);
         queryParams.push(`PageSize=${params.pageSize}`);
 
+        if (params.quotationCode !== undefined && params.quotationCode !== null)
+          queryParams.push(`QuotationCode=${params.quotationCode}`);
+
         if (params.status !== undefined && params.status !== null) {
           queryParams.push(`Status=${params.status}`);
         }
 
         if (params.sortBy) queryParams.push(`SortBy=${params.sortBy}`);
-        if (params.descending !== undefined) queryParams.push(`Descending=${params.descending}`);
+        if (params.descending !== undefined)
+          queryParams.push(`Descending=${params.descending}`);
 
-        url += queryParams.join('&');
+        url += queryParams.join("&");
 
         const res = await BaseRequest.Get(url, false);
         return res.data;
@@ -65,12 +70,16 @@ export function useGetListQuotationForProvider(paginationParams = {}) {
         queryParams.push(`PageIndex=${params.pageIndex}`);
         queryParams.push(`PageSize=${params.pageSize}`);
 
+        if (params.quotationCode !== undefined && params.quotationCode !== null)
+          queryParams.push(`QuotationCode=${params.quotationCode}`);
+
         if (params.status) queryParams.push(`Status=${params.status}`);
 
         if (params.sortBy) queryParams.push(`SortBy=${params.sortBy}`);
-        if (params.descending !== undefined) queryParams.push(`Descending=${params.descending}`);
+        if (params.descending !== undefined)
+          queryParams.push(`Descending=${params.descending}`);
 
-        url += queryParams.join('&');
+        url += queryParams.join("&");
 
         const res = await BaseRequest.Get(url, false);
         return res.data;
@@ -80,4 +89,3 @@ export function useGetListQuotationForProvider(paginationParams = {}) {
     },
   });
 }
-

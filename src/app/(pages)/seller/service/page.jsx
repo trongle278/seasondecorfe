@@ -160,7 +160,7 @@ const SellerServiceManage = () => {
   return (
     <SellerWrapper>
       <>
-        <div className="section-1 flex flex-row gap-3 items-center">
+        <div className="section-1 flex flex-row gap-3 items-center mb-6">
           <Button
             onClick={() => router.push("/seller/service/create")}
             label="Create new service"

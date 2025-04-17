@@ -29,7 +29,7 @@ const PendingTab = () => {
 
   
   return (
-    <div className="rounded-xl bg-transparent p-3">
+    <div className="flex flex-col gap-4 pb-4">
       <DataMapper
         data={orders}
         Component={OrderCard}
@@ -59,6 +59,7 @@ const PendingTab = () => {
               phoneNumber: order.phone,
               email: order.email,
               address: order.address,
+              buttonLabel: "Done",
             }),
         })}
       />

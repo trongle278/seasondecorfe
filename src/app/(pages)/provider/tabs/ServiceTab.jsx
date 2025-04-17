@@ -4,27 +4,29 @@ import * as React from "react";
 import { useState } from "react";
 import DataMapper from "@/app/components/DataMapper";
 import EmptyState from "@/app/components/EmptyState";
-import { useGetDecorServiceListByProvider } from "@/app/queries/list/service.list.query";
+import { useGetDecorServiceListForCustomer } from "@/app/queries/list/service.list.query";
 import ServiceCard from "@/app/components/ui/card/ServiceCard";
 import { Skeleton } from "@mui/material";
 import { generateSlug } from "@/app/helpers";
 
-const ServicesTab = () => {
+const ServicesTab = ({ providerId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = React.useState({
+    providerId: providerId,
     pageIndex: 1,
     pageSize: 10,
+    style: "",
     subLocation: "",
+    seasonId: "",
     decorCategory: "",
     sortBy: "",
     descending: false,
-    productName: "",
     minPrice: "",
     maxPrice: "",
   });
 
   const { data, isLoading, error, refetch } =
-    useGetDecorServiceListByProvider(pagination);
+    useGetDecorServiceListForCustomer(pagination);
 
   const services = data?.data || [];
   const totalCount = data?.totalCount || 0;

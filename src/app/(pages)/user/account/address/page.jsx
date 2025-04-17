@@ -23,6 +23,8 @@ const UserAddress = () => {
     ? [...addresses].sort((a, b) => (b.isDefault ? 1 : -1))
     : [];
 
+  const canAddMoreAddresses = sortedAddresses.length < 3;
+
   return (
     <UserWrapper>
       <div className="flex-grow ml-6 relative ">
@@ -36,11 +38,13 @@ const UserAddress = () => {
                 />
               </span>
 
-              <Button
-                label="Add address"
-                icon={<FaPlus size={20} />}
-                onClick={addressModal.onOpen}
-              />
+              {canAddMoreAddresses && (
+                <Button
+                  label="Add address"
+                  icon={<FaPlus size={20} />}
+                  onClick={addressModal.onOpen}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -98,7 +98,7 @@ export default function Header({ providerRef }) {
       tabIndex="-1"
     >
       <div className="hidden lg:block">
-        <div className="header container mx-auto px-4 max-w-[88rem]">
+        <div className="header container mx-auto max-w-[88rem]">
           <nav className="flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex items-center">

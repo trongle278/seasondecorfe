@@ -41,6 +41,10 @@ import { CgSpinner } from "react-icons/cg";
 import { FcFolder } from "react-icons/fc";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { toast } from "sonner";
+import ResultModal from "@/app/components/ui/Modals/ResultModal";
+import { Label } from "@/app/components/ui/inputs/Label";
+import { Field, Textarea } from "@headlessui/react";
+import { CiClock1 } from "react-icons/ci";
 
 const ServiceDetail = () => {
   const pagination = {
@@ -58,6 +62,12 @@ const ServiceDetail = () => {
   const { data: addressData, isLoading: addressLoading } = useGetAllAddress();
   const { data: bookings, isLoading: isBookingsLoading } =
     useGetPaginatedBookingsForCustomer(pagination);
+  const [resultModalOpen, setResultModalOpen] = React.useState(false);
+  const [resultModalData, setResultModalData] = React.useState({
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
@@ -67,7 +77,11 @@ const ServiceDetail = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      note: "",
+    },
+  });
 
   const { data: serviceDetail, isLoading } = useGetDecorServiceById(serviceId);
   const { data: favorites, isLoading: isLoadingFavorites } =
@@ -174,6 +188,7 @@ const ServiceDetail = () => {
       decorServiceId: serviceDetail.id,
       addressId: selectedAddress.value,
       surveyDate: selectedBookingData.date,
+      note: data.note,
     };
 
     console.log("Booking data being sent:", bookingData);
@@ -181,9 +196,12 @@ const ServiceDetail = () => {
     bookService(bookingData, {
       onSuccess: () => {
         console.log("Booking successful");
-        alert(
-          `Booking successful! Your survey is scheduled for ${selectedBookingData.formattedDate}`
-        );
+        setResultModalData({
+          title: "Booking successful",
+          message: `Booking successful! Your survey is scheduled for ${selectedBookingData.formattedDate}`,
+          type: "success",
+        });
+        setResultModalOpen(true);
       },
       onError: (error) => {
         toast.error(error.message);
@@ -192,16 +210,16 @@ const ServiceDetail = () => {
     });
   };
 
+  if (isLoading) {
+    return <Skeleton variant="rectangular" width="100%" height="100%" />;
+  }
+
   if (!serviceDetail) {
     return (
       <div className="text-center mt-20">
         <FootTypo footlabel="Service not found" className="text-primary" />
       </div>
     );
-  }
-
-  if (isLoading) {
-    return <Skeleton variant="rectangular" width="100%" height="100%" />;
   }
 
   return (
@@ -376,6 +394,30 @@ const ServiceDetail = () => {
                   </button>
                 </div>
               </div>
+              {!isBooked && (
+                <div className="space-y-4">
+                  <Label htmlFor="note">Your requirements for this service</Label>
+                  <div className="w-full">
+                  <Field>
+                    <Textarea
+                      id="note"
+                      name="note"
+                      {...register("note")}
+                      placeholder="Type something..."
+                      className={`
+      mt-3 block w-full resize-none rounded-lg border-[1px] 
+      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
+      bg-white dark:bg-gray-800 text-black dark:text-white
+      placeholder-gray-500 dark:placeholder-gray-400
+      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
+      transition duration-200
+    `}
+                      rows={7}
+                    />
+                    </Field>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-6 border-t mt-8">
                 {!isServiceProvider ? (
@@ -385,7 +427,7 @@ const ServiceDetail = () => {
                       className={`${isBooked ? "bg-yellow" : "bg-primary"}`}
                       icon={
                         isBooked ? (
-                          <CgSpinner className="animate-spin" size={20} />
+                          <CiClock1 size={20} />
                         ) : (
                           <IoCallOutline size={20} />
                         )
@@ -496,11 +538,20 @@ const ServiceDetail = () => {
         </div>
       </div>
 
+      {/* Add ResultModal component */}
+      <ResultModal
+        open={resultModalOpen}
+        onClose={() => setResultModalOpen(false)}
+        title={resultModalData.title}
+        message={resultModalData.message}
+        type={resultModalData.type}
+      />
+
       {/* Ratings and Reviews Section */}
-      <section className="mt-16 border-t pt-8">
+      <section className="mt-16 border-t pt-8 relative">
         <FootTypo
           footlabel="Ratings, reviews, and reliability"
-          className="!m-0 text-2xl font-bold mb-8"
+          className="!m-0 text-2xl font-bold mb-8 absolute top-[-25px] left-1/2 -translate-x-1/2 bg-gray-100 dark:bg-black p-2 rounded-xl"
         />
 
         {/* Ratings Overview */}

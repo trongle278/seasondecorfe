@@ -9,6 +9,7 @@ import { MdChevronRight } from "react-icons/md";
 import StatusChip from "../statusChip/StatusChip";
 import { FaBarcode } from "react-icons/fa";
 import { LuBadgeCheck } from "react-icons/lu";
+import Folder from "../animated/Folder";
 
 const QuotationCard = ({
   quotationCode,
@@ -32,25 +33,36 @@ const QuotationCard = ({
         {isContractExist && (
           <>
             {isSigned ? (
-              <button
-                onClick={viewContract}
-                className="absolute top-[-10] right-4 p-3 rounded-md hover:text-primary transition-all duration-300 text-sm"
-              >
+              <div className="absolute top-[-10] right-4 rounded-md hover:text-primary transition-all duration-300 text-sm">
                 <span className="flex flex-row gap-2 items-center">
                   <LuBadgeCheck
                     className="text-primary flex-shrink-0"
                     size={30}
                   />
-                  <FootTypo footlabel="View Contract" className="!m-0" />
+                  <FootTypo footlabel="Contract Signed" className="!m-0 text-sm" />
+                  <Folder
+                    size={0.4}
+                    color="#00d8ff"
+                    className="hover:scale-110 transition-transform duration-200"
+                    onClick={viewContract}
+                  />
                 </span>
-              </button>
+              </div>
             ) : (
-              <button
-                onClick={viewContract}
-                className="absolute top-[-10] right-4 bg-primary text-white p-3 rounded-md"
-              >
-                <FootTypo footlabel="Sign Contract" className="!m-0 text-sm" />
-              </button>
+              <div className="absolute top-[-10] right-4">
+                <span className="flex flex-row items-center">
+                  <FootTypo
+                    footlabel="View Contract"
+                    className="!m-0 text-sm"
+                  />
+                  <Folder
+                    size={0.4}
+                    color="#00d8ff"
+                    className="hover:scale-110 transition-transform duration-200"
+                    onClick={viewContract}
+                  />
+                </span>
+              </div>
             )}
           </>
         )}
