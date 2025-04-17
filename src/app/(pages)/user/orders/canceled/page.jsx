@@ -13,7 +13,7 @@ const CanceledTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  const status = 5;
+  const status = 4;
   const router = useRouter();
   const { data: ordersList, isLoading } = useGetOrderList({
     pageIndex: currentPage,
@@ -25,7 +25,7 @@ const CanceledTab = () => {
 
   const orders = ordersList?.data || [];
   return (
-    <div className="rounded-xl bg-transparent p-3">
+    <div className="flex flex-col gap-4 pb-4">
       <DataMapper
         data={orders}
         Component={OrderCard}
@@ -56,6 +56,7 @@ const CanceledTab = () => {
               phoneNumber: order.phone,
               email: order.email,
               address: order.address,
+              buttonLabel: "Done",
             }),
         })}
       />

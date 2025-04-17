@@ -374,7 +374,6 @@ const ProductDetail = () => {
             </div>
           </div>
         </BorderBox>
-        <DetailSection />
         <DescrriptionSection description={productDetail.description} />
         {/* Review Section */}
         <ReviewSection

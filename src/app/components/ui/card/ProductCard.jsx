@@ -48,8 +48,6 @@ const ProductCard = ({ image, productName, rate, price, totalSold, href }) => {
             className="flex flex-row items-center justify-between text-xl font-primary text-neutral-600 dark:text-white w-full"
           >
             <span className="inline-flex items-center justify-between text-primary">
-              <TbCurrencyDong />
-
               {formatCurrency(price)}
             </span>
             <FootTypo

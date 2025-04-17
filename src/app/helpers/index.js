@@ -1,3 +1,5 @@
+import { TiArrowSortedUp, TiArrowSortedDown } from "react-icons/ti";
+
 export const stripHtmlTags = (html) => {
   if (!html) return "";
   const tmp = document.createElement("DIV");
@@ -147,5 +149,22 @@ export const getSeasonConfig = (seasonName, seasons) => {
     bgColor: "bg-primary"
   };
 };
+
+  // Growth indicator component
+  export const GrowthIndicator = ({ value }) => {
+    if (value === 0) return null;
+
+    return value > 0 ? (
+      <div className="flex items-center text-green text-xs">
+        <TiArrowSortedUp size={16} />
+        <span>+{value}%</span>
+      </div>
+    ) : (
+      <div className="flex items-center text-red text-xs">
+        <TiArrowSortedDown size={16} />
+        <span>{value}%</span>
+      </div>
+    );
+  };
 
 

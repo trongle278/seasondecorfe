@@ -59,7 +59,7 @@ const InformationModal = () => {
   
 
   const bodyContent = (
-    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
+    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto py-2">
       <div className="flex items-center gap-2">
         <Heading title={title} />
       </div>
@@ -220,18 +220,20 @@ const InformationModal = () => {
                 w={40}
                 h={40}
               />
-              <FootTypo footlabel={providerName} className="!m-0 text-lg" />
+              <FootTypo footlabel={providerName} className="!m-0 text-sm" />
             </div>
             <div className="flex flex-row items-center gap-2">
               <Button
                 label="View Profile"
                 onClick={profileClick}
                 icon={<RiProfileLine />}
+                className="h-fit"
               />
               <Button
                 label="Chat now"
                 onClick={chatClick}
                 icon={<IoChatboxEllipsesOutline />}
+                className="h-fit"
               />
             </div>
           </div>

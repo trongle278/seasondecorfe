@@ -25,7 +25,7 @@ const CompletedTab = () => {
 
   const orders = ordersList?.data || [];
   return (
-    <div className="rounded-xl bg-transparent p-3">
+    <div className="flex flex-col gap-4 pb-4">
       <DataMapper
         data={orders}
         Component={OrderCard}
@@ -56,6 +56,7 @@ const CompletedTab = () => {
               status: order.status,
               email: order.email,
               address: order.address,
+              buttonLabel: "Done",
             }),
         })}
       />

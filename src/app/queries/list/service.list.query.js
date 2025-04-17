@@ -7,13 +7,14 @@ const SUB_URL = `api/DecorService`;
 
 const defaultPagination = {
   pageIndex: 1,
-  pageSize: 1,
-  productName: "",
+  pageSize: 10,
+  subLocation: "",
+  style: "",
   minPrice: "",
   maxPrice: "",
   sortBy: "",
   descending: false,
-  forcePagination: false,
+  seasonId: "",
 };
 
 export function useGetListDecorService(paginationParams = defaultPagination) {
@@ -105,6 +106,59 @@ export function useGetDecorServiceListByProvider(paginationParams = {}) {
           url += `&SortBy=${encodeURIComponent(params.sortBy)}`;
         if (params.descending !== undefined)
           url += `&Descending=${params.descending}`;
+
+        const res = await BaseRequest.Get(url, false);
+
+        if (res && typeof res === "object") {
+          if (res.data) {
+            return res.data;
+          } else if (Array.isArray(res)) {
+            return {
+              data: res,
+              totalCount: res.length,
+              totalPages: Math.ceil(res.length / params.pageSize),
+            };
+          }
+        }
+        return {
+          data: [],
+          totalCount: 0,
+          totalPages: 0,
+        };
+      } finally {
+        nProgress.done();
+      }
+    },
+    keepPreviousData: true,
+    staleTime: 30000,
+  });
+}
+
+export function useGetDecorServiceListForCustomer(paginationParams = {}) {
+  const params = {
+    ...defaultPagination,
+    ...paginationParams,
+  };
+
+  return useQuery({
+    queryKey: ["decor_service_list_for_customer", params, params.providerId],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        let url = `/${SUB_URL}/getDecorServiceListByCustomer?`;
+
+        url += `&PageIndex=${params.pageIndex}`;
+
+        url += `&PageSize=${params.pageSize}`;
+
+        if (params.providerId) url += `&providerId=${params.providerId}`;
+
+        if (params.productName)
+          url += `&ProductName=${encodeURIComponent(params.productName)}`;
+        if (params.minPrice) url += `&MinPrice=${params.minPrice}`;
+        if (params.maxPrice) url += `&MaxPrice=${params.maxPrice}`;
+        if (params.sortBy)
+          url += `&SortBy=${encodeURIComponent(params.sortBy)}`;
 
         const res = await BaseRequest.Get(url, false);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import SellerWrapper from "../../../components/SellerWrapper";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Stepper, { Step } from "@/app/components/ui/animated/Stepper";
 import {
   useCreateContractByQuotationCode,
@@ -16,17 +16,24 @@ import { BorderBox } from "@/app/components/ui/BorderBox";
 import { customCalendarStyles } from "@/app/(pages)/booking/components/PickDate";
 import { format } from "date-fns";
 import Spinner from "@/app/components/Spinner";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { TbArrowLeft } from "react-icons/tb";
 
 const CreateContractPage = () => {
-  const { id } = useParams();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const quotationCode = searchParams.get("quotationCode");
   const { mutate: createContract, isPending } =
     useCreateContractByQuotationCode();
   const [constructionDate, setConstructionDate] = useState(new Date());
-  const { data: contractFile, isLoading: isContractFileLoading } =
-    useGetContractFile(quotationCode);
+  const {
+    data: contractFile,
+    isLoading: isContractFileLoading,
+    refetch: refetchContractFile,
+  } = useGetContractFile(quotationCode);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isCreatingContract, setIsCreatingContract] = useState(false);
 
   useEffect(() => {
     if (contractFile?.data) {
@@ -35,6 +42,7 @@ const CreateContractPage = () => {
   }, [contractFile?.data]);
 
   const handleCreateContract = () => {
+    setIsCreatingContract(true);
     const formattedDate = format(
       constructionDate,
       "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
@@ -45,11 +53,18 @@ const CreateContractPage = () => {
         constructionDate: formattedDate,
       },
       {
-        onSuccess: () => {
-          alert("Contract created successfully");
+        onSuccess: async () => {
+          toast.success("Contract created successfully");
+          // Wait a bit for the file to be processed
+          setTimeout(async () => {
+            await refetchContractFile();
+            setIsCreatingContract(false);
+          }, 2000);
         },
         onError: (error) => {
           console.error("Error creating contract:", error);
+          toast.error("Failed to create contract");
+          setIsCreatingContract(false);
         },
       }
     );
@@ -58,20 +73,29 @@ const CreateContractPage = () => {
   const validateStep = (step) => {
     if (step === 1) {
       if (!constructionDate) {
-        alert("Please select a construction date before proceeding.");
+        toast.error("Please select a construction date before proceeding.");
         return false;
       }
       handleCreateContract();
+      return false; // Don't proceed to next step until file is loaded
     }
     return true;
   };
 
-  if (isContractFileLoading) {
+  if (isContractFileLoading || isCreatingContract) {
     return (
       <SellerWrapper>
         <BodyTypo bodylabel="Create Contract" className="!m-0 mb-5" />
-        <div className="flex items-center justify-center self-center h-[600px]">
+        <div className="flex flex-col items-center justify-center self-center h-[600px] gap-4">
           <Spinner />
+          <FootTypo
+            footlabel={
+              isCreatingContract
+                ? "Creating contract..."
+                : "Loading contract file..."
+            }
+            className="!m-0 text-gray-500"
+          />
         </div>
       </SellerWrapper>
     );
@@ -79,12 +103,18 @@ const CreateContractPage = () => {
 
   return (
     <SellerWrapper>
-      <BodyTypo bodylabel="Create Contract" className="!m-0 mb-5" />
+      <button
+        className="flex items-center gap-1 mb-5"
+        onClick={() => router.back()}
+      >
+        <TbArrowLeft size={20} />
+        <FootTypo footlabel="Go Back" className="!m-0" />
+      </button>
+      <BodyTypo bodylabel={contractFile?.data ? "View Contract" : "Create Contract"} className="!m-0 mb-5" />
       <Stepper
         initialStep={currentStep}
         onStepChange={(step) => {
           setCurrentStep(step);
-          console.log(step);
         }}
         backButtonText="Previous"
         nextButtonText="Next"
@@ -138,7 +168,7 @@ const CreateContractPage = () => {
             <div className="h-[800px] flex flex-col">
               {contractFile?.data ? (
                 <iframe
-                  src={contractFile.data}
+                  src={contractFile.data.fileUrl}
                   className="w-full h-full rounded-md border-0"
                   title="Contract Preview"
                 />

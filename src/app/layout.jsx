@@ -12,7 +12,6 @@ import ChatBox from "./components/ui/chatBox/ChatBox";
 import InformationModal from "./components/ui/Modals/InformationModal";
 import LocationModal from "./components/ui/Modals/LocationModal";
 
-
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
@@ -37,18 +36,16 @@ export default function RootLayout({ children }) {
       <body className="antialiased overflow-auto">
         <AppProviders>
           <ClientOnly>
-            <div className="flex min-h-screen flex-col relative">
-              <HeaderWrapper />
-              <OTPConfirmModal />
-              <DeleteConfirmModal />
-              <SearchModal />
-              <ChatBox />
-              <InformationModal />
-              <AdressModal />
-              <LocationModal />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <HeaderWrapper />
+            <OTPConfirmModal />
+            <DeleteConfirmModal />
+            <SearchModal />
+            <ChatBox />
+            <InformationModal />
+            <AdressModal />
+            <LocationModal />
+            <main className="flex-1">{children}</main>
+            <Footer />
           </ClientOnly>
         </AppProviders>
       </body>

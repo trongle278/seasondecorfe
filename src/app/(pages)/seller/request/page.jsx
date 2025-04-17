@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import SellerWrapper from "../components/SellerWrapper";
 import { useGetPaginatedBookingsForProvider } from "@/app/queries/list/booking.list.query";
 import DataTable from "@/app/components/ui/table/DataTable";
-import { Skeleton } from "@mui/material";
+import {
+  Skeleton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import StatusChip from "@/app/components/ui/statusChip/StatusChip";
 import { FaCheck } from "react-icons/fa6";
 import { MdCancel } from "react-icons/md";
@@ -18,7 +24,7 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { useChangeBookingStatus } from "@/app/queries/book/book.query";
 import { MdOutlineEditNote } from "react-icons/md";
 import { FootTypo } from "@/app/components/ui/Typography";
-import { FaFileContract } from "react-icons/fa";
+import { IoFilterOutline } from "react-icons/io5";
 
 const SellerOrderManage = () => {
   const router = useRouter();
@@ -28,10 +34,31 @@ const SellerOrderManage = () => {
 
   const { mutate: changeBookingStatus, isPending: isChangingStatus } =
     useChangeBookingStatus();
+
+  const [filters, setFilters] = useState({
+    status: "",
+  });
+
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 10,
+    status: "",
   });
+
+  // Update pagination when filters change
+  useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      status: filters.status,
+    }));
+  }, [filters]);
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterName]: value,
+    }));
+  };
 
   const { data: bookingsData, isLoading } =
     useGetPaginatedBookingsForProvider(pagination);
@@ -39,6 +66,25 @@ const SellerOrderManage = () => {
   const bookings = bookingsData?.data || [];
   const totalCount = bookingsData?.totalCount || 0;
   const totalPages = Math.ceil(totalCount / pagination.pageSize) || 1;
+
+  // Status options for the filter
+  const statusOptions = [
+    { id: "", name: "All" },
+    { id: "0", name: "Pending" },
+    { id: "1", name: "Planning" },
+    { id: "2", name: "Quoting" },
+    { id: "3", name: "Contracting" },
+    { id: "4", name: "Confirmed" },
+    { id: "5", name: "Deposited" },
+    { id: "6", name: "Preparing" },
+    { id: "7", name: "In Transit" },
+    { id: "8", name: "Progressing" },
+    { id: "9", name: "Labor Paid" },
+    { id: "10", name: "Completed" },
+    { id: "11", name: "Pending Cancel" },
+    { id: "12", name: "Cancelled" },
+    { id: "13", name: "Rejected" },
+  ];
 
   const columns = [
     {
@@ -193,11 +239,6 @@ const SellerOrderManage = () => {
     },
   ];
 
-  const handleAcceptOrder = useCallback((orderId) => {
-    // Implement accept order functionality here
-    console.log("Accept order:", orderId);
-  }, []);
-
   const handleCancelOrder = useCallback((orderId) => {
     // Implement cancel order functionality here
     console.log("Cancel order:", orderId);
@@ -214,9 +255,57 @@ const SellerOrderManage = () => {
   const tablePageIndex =
     pagination.pageIndex > 1 ? pagination.pageIndex - 1 : 0;
 
+  // Filter selection component
+  const FilterSelectors = () => (
+    <div className="mb-6 flex items-center gap-5 p-2 w-full">
+      <div className="font-medium mr-2 flex items-center gap-2">
+        <IoFilterOutline size={18} />
+        Filters
+      </div>
+
+      <FormControl
+        variant="outlined"
+        size="small"
+        className="w-full max-w-[250px] dark:text-white"
+      >
+        <InputLabel id="status-label" className="dark:text-white">
+          Status
+        </InputLabel>
+        <Select
+          MenuProps={{
+            disableScrollLock: true,
+          }}
+          labelId="status-label"
+          value={filters.status}
+          onChange={(e) => handleFilterChange("status", e.target.value)}
+          label="Status"
+          className="bg-white dark:bg-gray-700 dark:text-white"
+        >
+          {statusOptions.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <Button
+        label="Reset Filter"
+        onClick={() =>
+          setFilters({
+            status: "",
+          })
+        }
+        className="ml-auto"
+      />
+    </div>
+  );
+
   return (
     <SellerWrapper>
       <h1 className="text-2xl font-bold mb-6">Request Management</h1>
+
+      <FilterSelectors />
 
       {isLoading && bookings.length === 0 ? (
         <>
@@ -225,9 +314,13 @@ const SellerOrderManage = () => {
           <Skeleton animation="wave" variant="text" width="100%" />
         </>
       ) : bookings.length === 0 && !isLoading ? (
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="">
           <h2 className="text-xl font-semibold mb-4">No Orders Found</h2>
-          <p>You don't have any orders at the moment.</p>
+          <p>
+            {filters.status
+              ? "No orders match your filter criteria. Try adjusting your filters."
+              : "You don't have any orders at the moment."}
+          </p>
         </div>
       ) : (
         <DataTable

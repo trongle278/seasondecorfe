@@ -22,7 +22,7 @@ import { RiFolderSettingsLine } from "react-icons/ri";
 export default function SellerWrapper({ children }) {
   const links = [
     {
-      label: "Overeview",
+      label: "Dashboard",
       href: "/seller/dashboard",
       icon: <IconBrandTabler className=" h-5 w-5 flex-shrink-0" />,
     },

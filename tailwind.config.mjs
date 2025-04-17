@@ -197,6 +197,18 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
+        tabFadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0px)" },
+        },
+        tabSlideRight: {
+          "0%": { opacity: "0", transform: "translateX(-20px)" },
+          "100%": { opacity: "1", transform: "translateX(0px)" },
+        },
+        tabSlideLeft: {
+          "0%": { opacity: "0", transform: "translateX(20px)" },
+          "100%": { opacity: "1", transform: "translateX(0px)" },
+        },
       },
       animation: {
         aurora: "aurora 60s linear infinite",
@@ -211,6 +223,9 @@ export default {
         "star-movement-bottom":
           "star-movement-bottom linear infinite alternate",
         "star-movement-top": "star-movement-top linear infinite alternate",
+        "tab-fade-in": "tabFadeIn 0.3s ease-out forwards",
+        "tab-slide-right": "tabSlideRight 0.3s ease-out forwards",
+        "tab-slide-left": "tabSlideLeft 0.3s ease-out forwards",
       },
       // Custom timing functions (you can use them with Tailwind utilities)
       transitionTimingFunction: {

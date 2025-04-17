@@ -6,9 +6,9 @@ import Button from "@/app/components/ui/Buttons/Button";
 import Input from "@/app/components/ui/inputs/Input";
 import { IoIosRemove } from "react-icons/io";
 import { formatCurrency } from "@/app/helpers";
-import { AiOutlineStop, AiOutlineExclamationCircle } from "react-icons/ai";
+import { AiOutlineStop } from "react-icons/ai";
 
-const ConstructionTab = ({
+const LabourTab = ({
   constructionTasks,
   onTaskChange,
   onAddTask,
@@ -43,10 +43,7 @@ const ConstructionTab = ({
                   Unit
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Length
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Width
+                  Area
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Remove
@@ -74,7 +71,7 @@ const ConstructionTab = ({
                       <Input
                         id={`constructionTasks.${index}.cost`}
                         name={`constructionTasks.${index}.cost`}
-                        type="text" 
+                        type="text"
                         pattern="^\d+(\.\d{1,2})?$"
                         maxLength="10"
                         value={task.cost}
@@ -105,31 +102,13 @@ const ConstructionTab = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Input
-                        id={`constructionTasks.${index}.length`}
-                        name={`constructionTasks.${index}.length`}
-                        value={task.length || 0}
+                        id={`constructionTasks.${index}.area`}
+                        name={`constructionTasks.${index}.area`}
+                        value={task.area || 0}
                         onChange={(e) =>
                           onTaskChange(
                             index,
-                            "length",
-                            parseInt(e.target.value) || 0
-                          )
-                        }
-                        className="pl-3"
-                        min="0"
-                        placeholder="0"
-                        register={() => ({})}
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Input
-                        id={`constructionTasks.${index}.width`}
-                        name={`constructionTasks.${index}.width`}
-                        value={task.width || 0}
-                        onChange={(e) =>
-                          onTaskChange(
-                            index,
-                            "width",
+                            "area",
                             parseInt(e.target.value) || 0
                           )
                         }
@@ -170,14 +149,14 @@ const ConstructionTab = ({
 
       <div className="flex justify-between items-center">
         <Button
-          label="Add Construction Task"
+          label="Add Labour Task"
           onClick={onAddTask}
           icon={<MdAdd size={20} />}
         />
 
         <div className="text-right">
           <div className="text-sm text-gray-500 mb-1">
-            Total Construction Cost:
+            Total Labour Cost:
           </div>
           <div className="text-xl font-bold text-gray-900">
             {formatCurrency(calculateConstructionTotal())}
@@ -188,4 +167,4 @@ const ConstructionTab = ({
   );
 };
 
-export default ConstructionTab;
+export default LabourTab;

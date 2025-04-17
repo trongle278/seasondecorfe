@@ -34,14 +34,25 @@ export function useGetListAccount(paginationParams = {}) {
         queryParams.push(`PageSize=${params.pageSize}`);
 
         if (params.status) queryParams.push(`Status=${params.status}`);
-        if (params.gender) queryParams.push(`Gender=${params.gender}`);
-        if (params.isVerified)
+        
+        // Handle boolean parameters properly
+        if (params.gender !== undefined && params.gender !== "") {
+          queryParams.push(`Gender=${params.gender}`);
+        }
+        
+        if (params.isVerified !== undefined && params.isVerified !== "") {
           queryParams.push(`IsVerified=${params.isVerified}`);
-        if (params.isDisabled)
-          queryParams.push(`IsDisabled=${params.isDisabled}`);
+        }
+        
+        if (params.isDisabled !== undefined && params.isDisabled !== "") {
+          queryParams.push(`IsDisable=${params.isDisabled}`);
+        }
+        
         if (params.sortBy) queryParams.push(`SortBy=${params.sortBy}`);
-        if (params.descending !== undefined)
+        
+        if (params.descending !== undefined) {
           queryParams.push(`Descending=${params.descending}`);
+        }
 
         url += queryParams.join("&");
         const res = await BaseRequest.Get(url, false);

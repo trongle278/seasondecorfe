@@ -388,9 +388,9 @@ const QuotationDocument = ({ data = {} }) => {
             </View>
           </View>
           
-          {/* Construction Tasks Table */}
+          {/* Labour Tasks Table */}
           <View style={[styles.tableContainer, { marginTop: 8 }]}>
-            <Text style={styles.tableTitle}>Construction Tasks</Text>
+            <Text style={styles.tableTitle}>Labour Tasks</Text>
             <View style={[styles.table, styles.compactRows]}>
               {/* Table Header */}
               <View style={[styles.tableRow, styles.tableHeader]}>
@@ -404,14 +404,11 @@ const QuotationDocument = ({ data = {} }) => {
                   <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Unit</Text>
                 </View>
                 <View style={[styles.tableCell, { flex: 0.8 }]}>
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Length</Text>
-                </View>
-                <View style={[styles.tableCell, { flex: 0.8 }]}>
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Width</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 8 }}>Area</Text>
                 </View>
               </View>
               
-              {/* Construction Task Rows - limit to at most 3 rows */}
+              {/* Labour Task Rows - limit to at most 3 rows */}
               {safetyTasks.length > 0 ? (
                 safetyTasks.slice(0, 3).map((item, index) => {
                   // Parse formatted numbers for display
@@ -436,10 +433,7 @@ const QuotationDocument = ({ data = {} }) => {
                         <Text>{item.unit || 'N/A'}</Text>
                       </View>
                       <View style={[styles.tableCell, { flex: 0.8 }]}>
-                        <Text>{item.length || 0}</Text>
-                      </View>
-                      <View style={[styles.tableCell, { flex: 0.8 }]}>
-                        <Text>{item.width || 0}</Text>
+                        <Text>{item.area || 0}</Text>
                       </View>
                     </View>
                   );
@@ -447,15 +441,15 @@ const QuotationDocument = ({ data = {} }) => {
               ) : (
                 <View style={styles.tableRow}>
                   <View style={[styles.tableCell, { flex: 6.6 }]}>
-                    <Text>No construction tasks added</Text>
+                    <Text>No labour tasks added</Text>
                   </View>
                 </View>
               )}
             </View>
             
-            {/* Construction Total */}
+            {/* Labour Total */}
             <View style={styles.subtotal}>
-              <Text style={styles.totalLabel}>Construction Total:</Text>
+              <Text style={styles.totalLabel}>Labour Task Total:</Text>
               <Text style={styles.totalValue}>{formatVND(constructionTotal)}</Text>
             </View>
           </View>

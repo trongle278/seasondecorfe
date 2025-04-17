@@ -10,7 +10,7 @@ import { BorderBox } from "@/app/components/ui/BorderBox";
 import { useForm } from "react-hook-form";
 import { useParams, useSearchParams } from "next/navigation";
 import MaterialTab from "../../components/MaterialTab";
-import ConstructionTab from "../../components/ConstructionTab";
+import LabourTab from "../../components/LabourTab";
 import TermTab from "../../components/TermTab";
 import { formatCurrency } from "@/app/helpers";
 import { useCreateQuotation } from "@/app/queries/quotation/quotation.query";
@@ -19,6 +19,7 @@ import { AiOutlineUpload } from "react-icons/ai";
 import { TbArrowLeft } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
 const QuotationPage = () => {
   const router = useRouter();
@@ -55,8 +56,7 @@ const QuotationPage = () => {
         taskName: "",
         cost: 0,
         unit: "",
-        length: 0,
-        width: 0,
+        area: 0,
       },
     ],
   });
@@ -193,7 +193,7 @@ const QuotationPage = () => {
     // Ensure cost, length, and width are stored as numbers, not strings
     if (field === "cost") {
       value = parseFloat(value) || 0;
-    } else if (field === "length" || field === "width") {
+    } else if (field === "area") {
       value = parseInt(value) || 0;
     }
 
@@ -217,8 +217,7 @@ const QuotationPage = () => {
       taskName: "",
       cost: 0,
       unit: "",
-      length: 0,
-      width: 0,
+      area: 0,
     };
 
     const newIndex = quotationData.constructionTasks.length;
@@ -512,7 +511,6 @@ const QuotationPage = () => {
                 }
               />
 
-              {/* Show validation message when there are unfilled items */}
               {!isQuotationValid() &&
                 quotationData.materials.some((item) =>
                   isItemEmpty(item, "material")
@@ -535,143 +533,153 @@ const QuotationPage = () => {
         <div className="w-full flex flex-col">
           {showEditor ? (
             <BorderBox className="w-full shadow-xl">
-              {/* Tabs Navigation */}
-              <div className="flex flex-wrap">
-                <button
-                  className={`py-3 px-6 font-medium ${
-                    activeTab === "Information"
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Information")}
-                >
-                  Information
-                </button>
-                <button
-                  className={`py-3 px-6 font-medium ${
-                    activeTab === "Materials"
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Materials")}
-                >
-                  Materials
-                </button>
-                <button
-                  className={`py-3 px-6 font-medium ${
-                    activeTab === "Construction"
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Construction")}
-                >
-                  Construction
-                </button>
-                <button
-                  className={`py-3 px-6 font-medium ${
-                    activeTab === "Terms"
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Terms")}
-                >
-                  Terms
-                </button>
-                <button
-                  className={`py-3 px-6 font-medium ${
-                    activeTab === "Summary"
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("Summary")}
-                >
-                  Summary
-                </button>
-              </div>
+              <TabGroup>
+                <TabList className="flex space-x-1 rounded-xl bg-gray-100 dark:bg-gray-700 p-1">
+                  <Tab
+                    className={({ selected }) =>
+                      `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all duration-200 ease-in-out
+                      ${
+                        selected
+                          ? "bg-white dark:bg-gray-900 text-primary shadow"
+                          : "hover:bg-white/[0.12] hover:text-primary"
+                      }`
+                    }
+                  >
+                    <FootTypo footlabel="Information" className="!m-0" />
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all duration-200 ease-in-out
+                      ${
+                        selected
+                          ? "bg-white dark:bg-gray-900 text-primary shadow"
+                          : "hover:bg-white/[0.12] hover:text-primary"
+                      }`
+                    }
+                  >
+                    <FootTypo footlabel="Materials" className="!m-0" />
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all duration-200 ease-in-out
+                      ${
+                        selected
+                          ? "bg-white dark:bg-gray-900 text-primary shadow"
+                          : "hover:bg-white/[0.12] hover:text-primary"
+                      }`
+                    }
+                  >
+                    <FootTypo footlabel="Labour Tasks" className="!m-0" />
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all duration-200 ease-in-out
+                      ${
+                        selected
+                          ? "bg-white dark:bg-gray-900 text-primary shadow"
+                          : "hover:bg-white/[0.12] hover:text-primary"
+                      }`
+                    }
+                  >
+                    <FootTypo footlabel="Terms" className="!m-0" />
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all duration-200 ease-in-out
+                      ${
+                        selected
+                          ? "bg-white dark:bg-gray-900 text-primary shadow"
+                          : "hover:bg-white/[0.12] hover:text-primary"
+                      }`
+                    }
+                  >
+                    <FootTypo footlabel="Summary" className="!m-0" />
+                  </Tab>
+                </TabList>
 
-              {/* Tab Content */}
-              <div className="p-6 font-semibold">
-                {/* Client Info Tab */}
-                {activeTab === "Information" && (
-                  <div className="space-y-4">
-                    <div className="flex flex-row gap-3 items-center">
-                      <FootTypo footlabel="Name" className="!m-0 text-sm" />
-                      <FootTypo footlabel={fullName} className="!m-0" />
-                    </div>
-                    <div className="flex flex-row gap-3 items-center">
-                      <FootTypo footlabel="Email" className="!m-0 text-sm" />
-                      <FootTypo footlabel={email} className="!m-0" />
-                    </div>
-                  </div>
-                )}
-
-                {/* Materials Tab */}
-                {activeTab === "Materials" && (
-                  <MaterialTab
-                    materials={quotationData.materials}
-                    onMaterialChange={handleMaterialChange}
-                    onAddMaterial={addMaterial}
-                    onRemoveMaterial={removeMaterial}
-                    calculateMaterialTotal={calculateMaterialTotal}
-                    register={register}
-                    control={control}
-                  />
-                )}
-
-                {/* Construction Tab */}
-                {activeTab === "Construction" && (
-                  <ConstructionTab
-                    constructionTasks={quotationData.constructionTasks}
-                    onTaskChange={handleTaskChange}
-                    onAddTask={addTask}
-                    onRemoveTask={removeTask}
-                    calculateConstructionTotal={calculateConstructionTotal}
-                    register={register}
-                    control={control}
-                  />
-                )}
-
-                {/* Terms Tab */}
-                {activeTab === "Terms" && (
-                  <TermTab
-                    register={register}
-                    value={quotationData.terms}
-                    depositPercentage={quotationData.depositPercentage}
-                    onTermsChange={handleTermsChange}
-                    onDepositChange={handleDepositChange}
-                  />
-                )}
-
-                {/* Summary Tab */}
-                {activeTab === "Summary" && (
-                  <div className="space-y-4">
-                    <div className="border-b pb-4">
-                      <h3 className="text-lg font-bold mb-4">
-                        Quotation Summary
-                      </h3>
-                      <div className="flex justify-between items-center mb-2">
-                        <span>Materials Total:</span>
-                        <span className="font-bold">
-                          {formatCurrency(calculateMaterialTotal())}
-                        </span>
+                <TabPanels className="mt-4 relative overflow-hidden font-semibold">
+                  {/* Information Panel */}
+                  <TabPanel className="rounded-xl bg-white dark:bg-gray-900 p-3 animate-tab-fade-in">
+                    <div className="space-y-4">
+                      <div className="flex flex-row gap-3 items-center">
+                        <FootTypo footlabel="Name" className="!m-0 text-sm" />
+                        <FootTypo footlabel={fullName} className="!m-0 text-lg" />
                       </div>
-                      <div className="flex justify-between items-center mb-2">
-                        <span>Construction Total:</span>
-                        <span className="font-bold">
-                          {formatCurrency(calculateConstructionTotal())}
-                        </span>
+                      <div className="flex flex-row gap-3 items-center">
+                        <FootTypo footlabel="Email" className="!m-0 text-sm" />
+                        <FootTypo footlabel={email} className="!m-0 text-lg" />
                       </div>
                     </div>
+                  </TabPanel>
 
-                    <div className="flex justify-between items-center mb-2 text-lg">
-                      <span>Grand Total:</span>
-                      <span className="font-bold">
-                        {formatCurrency(calculateGrandTotal())}
-                      </span>
+                  {/* Materials Panel */}
+                  <TabPanel className="rounded-xl bg-white dark:bg-gray-900 p-3 animate-tab-slide-right">
+                    <MaterialTab
+                      materials={quotationData.materials}
+                      onMaterialChange={handleMaterialChange}
+                      onAddMaterial={addMaterial}
+                      onRemoveMaterial={removeMaterial}
+                      calculateMaterialTotal={calculateMaterialTotal}
+                      register={register}
+                      control={control}
+                    />
+                  </TabPanel>
+
+                  {/* Labour Panel */}
+                  <TabPanel className="rounded-xl bg-white dark:bg-gray-900 p-3 animate-tab-slide-left">
+                    <LabourTab
+                      constructionTasks={quotationData.constructionTasks}
+                      onTaskChange={handleTaskChange}
+                      onAddTask={addTask}
+                      onRemoveTask={removeTask}
+                      calculateConstructionTotal={calculateConstructionTotal}
+                      register={register}
+                      control={control}
+                    />
+                  </TabPanel>
+
+                  {/* Terms Panel */}
+                  <TabPanel className="rounded-xl bg-white dark:bg-gray-900 p-3 animate-tab-slide-right">
+                    <TermTab
+                      register={register}
+                      value={quotationData.terms}
+                      depositPercentage={quotationData.depositPercentage}
+                      onTermsChange={handleTermsChange}
+                      onDepositChange={handleDepositChange}
+                    />
+                  </TabPanel>
+
+                  {/* Summary Panel */}
+                  <TabPanel className="rounded-xl bg-white dark:bg-gray-900 p-3 animate-tab-fade-in">
+                    <div className="space-y-4">
+                      <div className="border-b pb-4">
+                        <h3 className="text-lg font-bold mb-4">
+                          Quotation Summary
+                        </h3>
+                        <div className="flex justify-between items-center mb-2">
+                          <span>Materials Total:</span>
+                          <span className="font-bold">
+                            {formatCurrency(calculateMaterialTotal())}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span>Construction Total:</span>
+                          <span className="font-bold">
+                            {formatCurrency(calculateConstructionTotal())}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center mb-2 text-lg">
+                        <span>Grand Total:</span>
+                        <span className="font-bold">
+                          {formatCurrency(calculateGrandTotal())}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  </TabPanel>
+                </TabPanels>
+              </TabGroup>
             </BorderBox>
           ) : (
             <div className="bg-transparent h-[800px]">

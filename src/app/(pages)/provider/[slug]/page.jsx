@@ -27,6 +27,10 @@ import { useFollow, useUnfollow } from "@/app/queries/user/user.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 import { formatDateVN } from "@/app/helpers";
+import { useAddContact } from "@/app/queries/contact/contact.query";
+import useChatBox from "@/app/hooks/useChatBox";
+import useChat from "@/app/hooks/useChat";
+
 
 const tabs = [
   { icon: IoMdHome, name: "Home", component: HomeTab },
@@ -43,6 +47,10 @@ const ProviderDetailPage = () => {
   const unfollowMutation = useUnfollow();
   const { data: followingData, isLoading: followingLoading } =
     useGetFollowing();
+  const { onOpen } = useChatBox();
+  const { setSelectedProvider } = useChat();
+  const addContactMutation = useAddContact();
+
 
   if (isLoading) {
     return (
@@ -103,6 +111,24 @@ const ProviderDetailPage = () => {
     );
   };
 
+  const handleChatClick = (provider) => {
+    const providerData = {
+      contactId: provider.id,
+      contactName: provider.businessName,
+      avatar: provider.avatar
+    };
+    addContactMutation.mutate(provider.id, {
+      onSuccess: () => {
+        setSelectedProvider(providerData);
+        onOpen();
+        queryClient.invalidateQueries(["get_list_contact"]);
+      },
+      onError: (error) => {
+        console.error("Error adding contact:", error);
+      },
+    });
+  };
+
   return (
     <Container>
       <div className="my-7">
@@ -125,6 +151,7 @@ const ProviderDetailPage = () => {
             userDetails={provider.businessName}
             className="w-[24rem]"
             onFollowClick={() => handleFollowToggle(provider.id)}
+            onChatClick={() => handleChatClick(provider)}
             isFollowed={isProviderFollowed(provider.id)}
             isLoading={followMutation.isLoading || unfollowMutation.isLoading || followingLoading}
           />

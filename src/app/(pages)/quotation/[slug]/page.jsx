@@ -264,9 +264,9 @@ const QuotationDetailPage = () => {
             )}
           </BorderBox>
 
-          {/* Construction Tasks Section */}
+          {/* Labour Tasks Section */}
           <BorderBox>
-            <h2 className="text-xl font-semibold mb-4">Construction Tasks</h2>
+            <h2 className="text-xl font-semibold mb-4">Labour Tasks</h2>
             {processedTasks.length > 0 ? (
               <DataTable
                 data={processedTasks}
