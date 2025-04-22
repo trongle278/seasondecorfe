@@ -28,7 +28,7 @@ const ImageSlider = ({ img = [], loading }) => {
             alt="Selected Image"
             width={500}
             height={500}
-            unoptimized={true}
+            //unoptimized={true}
             className="w-full h-96 object-cover rounded-xl"
           />
         ) : (
@@ -45,7 +45,7 @@ const ImageSlider = ({ img = [], loading }) => {
                 alt={`Thumbnail ${index + 1}`}
                 width={100}
                 height={100}
-                unoptimized={true}
+                //unoptimized={true}
                 className={`w-24 h-24 object-cover rounded-md cursor-pointer border-2 ${
                   activeImg === imageUrl ? "border-primary" : "border-gray-300"
                 }`}

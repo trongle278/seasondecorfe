@@ -2,14 +2,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { useSelector } from "react-redux";
 
 const SUB_URL = `api/Quotation`;
+
 
 const defaultPagination = {
   pageIndex: 1,
   pageSize: 10,
-  quotationCode: "",
-  status: "",
+  //quotationCode: "",
+  //status: "",
   sortBy: "",
   descending: false,
 };
@@ -87,5 +89,37 @@ export function useGetListQuotationForProvider(paginationParams = {}) {
         nProgress.done();
       }
     },
+  });
+}
+
+export function useGetListRelatedProduct(paginationParams = {}, quotationCode, isStatusChecked = false) {
+  const shouldFetchRelatedProduct = useSelector((state) => state.quotation.quotationExisted);
+  const params = {
+    ...defaultPagination,
+    ...paginationParams,
+  };
+  return useQuery({
+    queryKey: ["get_list_related_product", params, quotationCode, isStatusChecked],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        let url = `/${SUB_URL}/getPaginatedRelatedProduct?`;
+
+        const queryParams = [];
+
+        queryParams.push(`PageIndex=${params.pageIndex}`);
+        queryParams.push(`PageSize=${params.pageSize}`);
+        
+        queryParams.push(`QuotationCode=${quotationCode}`);
+
+        url += queryParams.join("&");
+
+        const res = await BaseRequest.Get(url, false);
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+    enabled: isStatusChecked && !!shouldFetchRelatedProduct,
   });
 }

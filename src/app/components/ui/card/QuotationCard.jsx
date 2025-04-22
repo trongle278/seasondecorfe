@@ -22,7 +22,7 @@ const QuotationCard = ({
   isSigned,
 }) => {
   return (
-    <section className="p-7">
+    <section className="py-4">
       <BorderBox className="w-full font-semibold relative">
         <div className="absolute top-[-10px] left-4">
           <FootTypo

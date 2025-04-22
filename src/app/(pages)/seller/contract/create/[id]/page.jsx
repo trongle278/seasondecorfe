@@ -19,6 +19,8 @@ import Spinner from "@/app/components/Spinner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { TbArrowLeft } from "react-icons/tb";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 const CreateContractPage = () => {
   const router = useRouter();
@@ -165,13 +167,9 @@ const CreateContractPage = () => {
               footlabel="Contract preview"
               className="!m-0 text-lg font-semibold self-center"
             />
-            <div className="h-[800px] flex flex-col">
+            <div className="h-[800px] flex flex-col border rounded-md">
               {contractFile?.data ? (
-                <iframe
-                  src={contractFile.data.fileUrl}
-                  className="w-full h-full rounded-md border-0"
-                  title="Contract Preview"
-                />
+                <Viewer fileUrl={contractFile?.data.fileUrl} defaultScale={1.5} />
               ) : (
                 <div className="flex items-center justify-center h-[600px] bg-gray-50">
                   <FootTypo

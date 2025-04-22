@@ -137,7 +137,7 @@ export const MultiSearch = ({ onSearch, onSearchResults }) => {
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto dark:text-black">
+    <div className="relative w-full max-w-[48vw] mx-auto dark:text-black">
       <div className="flex flex-col md:flex-row items-center justify-between bg-white rounded-full shadow-md border border-gray-200 overflow-hidden">
         <Divider orientation="vertical" variant="middle" flexItem/>
         <div 

@@ -11,6 +11,7 @@ import { AuthProvider } from "./authprovider";
 import { UserProvider } from "./userprovider";
 import { Provider } from "react-redux";
 import store from "../lib/redux/store";
+import { Worker } from "@react-pdf-viewer/core";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,14 +41,16 @@ export function AppProviders({ children }) {
             <ReactQueryDevtools />
             <AuthProvider>
               <UserProvider>
-                <Toaster richColors position="bottom-right" />
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="system"
-                  enableSystem
-                >
-                  {children}
-                </ThemeProvider>
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                  <Toaster richColors position="bottom-right" />
+                  <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                  >
+                    {children}
+                  </ThemeProvider>
+                </Worker>
               </UserProvider>
             </AuthProvider>
           </QueryClientProvider>

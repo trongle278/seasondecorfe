@@ -17,6 +17,7 @@ import Avatar from "../Avatar/Avatar";
 import Button from "../Buttons/Button";
 import { RiProfileLine } from "react-icons/ri";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import { IoIosArrowForward } from "react-icons/io";
 
 const InformationModal = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -47,6 +48,7 @@ const InformationModal = () => {
     chatClick,
     buttonLabel,
     onSubmit,
+    viewService,
     contractFilePath,
   } = infoModal.data || {};
 
@@ -56,10 +58,9 @@ const InformationModal = () => {
     }
     infoModal.onClose();
   };
-  
 
   const bodyContent = (
-    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto py-2">
+    <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto py-2 overflow-x-hidden">
       <div className="flex items-center gap-2">
         <Heading title={title} />
       </div>
@@ -69,10 +70,7 @@ const InformationModal = () => {
             <div className="">
               <div className="space-y-4">
                 {description.split("\n").map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="font-medium leading-relaxed"
-                  >
+                  <p key={index} className="font-medium leading-relaxed">
                     {paragraph}
                   </p>
                 ))}
@@ -209,6 +207,10 @@ const InformationModal = () => {
               )}
             </div>
           </div>
+          <button className="text-primary text-left mb-3 flex items-center gap-2 hover:translate-x-3 transition-all duration-300" onClick={viewService}>
+            <IoIosArrowForward />
+            Go to service
+          </button>
           <div className="flex flex-row items-center gap-5 border border-black rounded-lg p-5 w-fit relative">
             <span className="absolute top-[-12px] left-2 bg-white dark:bg-transparent px-2 overflow-hidden">
               A service from

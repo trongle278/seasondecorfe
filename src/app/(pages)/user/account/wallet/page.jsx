@@ -15,6 +15,7 @@ import { useGetTransaction } from "@/app/queries/wallet/wallet.query";
 import { encryptWalletId } from "@/app/helpers";
 import { formatCurrency } from "@/app/helpers";
 import { BsClock } from "react-icons/bs";
+import { formatDateTime } from "@/app/helpers";
 
 const UserWallet = () => {
   const router = useRouter();
@@ -34,27 +35,6 @@ const UserWallet = () => {
       })
       .slice(0, 3); // Take only the first 3
   }, [transactionData]);
-
-  // Format date and time
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString || Date.now());
-    
-    // Format date as DD/MM/YYYY
-    const formattedDate = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-    
-    // Format time as HH:MM (24-hour format)
-    const formattedTime = date.toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-    
-    return { date: formattedDate, time: formattedTime };
-  };
 
   if (isLoadingWallet || isLoadingTransaction) {
     return (

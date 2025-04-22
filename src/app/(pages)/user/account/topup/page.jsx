@@ -15,7 +15,7 @@ import { Divider } from "@mui/material";
 import { VnPayIcon, MomoIcon } from "@/app/components/icons";
 import Button from "@/app/components/ui/Buttons/Button";
 import { MdNavigateNext } from "react-icons/md";
-import { useCreateTopup } from "@/app/queries/topup/topup.query";
+import { useCreateTopup } from "@/app/queries/payment/payment.query";
 
 const PayPage = () => {
   const [isHover, setIsHover] = useState(false);

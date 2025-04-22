@@ -20,10 +20,45 @@ const BookingCard = ({
   totalPrice = 0,
   createdDate,
   isPending,
+  isPlanning,
   isContracting,
   detailClick,
   cancelClick,
+  isCanceled,
+  isQuoteExist,
+  isDepositPaid,
+  isPendingCancel,
 }) => {
+  const getStatusMessage = () => {
+    if (isCanceled) {
+      return "The request has been canceled";
+    }
+    
+    if (isDepositPaid) {
+      return "Your deposit has been paid";
+    }
+    
+    if (isQuoteExist && !isDepositPaid) {
+      return "The quotation has been created";
+    }
+    
+    if (isContracting) {
+      return "The contract is being processed";
+    }
+
+    if (isPendingCancel) {
+      return "Your cancellation request is pending";
+    }
+    
+    if (!isPending && !isContracting && !isCanceled && !isQuoteExist) {
+      return "Provider is preparing quotation";
+    }
+    
+    return null;
+  };
+  
+  const statusMessage = getStatusMessage();
+  
   return (
     <BorderBox className="rounded-lg mb-4 border shadow-md p-4 relative flex justify-between items-start">
       <div className="flex flex-col gap-2 space-y-2">
@@ -81,28 +116,18 @@ const BookingCard = ({
             <StatusChip status={status} isBooking={true} />
           </div>
 
-          {!isPending && !isContracting && (
+          {statusMessage && (
             <div className="flex items-center gap-2 text-gray-600 mt-1">
               <MdErrorOutline size={16} />
               <FootTypo 
-                footlabel="Provider is preparing quotation" 
-                className="!m-0 text-sm"
-              />
-            </div>
-          )}
-
-          {isContracting && (
-            <div className="flex items-center gap-2 text-gray-600 mt-1">
-              <MdErrorOutline size={16} />
-              <FootTypo 
-                footlabel="The contract is being processed" 
+                footlabel={statusMessage} 
                 className="!m-0 text-sm"
               />
             </div>
           )}
         </div>
 
-        {isPending && (
+        {(isPending || isPlanning) && (
           <Button
             label="Cancel request"
             onClick={cancelClick}

@@ -44,7 +44,7 @@ const AllTabs = () => {
           orderDate: order.orderDate,
           isPending: order.status === 0,
           cancelClick: () => deleteConfirmModal.onOpen('order', order.id, 'order'),
-          procceedClick: () => router.push(`/payment/${order.id}`),
+          procceedClick: () => router.push(`/payment/${order.id}?type=order`),
           detailClick: () =>
             infoModal.onOpen({
               title: "Order Details",
