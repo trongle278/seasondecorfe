@@ -23,7 +23,7 @@ const SellerServiceManage = () => {
     subLocation: "",
     decorCategory: "",
     sortBy: "",
-    descending: false,
+    descending: true,
     productName: "",
     minPrice: "",
     maxPrice: "",
@@ -169,7 +169,11 @@ const SellerServiceManage = () => {
           />
         </div>
         {isLoading && services.length === 0 ? (
-          <Skeleton animation="wave" variant="text" width="100%" height={40} />
+          <>
+            <Skeleton animation="wave" variant="text" width="100%" height={20} />
+            <Skeleton animation="wave" variant="text" width="100%" height={20} />
+            <Skeleton animation="wave" variant="text" width="100%" height={20} />
+          </>
         ) : error ? (
           <div className="bg-red-100 text-red-700 p-4 rounded">
             Error loading services: {error.message}

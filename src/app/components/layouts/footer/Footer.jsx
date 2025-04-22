@@ -10,12 +10,17 @@ const Footer = () => {
   const pathname = usePathname();
   const isSeller= pathname.startsWith("/seller/");
   const isPay= pathname === "/user/account/topup" || pathname === "/payment/success" || pathname === "/payment/failure";
+  const isSign= pathname.startsWith("/sign");
 
   if (isSeller) {
     return null;
   }
 
   if (isPay) {
+    return null;
+  }
+
+  if (isSign) {
     return null;
   }
 

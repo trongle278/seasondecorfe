@@ -37,7 +37,6 @@ import { useGetAllAddress } from "@/app/queries/user/address.query";
 import { useRouter } from "next/navigation";
 import { seasons } from "@/app/constant/season";
 import { useGetPaginatedBookingsForCustomer } from "@/app/queries/list/booking.list.query";
-import { CgSpinner } from "react-icons/cg";
 import { FcFolder } from "react-icons/fc";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { toast } from "sonner";
@@ -45,6 +44,8 @@ import ResultModal from "@/app/components/ui/Modals/ResultModal";
 import { Label } from "@/app/components/ui/inputs/Label";
 import { Field, Textarea } from "@headlessui/react";
 import { CiClock1 } from "react-icons/ci";
+import Spinner from "@/app/components/Spinner";
+
 
 const ServiceDetail = () => {
   const pagination = {
@@ -127,11 +128,6 @@ const ServiceDetail = () => {
     return favorites.some((fav) => fav.decorServiceDetails.id === serviceId);
   }, [favorites, serviceId]);
 
-  // Check if the service is already in booking
-  const isBooked = React.useMemo(() => {
-    if (!bookings?.data || !serviceId) return false;
-    return bookings?.data.some((fav) => fav.decorService.id === serviceId);
-  }, [bookings, serviceId]);
 
   const handleAddToFavorites = () => {
     if (isInFavorites) return;
@@ -195,13 +191,14 @@ const ServiceDetail = () => {
 
     bookService(bookingData, {
       onSuccess: () => {
-        console.log("Booking successful");
+        //console.log("Booking successful");
         setResultModalData({
           title: "Booking successful",
           message: `Booking successful! Your survey is scheduled for ${selectedBookingData.formattedDate}`,
           type: "success",
         });
         setResultModalOpen(true);
+        queryClient.invalidateQueries({ queryKey: ["get_decor_service_by_id"] });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -216,8 +213,8 @@ const ServiceDetail = () => {
 
   if (!serviceDetail) {
     return (
-      <div className="text-center mt-20">
-        <FootTypo footlabel="Service not found" className="text-primary" />
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
       </div>
     );
   }
@@ -394,7 +391,7 @@ const ServiceDetail = () => {
                   </button>
                 </div>
               </div>
-              {!isBooked && (
+              {!serviceDetail.isBooked && (
                 <div className="space-y-4">
                   <Label htmlFor="note">Your requirements for this service</Label>
                   <div className="w-full">
@@ -423,17 +420,17 @@ const ServiceDetail = () => {
                 {!isServiceProvider ? (
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      label={isBooked ? "Waiting for confirmation" : "Book now"}
-                      className={`${isBooked ? "bg-yellow" : "bg-primary"}`}
+                      label={serviceDetail.isBooked ? "Waiting for confirmation" : "Book now"}
+                      className={`${serviceDetail.isBooked ? "bg-yellow" : "bg-primary"}`}
                       icon={
-                        isBooked ? (
+                        serviceDetail.isBooked ? (
                           <CiClock1 size={20} />
                         ) : (
                           <IoCallOutline size={20} />
                         )
                       }
                       disabled={
-                        isBooked || !selectedAddress || !selectedBookingData
+                        serviceDetail.isBooked || !selectedAddress || !selectedBookingData
                       }
                       onClick={handleSubmit(onSubmit)}
                     />
@@ -465,7 +462,7 @@ const ServiceDetail = () => {
           </div>
           <div>
             <div className="space-y-5 mb-5 w-full">
-              {isBooked ? (
+              {serviceDetail.isBooked ? (
                 <BorderBox>
                   <div className="flex flex-row items-center gap-2 rounded-lg mb-4">
                     <FcFolder size={20} />
@@ -499,13 +496,13 @@ const ServiceDetail = () => {
                       returnObject={true}
                       lisboxClassName="mt-11"
                       placeholder="Select a shipping address"
-                      isDisabled={isBooked}
+                      isDisabled={serviceDetail.isBooked}
                     />
                   ) : (
                     <button
                       onClick={() => router.push("/user/account/address")}
                       className="py-2 text-gray-500 bg-primary text-white rounded-md px-4"
-                      disabled={isBooked}
+                      disabled={serviceDetail.isBooked}
                     >
                       Add new address
                     </button>
@@ -514,7 +511,7 @@ const ServiceDetail = () => {
               )}
             </div>
 
-            {!isBooked && (
+            {!serviceDetail.isBooked && (
               <PickDate
                 availableDates={serviceDetail.availableDates || []}
                 onDateSelect={(dateData) => {

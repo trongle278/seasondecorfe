@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setUserSlug, setUserLocationCode, setUserLocationProvince } from "../lib/redux/reducers/userSlice";
 import Spinner from "../components/Spinner";
 import { useLocationModal } from "../hooks/useLocationModal";
+import Image from "next/image";
 
 const UserContext = createContext(null);
 
@@ -78,7 +79,7 @@ export function UserProvider({ children }) {
   if (status === "loading" || isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Spinner />
+        <Image src="/gif/loading.gif" alt="loading" width={150} height={150} />
       </div>
     );
   }

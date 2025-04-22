@@ -69,6 +69,7 @@ const ListProductPage = () => {
           totalSold: product.totalSold,
           id: product.id,
           href: `/products/${generateSlug(product.productName)}`,
+          isAdditionalProduct: false,
         })}
       />
     </ListWrapper>

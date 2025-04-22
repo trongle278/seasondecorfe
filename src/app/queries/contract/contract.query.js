@@ -48,8 +48,27 @@ export function useGetContractFile(quotationCode) {
 export function useSignContract() {
   return useMutation({
     mutationFn: async (contractCode) => {
-       const res = await BaseRequest.Post(`/${SUB_URL}/requestSignature/${contractCode}`);
-       return res;
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Post(`/${SUB_URL}/requestSignature/${contractCode}`);
+        return res;
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+
+export function useVerifySignature() {
+  return useMutation({
+    mutationFn: async (token) => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Post(`/${SUB_URL}/verifySignature`, token, false);
+        return res;
+      } finally {
+        nProgress.done();
+      }
     },
   });
 }

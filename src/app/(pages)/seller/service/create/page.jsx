@@ -249,9 +249,10 @@ const ServiceCreate = () => {
                 register={register}
               />
             </div>
-            <div className="form inline-flex items-center w-full h-full gap-5 my-5">
-              <FootTypo
-                footlabel="Available at :"
+            <div className="flex flex-row gap-5">
+              <div className="form inline-flex items-center w-full h-full gap-5 my-5">
+                <FootTypo
+                  footlabel="Available at :"
                 className="!m-0 text-lg font-semibold w-40"
               />
               <div className="w-[200px]">
@@ -284,6 +285,7 @@ const ServiceCreate = () => {
                   lisboxClassName="mt-10"
                 />
               </div>
+            </div>
             </div>
           </div>
         </Step>

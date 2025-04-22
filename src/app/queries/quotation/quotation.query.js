@@ -3,7 +3,6 @@ import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 
-
 const SUB_URL = `api/Quotation`;
 
 export function useCreateQuotation() {
@@ -69,13 +68,12 @@ export function useGetQuotationDetailByCustomerId(quotationCode) {
   });
 }
 
-
 export function useConfirmQuotation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (quotationCode) => {
       if (!quotationCode) throw new Error("No quotation code provided");
-      
+
       nProgress.start();
       try {
         return await BaseRequest.Put(
@@ -83,8 +81,8 @@ export function useConfirmQuotation() {
           true,
           {
             headers: {
-              'Content-Type': 'application/json'
-            }
+              "Content-Type": "application/json",
+            },
           }
         );
       } finally {
@@ -97,4 +95,39 @@ export function useConfirmQuotation() {
   });
 }
 
+export function useAddProductToQuotation() {
+  return useMutation({
+    mutationFn: async (data) => {
+      try {
+        nProgress.start();
+        const { quotationCode, productId, quantity } = data;
+        
+        // Format the URL to match API expectations:
+        // /api/Quotation/addProductToQuotation/{quotationCode}?productId=1&quantity=1
+        return await BaseRequest.Post(
+          `/${SUB_URL}/addProductToQuotation/${quotationCode}?productId=${productId}&quantity=${quantity}`
+        );
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
 
+export function useRemoveProductFromQuotation() {
+  return useMutation({
+    mutationFn: async (data) => {
+      try {
+        nProgress.start();
+        const { quotationCode, productId } = data;
+        
+        // Format the URL to match API expectations, similar to addProductToQuotation
+        return await BaseRequest.Delete(
+          `/${SUB_URL}/removeProductFromQuotation/${quotationCode}?productId=${productId}`
+        );
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}

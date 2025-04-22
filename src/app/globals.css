@@ -22,6 +22,69 @@
   --color-fuchsia: #FF00FF;
   --color-rose: #FF69B4;
   
+  /* Season Colors */
+  --color-spring: #78C091;
+  --color-spring-foreground: #ffffff;
+  --color-spring-light: #A5DCB9;
+  --color-spring-dark: #4B9A6C;
+  
+  --color-summer: #FFD166;
+  --color-summer-foreground: #333333;
+  --color-summer-light: #FFE4A3;
+  --color-summer-dark: #E5B73E;
+  
+  --color-autumn: #E07A5F;
+  --color-autumn-foreground: #ffffff;
+  --color-autumn-light: #F5A78C;
+  --color-autumn-dark: #BC5A3F;
+  
+  --color-winter: #5FC1F1;
+  --color-winter-foreground: #ffffff;
+  --color-winter-light: #A5DBFF;
+  --color-winter-dark: #2F9CD8;
+  
+  /* Holiday Colors */
+  --color-christmas: #C5283D;
+  --color-christmas-foreground: #ffffff;
+  --color-christmas-light: #E94E60;
+  --color-christmas-dark: #9D1C2D;
+  
+  --color-halloween: #FF8C00;
+  --color-halloween-foreground: #333333;
+  --color-halloween-light: #FFAE4C;
+  --color-halloween-dark: #D37600;
+  
+  --color-easter: #9FD7F9;
+  --color-easter-foreground: #333333;
+  --color-easter-light: #C7E7FF;
+  --color-easter-dark: #6BA8D8;
+  
+  --color-valentine: #FF5A8C;
+  --color-valentine-foreground: #ffffff;
+  --color-valentine-light: #FF9FB9;
+  --color-valentine-dark: #D63A6B;
+  
+  --color-tet: #DF2935;
+  --color-tet-foreground: #ffffff;
+  --color-tet-light: #FF5C66;
+  --color-tet-dark: #B81926;
+  
+  /* Personal Event Colors */
+  --color-birthday: #3D90E3;
+  --color-birthday-foreground: #ffffff;
+  --color-birthday-light: #7CB3F0;
+  --color-birthday-dark: #2471C9;
+  
+  --color-wedding: #DBB8FF;
+  --color-wedding-foreground: #333333;
+  --color-wedding-light: #EDD5FF;
+  --color-wedding-dark: #B889E6;
+  
+  --color-anniversary: #20A4F3;
+  --color-anniversary-foreground: #ffffff;
+  --color-anniversary-light: #6AC5FF;
+  --color-anniversary-dark: #0D7DBD;
+  
   --color-neutral-0: var(--color-black);
   --color-neutral-10: var(--color-mix-neutral-10, #1e1e1e);
   --color-neutral-20: var(--color-mix-neutral-20, #373737);

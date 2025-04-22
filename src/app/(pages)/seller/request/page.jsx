@@ -25,6 +25,7 @@ import { useChangeBookingStatus } from "@/app/queries/book/book.query";
 import { MdOutlineEditNote } from "react-icons/md";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { IoFilterOutline } from "react-icons/io5";
+import { GoQuestion } from "react-icons/go";
 
 const SellerOrderManage = () => {
   const router = useRouter();
@@ -43,6 +44,7 @@ const SellerOrderManage = () => {
     pageIndex: 1,
     pageSize: 10,
     status: "",
+    descending: true,
   });
 
   // Update pagination when filters change
@@ -75,7 +77,7 @@ const SellerOrderManage = () => {
     { id: "2", name: "Quoting" },
     { id: "3", name: "Contracting" },
     { id: "4", name: "Confirmed" },
-    { id: "5", name: "Deposited" },
+    { id: "5", name: "Deposite Paid" },
     { id: "6", name: "Preparing" },
     { id: "7", name: "In Transit" },
     { id: "8", name: "Progressing" },
@@ -144,6 +146,14 @@ const SellerOrderManage = () => {
             />
           );
         }
+        if (row.original.status === 12) {
+          return (
+            <FootTypo
+              footlabel="Cancelled by customer"
+              className="!m-0 text-red font-medium"
+            />
+          );
+        }
         if (row.original.isQuoteExisted) {
           return (
             <FootTypo
@@ -201,6 +211,19 @@ const SellerOrderManage = () => {
           );
         }
 
+        if (row.original.status === 11) {
+          return (
+            <Button 
+              label="Preview request"
+              onClick={() => {
+                router.push(`/seller/request/${row.original.bookingCode}`);
+              }}
+              className="bg-primary"
+              icon={<GoQuestion size={20} />}
+              isLoading={isChangingStatus}
+            />
+          );
+        }
         return (
           <div className="flex gap-2">
             <Button

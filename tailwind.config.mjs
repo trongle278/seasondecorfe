@@ -53,6 +53,84 @@ export default {
         orange: "var(--color-orange)",
         purple: "var(--color-purple)",
         pink: "var(--color-pink)",
+        
+        // Season Colors
+        spring: {
+          DEFAULT: "#78C091",
+          foreground: "#ffffff",
+          light: "#A5DCB9",
+          dark: "#4B9A6C"
+        },
+        summer: {
+          DEFAULT: "#FFD166",
+          foreground: "#333333",
+          light: "#FFE4A3",
+          dark: "#E5B73E"
+        },
+        autumn: {
+          DEFAULT: "#E07A5F",
+          foreground: "#ffffff",
+          light: "#F5A78C",
+          dark: "#BC5A3F"
+        },
+        winter: {
+          DEFAULT: "#5FC1F1",
+          foreground: "#ffffff",
+          light: "#A5DBFF",
+          dark: "#2F9CD8"
+        },
+        
+        // Holiday Colors
+        christmas: {
+          DEFAULT: "#C5283D",
+          foreground: "#ffffff",
+          light: "#E94E60",
+          dark: "#9D1C2D"
+        },
+        halloween: {
+          DEFAULT: "#FF8C00",
+          foreground: "#333333",
+          light: "#FFAE4C",
+          dark: "#D37600"
+        },
+        easter: {
+          DEFAULT: "#9FD7F9",
+          foreground: "#333333",
+          light: "#C7E7FF",
+          dark: "#6BA8D8"
+        },
+        valentine: {
+          DEFAULT: "#FF5A8C",
+          foreground: "#ffffff",
+          light: "#FF9FB9",
+          dark: "#D63A6B"
+        },
+        tet: {
+          DEFAULT: "#DF2935",
+          foreground: "#ffffff",
+          light: "#FF5C66",
+          dark: "#B81926"
+        },
+        
+        // Personal Event Colors
+        birthday: {
+          DEFAULT: "#3D90E3",
+          foreground: "#ffffff",
+          light: "#7CB3F0",
+          dark: "#2471C9"
+        },
+        wedding: {
+          DEFAULT: "#DBB8FF",
+          foreground: "#333333",
+          light: "#EDD5FF",
+          dark: "#B889E6"
+        },
+        anniversary: {
+          DEFAULT: "#20A4F3",
+          foreground: "#ffffff",
+          light: "#6AC5FF",
+          dark: "#0D7DBD"
+        },
     
         neutral: {
           0: "var(--color-neutral-0)",

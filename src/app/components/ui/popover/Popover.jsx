@@ -32,7 +32,7 @@ const PopoverComponent = ({ buttonLabel, children, itemCount}) => {
         )}
       </div>
       
-      <PopoverPanel transition anchor="bottom end" className="w-[500px] h-[60vh] overflow-y-auto right-0 mt-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0">
+      <PopoverPanel transition anchor="bottom end" className="w-[500px] h-[60vh] p-5 overflow-y-auto right-0 mt-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0">
         {children}
       </PopoverPanel>
     </Popover>

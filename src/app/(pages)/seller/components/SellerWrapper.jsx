@@ -37,9 +37,9 @@ export default function SellerWrapper({ children }) {
       icon: <IconChartBarPopular className=" h-5 w-5 flex-shrink-0" />,
     },
     {
-      label: "Chat Management",
-      href: "#",
-      icon: <IconMessages className=" h-5 w-5 flex-shrink-0" />,
+      label: "Transaction Management",
+      href: "/seller/transaction",
+      icon: <IconWorldDollar className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Product Management",
@@ -53,13 +53,8 @@ export default function SellerWrapper({ children }) {
     },
     {
       label: "Data Management",
-      href: "#",
+      href: "/seller/data",
       icon: <IconDatabase className=" h-5 w-5 flex-shrink-0" />,
-    },
-    {
-      label: "Finance Management",
-      href: "#",
-      icon: <IconWorldDollar className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Shop Management",
@@ -94,9 +89,9 @@ export default function SellerWrapper({ children }) {
 // Dummy dashboard component with content
 const Dashboard = ({ props }) => {
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 overflow-hidden">
       <div className="flex h-full w-full flex-col gap-2 rounded-tl-2xl border border-neutral-200 p-2 md:p-10">
-        <div className="flex flex-grow flex-col items-start justify-start">
+        <div className="flex flex-grow flex-col items-start justify-start ">
           {props}
         </div>
       </div>

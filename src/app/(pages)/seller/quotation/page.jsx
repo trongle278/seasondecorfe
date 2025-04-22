@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import SellerWrapper from "../components/SellerWrapper";
 import DataTable from "@/app/components/ui/table/DataTable";
-import { useGetListQuotationForProvider } from "@/app/queries/list/quotation";
+import { useGetListQuotationForProvider } from "@/app/queries/list/quotation.list.query";
 import { useRouter } from "next/navigation";
 import {
   Skeleton,
@@ -18,6 +18,8 @@ import StatusChip from "@/app/components/ui/statusChip/StatusChip";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoFilterOutline } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
+import { MdPlaylistAddCheckCircle } from "react-icons/md";
+import { PiEmpty } from "react-icons/pi";
 
 const QuotationPage = () => {
   const router = useRouter();
@@ -32,6 +34,7 @@ const QuotationPage = () => {
     pageSize: 10,
     status: "",
     quotationCode: "",
+    descending: true,
   });
 
   // Update pagination when filters change
@@ -105,7 +108,7 @@ const QuotationPage = () => {
         <div className="flex items-center gap-2">
           <FaFilePdf size={20} />
           <span
-            className="text-primary cursor-pointer hover:underline"
+            className="text-primary cursor-pointer hover:underline max-w-[200px] truncate"
             onClick={() => window.open(row.original.filePath, "_blank")}
           >
             {row.original.filePath}
@@ -117,6 +120,24 @@ const QuotationPage = () => {
       header: "Status",
       cell: ({ row }) => (
         <StatusChip status={row.original.status} isQuotation={true} />
+      ),
+    },
+    {
+      header: "Has Contract",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          {row.original.isContractExisted ? (
+            <div className="flex items-center gap-2">
+              <MdPlaylistAddCheckCircle size={20} color="green" />
+              Yes
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <PiEmpty size={20} color="red" />
+              No
+            </div>
+          )}
+        </div>
       ),
     },
     {
@@ -149,7 +170,7 @@ const QuotationPage = () => {
                 `/seller/contract/create/contract?quotationCode=${row.original.quotationCode}`
               )
             }
-            className="flex items-center gap-2 py-2 rounded-md hover:translate-x-2 transition-all duration-300"
+            className="flex items-center gap-2 py-2 rounded-md hover:translate-x-2 transition-all duration-300 underline"
           >
             <IoIosArrowForward size={20} />
             Create Contract
@@ -249,7 +270,11 @@ const QuotationPage = () => {
       <FilterSelectors />
 
       {isLoading && quotations.length === 0 ? (
-        <Skeleton animation="wave" variant="text" width="100%" height={40} />
+        <>
+          <Skeleton animation="wave" variant="text" width="100%" height={20} />
+          <Skeleton animation="wave" variant="text" width="100%" height={20} />
+          <Skeleton animation="wave" variant="text" width="100%" height={20} />
+        </>
       ) : error ? (
         <div className="bg-red-100 text-red-700 p-4 rounded">
           Error loading quotations: {error.message}

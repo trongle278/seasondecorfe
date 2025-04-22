@@ -32,7 +32,7 @@ const RoleChip = ({
   return (
     <div
       className={clsx(
-        `px-2 py-1 rounded-full text-white text-sm text-center font-bold ${statusClass} w-fit flex items-center justify-center gap-2`,
+        `px-3 py-1 rounded-md text-sm font-medium ${statusClass} w-fit flex items-center justify-center gap-2 shadow-sm`,
         className
       )}
     >

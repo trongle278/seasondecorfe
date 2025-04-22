@@ -15,25 +15,25 @@ const StatusChip = ({
   switch (status) {
     case 0:
       if (isService) {
-        statusClass = "bg-green";
+        statusClass = "bg-green text-white";
         label = "Available";
       } else {
-        statusClass = "bg-yellow";
+        statusClass = "bg-yellow text-yellow-800";
         label = "Pending";
       }
       break;
     case 1:
       if (isService) {
-        statusClass = "bg-red";
+        statusClass = "bg-red text-white";
         label = "Unavailable";
       } else if (isBooking) {
-        statusClass = "bg-primary";
+        statusClass = "bg-primary text-white";
         label = "Planning";
       } else if (isQuotation) {
-        statusClass = "bg-green";
+        statusClass = "bg-green text-white";
         label = "Confirmed";
       } else {
-        statusClass = "bg-green";
+        statusClass = "bg-green text-white";
         label = "Paid";
       }
       break;
@@ -44,7 +44,7 @@ const StatusChip = ({
       break;
     case 3:
       if (isBooking) {
-        statusClass = "bg-lightGrey";
+        statusClass = "bg-gray-300 text-gray-800";
         label = "Contracting";
       } else {
         statusClass = "bg-yellow";
@@ -54,26 +54,39 @@ const StatusChip = ({
 
     case 4:
       if (isBooking) {
-        statusClass = "bg-green";
+        statusClass = "bg-green text-white";
         label = "Confirmed";
       } else {
-        statusClass = "bg-green";
+        statusClass = "bg-green text-white";
         label = "Paid";
       }
       break;
     case 5:
-      statusClass = "bg-red";
-      label = "Canceled";
+      if (isBooking) {
+        statusClass = "bg-green text-white";
+        label = "Deposit Paid";
+      } else {
+        statusClass = "bg-red text-white";
+        label = "Failed";
+      }
+      break;
+    case 11:
+      statusClass = "bg-yellow";
+      label = "Pending Cancel";
+      break;
+    case 12:
+      statusClass = "bg-red text-white";
+      label = "Cancelled";
       break;
     default:
-      statusClass = "bg-gray";
+      statusClass = "bg-gray-300 text-gray-800";
       label = "Unknown";
   }
 
   return (
     <div
       className={clsx(
-        `px-2 py-1 rounded-full text-white text-sm text-center font-bold ${statusClass} w-fit flex items-center justify-center gap-2`,
+        `px-3 py-1 rounded-md text-sm font-medium ${statusClass} w-fit flex items-center justify-center gap-2 shadow-sm`,
         className
       )}
     >

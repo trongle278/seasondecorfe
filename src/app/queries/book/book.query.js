@@ -115,3 +115,44 @@ export function useChangeBookingStatus() {
     },
   });
 }
+
+export function useCancelBookingRequest() {
+  return useMutation({
+    mutationFn: async (data) => {
+      nProgress.start();
+      try { 
+        const { bookingCode, ...requestBody } = data;
+        return await BaseRequest.Put(`/${SUB_URL}/requestCancel/${bookingCode}`, requestBody);
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+
+export function useDepositBooking() {
+  return useMutation({
+    mutationFn: async (bookingCode) => {
+      nProgress.start();
+      try {
+        return await BaseRequest.Post(`/${SUB_URL}/deposit/${bookingCode}`);
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+
+export function usePaymentBooking() {
+  return useMutation({
+    mutationFn: async (bookingCode) => {
+      nProgress.start();
+      try {
+        return await BaseRequest.Post(`/${SUB_URL}/payment/${bookingCode}`);
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
+

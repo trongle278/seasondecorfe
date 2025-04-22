@@ -118,3 +118,18 @@ export function useGetPaginatedBookingsForProvider(paginationParams = {}) {
     staleTime: 30000,
   });
 }
+
+export function useGetPendingCancelBookingDetail(bookingCode) {
+  return useQuery({
+    queryKey: ["pending-cancel-booking-detail", bookingCode],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(`/${SUB_URL}/GetPendingCancelBookingDetailByBookingCode/{bookingCode}`, false);
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+  });
+}
