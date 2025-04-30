@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@/app/components/layouts/Container";
 import { HeadTypo, BodyTypo, FootTypo } from "@/app/components/ui/Typography";
 import Button2 from "@/app/components/ui/Buttons/Button2";

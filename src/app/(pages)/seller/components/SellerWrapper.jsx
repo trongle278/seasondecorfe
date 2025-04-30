@@ -10,14 +10,30 @@ import {
   IconBrandTabler,
   IconBuildingStore,
   IconChartBarPopular,
-  IconMessages,
   IconDatabase,
   IconWorldDollar,
   IconPackage,
+  IconPackageExport
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
 import ScrollToTop from "@/app/components/ScrollToTop";
 import { RiFolderSettingsLine } from "react-icons/ri";
+import { usePathname } from "next/navigation";
+
+// Custom SidebarLinkWithActiveState component to handle active route highlighting
+const SidebarLinkWithActiveState = ({ link }) => {
+  const pathname = usePathname();
+  const isActive = pathname.startsWith(link.href);
+  
+  return (
+    <SidebarLink 
+      link={link} 
+      className={cn(
+        isActive && "font-bold text-primary bg-primary/10 border-r-2 border-primary"
+      )}
+    />
+  );
+};
 
 export default function SellerWrapper({ children }) {
   const links = [
@@ -40,6 +56,11 @@ export default function SellerWrapper({ children }) {
       label: "Transaction Management",
       href: "/seller/transaction",
       icon: <IconWorldDollar className=" h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Order Management",
+      href: "/seller/order",
+      icon: <IconPackageExport className=" h-5 w-5 flex-shrink-0" />,
     },
     {
       label: "Product Management",
@@ -74,7 +95,7 @@ export default function SellerWrapper({ children }) {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <div className="mt-8 flex flex-col gap-4">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+                <SidebarLinkWithActiveState key={idx} link={link} />
               ))}
             </div>
           </div>

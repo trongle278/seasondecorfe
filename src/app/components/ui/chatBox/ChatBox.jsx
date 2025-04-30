@@ -28,7 +28,7 @@ const ChatBox = () => {
   const router = useRouter();
   const { user } = useUser();
   const { isOpen, onOpen, onClose } = useChatBox();
-  const { selectedProvider, setSelectedProvider } = useChat();
+  const { selectedReceiver, setSelectedReceiver } = useChat();
   const [currentMessages, setCurrentMessages] = React.useState([]);
 
   const fileInputRef = React.useRef(null);
@@ -37,7 +37,7 @@ const ChatBox = () => {
 
   const { data: contactList, isLoading: contactLoading } = useGetListContact();
   const { data: chatHistory, isLoading: historyLoading } = useGetHistoryChat(
-    selectedProvider?.contactId 
+    selectedReceiver?.contactId 
   );
 
   const queryClient = useQueryClient();
@@ -50,7 +50,6 @@ const ChatBox = () => {
     const files = Array.from(event.target.files);
     const maxTotalFiles = 5;
     
-    console.log('Files selected:', files); // Debug log
     
     // Check if total files exceed limit
     if (selectedFiles.length + files.length > maxTotalFiles) {
@@ -71,10 +70,8 @@ const ChatBox = () => {
       return true;
     });
 
-    console.log('New files to add:', newFiles); // Debug log
     setSelectedFiles(prevFiles => {
       const updatedFiles = [...prevFiles, ...newFiles];
-      console.log('Updated selected files:', updatedFiles); // Debug log
       return updatedFiles;
     });
   };
@@ -118,19 +115,19 @@ const ChatBox = () => {
 
   // Update messages when chat history changes
   React.useEffect(() => {
-    if (user?.providerVerified && selectedProvider) {
+    if (user?.providerVerified && selectedReceiver) {
       // Filter messages for selected customer when chat history updates
       const customerMessages = chatHistory?.filter(
         (msg) =>
-          msg.senderId === selectedProvider.contactId ||
-          msg.receiverId === selectedProvider.contactId
+          msg.senderId === selectedReceiver.contactId ||
+          msg.receiverId === selectedReceiver.contactId
       );
       setCurrentMessages(customerMessages || []);
     } else {
       // For customers, use all chat history
       setCurrentMessages(chatHistory || []);
     }
-  }, [chatHistory, selectedProvider, user]);
+  }, [chatHistory, selectedReceiver, user]);
 
   // Scroll to bottom when messages change
   React.useEffect(() => {
@@ -158,12 +155,11 @@ const ChatBox = () => {
 
         // Set up message listener for real-time updates
         const handleNewMessage = async (message, isReceived = false) => {
-          console.log("New message received:", message, "isReceived:", isReceived);
           
           // Update current conversation if message belongs to it
-          if (selectedProvider && (
-            (message.senderId === selectedProvider.contactId && message.receiverId === user.id) ||
-            (message.senderId === user.id && message.receiverId === selectedProvider.contactId)
+          if (selectedReceiver && (
+            (message.senderId === selectedReceiver.contactId && message.receiverId === user.id) ||
+            (message.senderId === user.id && message.receiverId === selectedReceiver.contactId)
           )) {
             setCurrentMessages(prev => {
               const messageExists = prev.some(msg => msg.id === message.id);
@@ -194,7 +190,7 @@ const ChatBox = () => {
           }
 
           // Update chat history cache
-          queryClient.setQueryData(["get_history_chat", selectedProvider?.contactId], (oldData) => {
+          queryClient.setQueryData(["get_history_chat", selectedReceiver?.contactId], (oldData) => {
             if (!oldData) return [message];
             const messageExists = oldData.some(msg => msg.id === message.id);
             if (messageExists) return oldData;
@@ -230,7 +226,6 @@ const ChatBox = () => {
 
         // Set up contacts updated listener
         const handleContactsUpdated = (contacts) => {
-          console.log("Contacts updated:", contacts);
           // Directly set the new contacts data
           queryClient.setQueryData(["get_list_contact"], contacts);
         };
@@ -261,11 +256,11 @@ const ChatBox = () => {
     };
 
     connectToSignalR();
-  }, [user?.id, isOpen, selectedProvider?.contactId, queryClient, scrollToBottom]);
+  }, [user?.id, isOpen, selectedReceiver?.contactId, queryClient, scrollToBottom]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if ((!editor?.getText().trim() && selectedFiles.length === 0) || !selectedProvider || !user?.id) return;
+    if ((!editor?.getText().trim() && selectedFiles.length === 0) || !selectedReceiver || !user?.id) return;
 
     try {
       if (!signalRService.isConnected()) {
@@ -280,7 +275,7 @@ const ChatBox = () => {
       try {
         setIsUploading(true);
         await signalRService.sendMessage(
-          selectedProvider.contactId, 
+          selectedReceiver.contactId, 
           htmlContent, 
           selectedFiles,
           (progress) => {
@@ -290,15 +285,15 @@ const ChatBox = () => {
 
         // Update contact list immediately after sending message
         queryClient.setQueryData(["get_list_contact"], (oldData) => {
-          if (!oldData) return [selectedProvider];
+          if (!oldData) return [selectedReceiver];
           
           // Check if the contact already exists
-          const contactExists = oldData.some(contact => contact.contactId === selectedProvider.contactId);
+          const contactExists = oldData.some(contact => contact.contactId === selectedReceiver.contactId);
           
           if (!contactExists) {
             // Add new contact to the list
             return [{
-              ...selectedProvider,
+              ...selectedReceiver,
               message: htmlContent,
               lastMessageSenderId: user.id,
               unreadCount: 0
@@ -307,7 +302,7 @@ const ChatBox = () => {
           
           // Update existing contact
           return oldData.map(contact => {
-            if (contact.contactId === selectedProvider.contactId) {
+            if (contact.contactId === selectedReceiver.contactId) {
               return {
                 ...contact,
                 message: htmlContent,
@@ -335,7 +330,6 @@ const ChatBox = () => {
         setUploadProgress(0);
       }
     } catch (error) {
-      console.error("Error sending message:", error);
       toast.error(
         error.message === "Unable to establish chat connection"
           ? "Unable to connect to chat. Please try again."
@@ -353,7 +347,7 @@ const ChatBox = () => {
 
   const handleChatClick = (contact) => {
     if (contact) {
-      setSelectedProvider(contact);
+      setSelectedReceiver(contact);
       // If provider, filter messages for selected customer
       if (user?.providerVerified) {
         const customerMessages = chatHistory?.filter(
@@ -368,44 +362,38 @@ const ChatBox = () => {
   };
 
   React.useEffect(() => {
-    if (!selectedProvider && contactList && contactList.length > 0) {
-      // Automatically select the first provider if none is selected
-      setSelectedProvider(contactList[0]);
+    if (!selectedReceiver && contactList && contactList.length > 0) {
+      // Automatically select the first receiver if none is selected
+      setSelectedReceiver(contactList[0]);
     }
-  }, [contactList, selectedProvider]);
+  }, [contactList, selectedReceiver]);
 
   // Consolidated query invalidation effect
   React.useEffect(() => {
-    if (isOpen && selectedProvider?.contactId) {
+    if (isOpen && selectedReceiver?.contactId) {
       // Only fetch chat history for the current conversation
       queryClient.invalidateQueries({
-        queryKey: ["get_history_chat", selectedProvider.contactId],
+        queryKey: ["get_history_chat", selectedReceiver.contactId],
         exact: true
       });
     }
-  }, [isOpen, selectedProvider?.contactId, queryClient]);
+  }, [isOpen, selectedReceiver?.contactId, queryClient]);
 
-  // Save editor content when switching providers
+  // Save editor content when switching receivers
   React.useEffect(() => {
-    if (selectedProvider && editor) {
-      // Save current editor content for the previous provider
+    if (selectedReceiver && editor) {
+      // Save current editor content for the previous receiver
       setEditors((prev) => ({
         ...prev,
-        [selectedProvider.id]: editor.getHTML(),
+        [selectedReceiver.id]: editor.getHTML(),
       }));
 
-      // Load content for the current provider
-      const savedContent = editors[selectedProvider.id] || "";
+      // Load content for the current receiver
+      const savedContent = editors[selectedReceiver.id] || "";
       editor.commands.setContent(savedContent);
     }
-  }, [selectedProvider, editor]);
+  }, [selectedReceiver, editor]);
 
-  // Add debug logs
-  React.useEffect(() => {
-    console.log('Selected Provider:', selectedProvider);
-    console.log('Chat History:', chatHistory);
-    console.log('History Loading:', historyLoading);
-  }, [selectedProvider, chatHistory, historyLoading]);
 
   // Add an effect to maintain scroll position when loading older messages
   React.useEffect(() => {
@@ -452,12 +440,12 @@ const ChatBox = () => {
           user={user}
           contactLoading={contactLoading}
           contactList={contactList}
-          selectedProvider={selectedProvider}
+          selectedReceiver={selectedReceiver}
           handleChatClick={handleChatClick}
         />
 
         <div className="flex-1 flex flex-col h-full">
-          {selectedProvider ? (
+          {selectedReceiver ? (
             <ChatView
               messages={currentMessages}
               user={user}
@@ -471,6 +459,7 @@ const ChatBox = () => {
               handleSendMessage={handleSendMessage}
               messagesEndRef={messagesEndRef}
               isLoading={historyLoading}
+              selectedReceiver={selectedReceiver}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
@@ -510,8 +499,8 @@ const ChatBox = () => {
               <div className="flex items-start justify-between p-4 bg-primary rounded-t-lg">
                 <h3 className="font-semibold">
                   {user
-                    ? selectedProvider
-                      ? `Chat with [ ${selectedProvider.contactName} ]`
+                    ? selectedReceiver
+                      ? `Chat with [ ${selectedReceiver.contactName} ]`
                       : "Chat"
                     : "Chat"}
                 </h3>

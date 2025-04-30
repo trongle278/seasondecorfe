@@ -11,7 +11,6 @@ import Input from "../inputs/Input";
 import { IoIosMail } from "react-icons/io";
 import { HeadTypo, BodyTypo, FootTypo } from "../Typography";
 import { useSession } from "next-auth/react";
-import { useGetAccountDetails } from "@/app/queries/user/user.query";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";

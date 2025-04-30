@@ -75,9 +75,9 @@ const TransactionPage = () => {
   // Transaction type options
   const typeOptions = [
     { id: "", name: "All Types" },
-    { id: "0", name: "Income" },
-    { id: "1", name: "Withdrawal" },
-    { id: "2", name: "Refund" },
+    { id: "2", name: "Deposite Money" },
+    { id: "4", name: "Final Payment" },
+    { id: "6", name: "Order Payment" },
   ];
 
   const {

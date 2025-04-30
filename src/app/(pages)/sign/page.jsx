@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import Orb from "@/app/components/ui/animated/Orb";
 import { useVerifySignature } from "@/app/queries/contract/contract.query";
 import { BsClipboard2Check } from "react-icons/bs";

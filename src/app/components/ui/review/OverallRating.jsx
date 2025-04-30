@@ -1,106 +1,87 @@
 import React from "react";
-import { 
-  FaSprayCan, 
-  FaCheckCircle, 
-  FaSearchLocation,
-  FaCommentDots, 
-  FaMapMarkerAlt, 
-  FaTags
-} from "react-icons/fa";
-import { FootTypo } from "../Typography";
+import { Rating } from "@mui/material";
 
-const RatingBar = ({ value, maxValue = 5 }) => {
-  const percentage = (value / maxValue) * 100;
-  
+const RatingBar = ({ value, maxValue = 5, count = 0 }) => {
+  const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
+
   return (
-    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-      <div 
-        className="h-full bg-black dark:bg-white rounded-full" 
-        style={{ width: `${percentage}%` }}
-      />
+    <div className="flex items-center gap-4 w-full">
+      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-black dark:bg-white rounded-full"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <span className="text-gray-500 dark:text-gray-400 min-w-[30px] text-right">
+        {count}
+      </span>
     </div>
   );
 };
 
-const RatingCategory = ({ label, value, icon }) => {
-  return (
-    <div className="flex flex-col h-full justify-between px-4 border-l border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col items-start mb-2">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm font-bold">{value.toFixed(1)}</span>
-      </div>
-      <div className="flex justify-start items-center">
-        {icon}
-      </div>
-    </div>
-  );
-};
-
-const OverallRating = ({ 
+const OverallRating = ({
   overallRating = 5.0,
-  cleanliness = 5.0, 
-  accuracy = 5.0, 
-  checkIn = 5.0, 
-  communication = 4.9, 
-  location = 4.9, 
-  value = 4.8
+  rateCount = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  },
+  totalReviews = 0,
 }) => {
   // Array of rating levels for the bars
   const ratingLevels = [5, 4, 3, 2, 1];
-  
+
+  // Calculate total count of all ratings
+  const totalRatings =
+    Object.values(rateCount).reduce((sum, count) => sum + count, 0) ||
+    totalReviews ||
+    1;
+
   return (
-    <div className="w-full my-6 pb-20 text-sm border-b border-gray-200 dark:border-gray-700">
-      <FootTypo footlabel="Ratings" className="font-bold mb-6" />
-      
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+    <div className="w-full my-6 pb-6 text-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col md:flex-row gap-8">
         {/* Overall Rating Column */}
-        <div className="md:pr-4">
-          <h3 className="font-medium mb-2">Overall rating</h3>
-          <div className="space-y-1">
+        <div className="md:w-1/3 flex flex-col items-center justify-center">
+          <div className="text-center mb-2">
+            <span className="font-bold text-5xl">
+              {overallRating?.toFixed(1) || "0.0"}
+            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+              out of 5
+            </span>
+          </div>
+
+          <Rating
+            value={Number(overallRating) || 0}
+            readOnly
+            precision={0.5}
+            size="medium"
+            className="mb-2"
+          />
+
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {totalRatings} {totalRatings === 1 ? "review" : "reviews"}
+          </p>
+        </div>
+
+        {/* Rating Bars Column */}
+        <div className="md:w-2/3">
+          <div className="space-y-3 max-w-xl">
             {ratingLevels.map((level) => (
               <div key={level} className="flex items-center gap-2">
-                <span className="w-4">{level}</span>
-                <RatingBar 
-                  value={level === Math.round(overallRating) ? 1 : 0} 
-                  maxValue={1} 
+                <span className="w-4 text-gray-700 dark:text-gray-300">
+                  {level}
+                </span>
+                <RatingBar
+                  value={rateCount[level] || 0}
+                  maxValue={totalRatings}
+                  count={rateCount[level] || 0}
                 />
               </div>
             ))}
           </div>
-        </div>
-        
-        {/* Rating Categories */}
-        <div className="col-span-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          <RatingCategory 
-            label="Cleanliness" 
-            value={cleanliness} 
-            icon={<FaSprayCan size={32} />} 
-          />
-          <RatingCategory 
-            label="Accuracy" 
-            value={accuracy} 
-            icon={<FaCheckCircle size={32} />} 
-          />
-          <RatingCategory 
-            label="Check-in" 
-            value={checkIn} 
-            icon={<FaSearchLocation size={32} />} 
-          />
-          <RatingCategory 
-            label="Communication" 
-            value={communication} 
-            icon={<FaCommentDots size={32} />} 
-          />
-          <RatingCategory 
-            label="Location" 
-            value={location} 
-            icon={<FaMapMarkerAlt size={32}/>} 
-          />
-          <RatingCategory 
-            label="Value" 
-            value={value} 
-            icon={<FaTags size={32} />} 
-          />
         </div>
       </div>
     </div>

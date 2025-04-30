@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Checkbox, FormControlLabel } from "@mui/material";
-import { IoCheckmarkCircleOutline } from "react-icons/io5";
 
 import Modal from "../Modal";
 import Heading from "./components/Heading";
@@ -131,6 +130,55 @@ const InformationModal = () => {
             <StatusChip status={status} />
           </div>
           <FootTypo footlabel="Items" className="!m-0 text-sm" />
+
+          {/* Order Items List */}
+          <div className="mt-2 space-y-4">
+            {Array.isArray(items) && items.length > 0 ? (
+              items.map((item, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 dark:border-gray-800 rounded-lg p-2 shadow-sm"
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Product Image */}
+                    <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
+                      <Image
+                        src={item.image || "/placeholder-image.jpg"}
+                        alt={item.productName || "Product"}
+                        fill
+                        className="object-cover"
+                        sizes="100px"
+                      />
+                    </div>
+
+                    {/* Product Details */}
+                    <div className="flex flex-col flex-grow gap-1">
+                      <h3 className="text-base font-semibold">
+                        {item.productName}
+                      </h3>
+                      <div className="flex justify-between items-end mt-2">
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium">Quantity:</span>
+                          <FootTypo
+                            footlabel={item.quantity}
+                            className="ml-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md"
+                          />
+                        </div>
+                        <FootTypo
+                          footlabel={formatCurrency(item.unitPrice)}
+                          className="text-right"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 italic">
+                No items found in this order
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -207,7 +255,10 @@ const InformationModal = () => {
               )}
             </div>
           </div>
-          <button className="text-primary text-left mb-3 flex items-center gap-2 hover:translate-x-3 transition-all duration-300" onClick={viewService}>
+          <button
+            className="text-primary text-left mb-3 flex items-center gap-2 hover:translate-x-3 transition-all duration-300"
+            onClick={viewService}
+          >
             <IoIosArrowForward />
             Go to service
           </button>
@@ -262,12 +313,6 @@ const InformationModal = () => {
     </div>
   );
 
-  const footerContent = (
-    <div className="flex flex-col gap-4 mt-3">
-      <hr />
-    </div>
-  );
-
   return (
     <Modal
       isOpen={infoModal.isOpen}
@@ -278,7 +323,7 @@ const InformationModal = () => {
       onSubmit={handleSubmit}
       body={bodyContent}
       //disabled={!isChecked}
-      footer={footerContent}
+      //footer={footerContent}
     />
   );
 };

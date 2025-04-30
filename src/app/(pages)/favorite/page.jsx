@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { ListWrapper } from "@/app/components/ui/ListWrapper";
 import DataMapper from "@/app/components/DataMapper";
 import { useGetListFavorite } from "@/app/queries/list/favorite.list.query";
 import { useRemoveFavoriteDecorService } from "@/app/queries/favorite/favorit.query";
@@ -50,7 +49,7 @@ const FavoritePage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6 animate-tab-fade-in">
           {/* Tab Content */}
           {activeTab === "service" ? (
             <DataMapper
@@ -64,7 +63,7 @@ const FavoritePage = () => {
               componentProps={(item) => ({
                 image: item.decorServiceDetails.images,
                 name: item.decorServiceDetails.style,
-                description: item.decorServiceDetails.description,
+                //description: item.decorServiceDetails.description,
                 location: item.decorServiceDetails.sublocation,
                 price: item.decorServiceDetails.price,
                 rating: item.decorServiceDetails.rating,

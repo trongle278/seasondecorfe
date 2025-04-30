@@ -15,15 +15,23 @@ import { useUser } from "@/app/providers/userprovider";
 import { useChangeStatus } from "@/app/queries/user/provider.query";
 import { ColourfulText } from "@/app/components/ui/animated/ColorfulText";
 import { scroller } from "react-scroll";
-import { SearchBtn } from "../components/indexBtn";
-import AnchorDrawer from "@/app/components/ui/drawer/Drawer";
+import Notifcation from "@/app/components/ui/notification/Notifcation";
+import { notificationService } from "@/app/services/notificationService";
+import { toast } from "sonner";
+import { createMarkup } from "@/app/helpers";
 
-export default function Header({ providerRef }) {
+export default function Header() {
   const { user } = useUser();
   const { data: session } = useSession();
   const mutationChangeStatus = useChangeStatus();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isDrawerOpen, setDrawerOpen] = React.useState(false);
+  const router = useRouter();
+
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
 
   // Add scroll event listener
   React.useEffect(() => {
@@ -40,12 +48,81 @@ export default function Header({ providerRef }) {
     };
   }, []);
 
-  console.log(session);
-  //console.log("isProvider:", session?.isProvider);
 
-  //console.log(user);
+  // Initialize notification service connection
+  React.useEffect(() => {
+    if (user?.id) {
+      const connectNotificationService = async () => {
+        try {
+          if (!notificationService.isConnected()) {
+            await notificationService.startConnection(user.id);
+          }
+        } catch (error) {
+          // Add a retry mechanism with increasing delay
+          setTimeout(() => {
+            if (user?.id && !notificationService.isConnected()) {
+              connectNotificationService();
+            }
+          }, 3000); // Wait 3 seconds before retrying
+        }
+      };
 
-  const router = useRouter();
+      // Initialize connection with a small delay to ensure all dependencies are properly loaded
+      const initTimeout = setTimeout(() => {
+        connectNotificationService();
+      }, 500);
+
+      return () => {
+        clearTimeout(initTimeout);
+      };
+    }
+  }, [user?.id]);
+
+  // Set up notification event listener
+  React.useEffect(() => {
+    if (!user?.id) return;
+
+    // Listen for new notifications and show toast
+    const handleNewNotification = (notification) => {
+      // Show toast notification only if the drawer is not open
+      if (!isDrawerOpen) {
+        toast.info(
+          <div className="flex items-start cursor-pointer">
+            <div>
+              <div className="font-semibold">{notification.title}</div>
+              <div 
+                className="text-sm text-gray-600"
+                dangerouslySetInnerHTML={createMarkup(
+                  notification.message || notification.content || ""
+                )}
+              />
+            </div>
+          </div>,
+          {
+            duration: 5000,
+            onDismiss: () => {},
+            onAutoClose: () => {},
+            onClick: () => {
+              // Handle click on toast notification
+              if (notification.url) {
+                router.push(notification.url);
+              } else {
+                toggleDrawer(true)();
+              }
+            },
+          }
+        );
+      }
+    };
+    
+    // Register listener
+    notificationService.onNotificationReceived(handleNewNotification);
+
+    // Cleanup listener
+    return () => {
+      notificationService.offNotificationReceived(handleNewNotification);
+    };
+  }, [user?.id, isDrawerOpen, router, toggleDrawer]);
 
   const onChangeStatus = React.useCallback(() => {
     mutationChangeStatus.mutate(true, {
@@ -84,12 +161,6 @@ export default function Header({ providerRef }) {
     });
   }, [mutationChangeStatus, router, pathname, session, user]);
 
-  const [isDrawerOpen, setDrawerOpen] = React.useState(false);
-
-  const toggleDrawer = (open) => () => {
-    setDrawerOpen(open);
-  };
-
   return (
     <header
       className={`z-[50] fixed top-0 w-full transition-all ${
@@ -125,19 +196,12 @@ export default function Header({ providerRef }) {
                 </ColourfulText>
               </div>
               <Link
-                href="/pricing"
-                className="text-sm font-semibold text-white/70 hover:text-primary"
-              >
-                PRICING
-              </Link>
-              <Link
                 href="/provider"
                 className="text-sm font-semibold text-white/70 hover:text-primary "
               >
                 PROVIDERS
               </Link>
-              
-              
+
               <Link
                 href="/products"
                 className="text-sm font-semibold text-white/70 hover:text-primary"
@@ -148,12 +212,13 @@ export default function Header({ providerRef }) {
 
             {/* Right Section */}
             <div className="flex items-center space-x-4">
-              <ThemeSwitch/>
+              <ThemeSwitch />
               <span>/</span>
-              <SearchBtn />
               <CartBtn cartClick={() => router.push("/cart")} />
-              <NotificationBtn toggleDrawer={toggleDrawer} />
-              <AnchorDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+              <NotificationBtn
+                toggleDrawer={toggleDrawer}
+                isDrawerOpen={isDrawerOpen}
+              />
               {user && (
                 <>
                   <UserMenu />
@@ -174,6 +239,9 @@ export default function Header({ providerRef }) {
           </button>
         </div>
       </div>
+
+      {/* Notification Drawer */}
+      <Notifcation isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
     </header>
   );
 }

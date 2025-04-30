@@ -6,7 +6,7 @@ const ContactList = ({
   user,
   contactLoading,
   contactList,
-  selectedProvider,
+  selectedReceiver,
   handleChatClick,
 }) => {
   return (
@@ -28,7 +28,7 @@ const ContactList = ({
             key={contact.contactId}
             onClick={() => handleChatClick(contact)}
             className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-100 transition-colors ${
-              selectedProvider?.contactId === contact.contactId
+              selectedReceiver?.contactId === contact.contactId
                 ? "bg-gray-100"
                 : ""
             }`}

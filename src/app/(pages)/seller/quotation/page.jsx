@@ -13,13 +13,15 @@ import {
   MenuItem,
 } from "@mui/material";
 import Button from "@/app/components/ui/Buttons/Button";
-import { FaFilePdf } from "react-icons/fa6";
+import { TiArrowForward } from "react-icons/ti";
 import StatusChip from "@/app/components/ui/statusChip/StatusChip";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoFilterOutline } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
 import { MdPlaylistAddCheckCircle } from "react-icons/md";
 import { PiEmpty } from "react-icons/pi";
+import Folder from "@/app/components/ui/animated/Folder";
+import RefreshButton from "@/app/components/ui/Buttons/RefreshButton";
 
 const QuotationPage = () => {
   const router = useRouter();
@@ -70,6 +72,7 @@ const QuotationPage = () => {
     data: quotationsData,
     isLoading,
     error,
+    refetch
   } = useGetListQuotationForProvider(pagination);
 
   const quotations = quotationsData?.data || [];
@@ -105,14 +108,13 @@ const QuotationPage = () => {
       header: "File",
       accessorKey: "filePath",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <FaFilePdf size={20} />
-          <span
-            className="text-primary cursor-pointer hover:underline max-w-[200px] truncate"
+        <div className="flex !p-0 !m-0 items-center">
+          <TiArrowForward size={20} />
+          <Folder
+            size={0.4}
+            color="#00d8ff"
             onClick={() => window.open(row.original.filePath, "_blank")}
-          >
-            {row.original.filePath}
-          </span>
+          />
         </div>
       ),
     },
@@ -123,7 +125,7 @@ const QuotationPage = () => {
       ),
     },
     {
-      header: "Has Contract",
+      header: "Contract",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           {row.original.isContractExisted ? (
@@ -265,7 +267,14 @@ const QuotationPage = () => {
 
   return (
     <SellerWrapper>
-      <h1 className="text-2xl font-bold mb-6">Quotation Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Quotation Management</h1>
+        <RefreshButton 
+          onRefresh={refetch} 
+          isLoading={isLoading}
+          tooltip="Refresh quotation list"
+        />
+      </div>
 
       <FilterSelectors />
 

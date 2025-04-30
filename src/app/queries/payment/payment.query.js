@@ -39,14 +39,14 @@ export function useGetDepositPayment(contractCode) {
   });
 }
 
-export function useGetFinalPayment(contractCode) {
+export function useGetFinalPayment(bookingCode) {
   return useQuery({
-    queryKey: ["final_payment", contractCode],
+    queryKey: ["final_payment", bookingCode],
     queryFn: async () => {
       nProgress.start();
       try {
         const response = await BaseRequest.Get(
-          `/${SUB_URL}/getFinalPayment/${contractCode}`
+          `/${SUB_URL}/getFinalPayment/${bookingCode}`
         );
         return response.data;
       } finally {

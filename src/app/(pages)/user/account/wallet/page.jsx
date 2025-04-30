@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { UserWrapper } from "../../components/UserWrapper";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Button from "@/app/components/ui/Buttons/Button";
-import { FaRegEye, FaWallet, FaHistory } from "react-icons/fa";
+import { FaRegEye, FaWallet, FaHistory, FaPlus, FaMinus } from "react-icons/fa";
 import ShinyCard from "@/app/components/ui/animated/ShinyCard";
 import { MdPayments } from "react-icons/md";
-import { FcPlus } from "react-icons/fc";
-import { FcMinus } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useGetWallet } from "@/app/queries/wallet/wallet.query";
 import { useGetTransaction } from "@/app/queries/wallet/wallet.query";
@@ -16,11 +14,18 @@ import { encryptWalletId } from "@/app/helpers";
 import { formatCurrency } from "@/app/helpers";
 import { BsClock } from "react-icons/bs";
 import { formatDateTime } from "@/app/helpers";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import { IoClose } from "react-icons/io5";
 
 const UserWallet = () => {
   const router = useRouter();
   const { data: walletData, isLoading: isLoadingWallet } = useGetWallet();
   const { data: transactionData, isLoading: isLoadingTransaction } = useGetTransaction();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Get the 3 latest transactions
   const latestTransactions = useMemo(() => {
@@ -35,6 +40,27 @@ const UserWallet = () => {
       })
       .slice(0, 3); // Take only the first 3
   }, [transactionData]);
+
+  // All transactions for the dialog
+  const allTransactions = useMemo(() => {
+    if (!transactionData || !Array.isArray(transactionData)) return [];
+    
+    // Sort transactions by date (newest first)
+    return [...transactionData]
+      .sort((a, b) => {
+        const dateA = new Date(a.transactionDate || a.date || 0);
+        const dateB = new Date(b.transactionDate || b.date || 0);
+        return dateB - dateA;
+      });
+  }, [transactionData]);
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   if (isLoadingWallet || isLoadingTransaction) {
     return (
@@ -59,12 +85,6 @@ const UserWallet = () => {
                   className="!m-0 text-lg font-semibold"
                 />
               </div>
-
-              <Button
-                label="Transaction History"
-                icon={<FaHistory size={20} />}
-                onClick={() => router.push("/user/account/transactions")}
-              />
             </div>
           </div>
           
@@ -123,11 +143,11 @@ const UserWallet = () => {
                       className="flex justify-between items-center p-4 border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${transaction.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                        <div className={`p-2 rounded-full ${transaction.amount > 0 ? 'text-green' : 'text-red'}`}>
                           {transaction.amount > 0 ? (
-                            <FcPlus size={20} />
+                            <FaPlus size={18} />
                           ) : (
-                            <FcMinus size={20} />
+                            <FaMinus size={18} />
                           )}
                         </div>
                         <div>
@@ -154,7 +174,7 @@ const UserWallet = () => {
                   <Button
                     label="View All Transactions"
                     icon={<FaRegEye size={20} />}
-                    onClick={() => router.push("/user/account/transactions")}
+                    onClick={handleDialogOpen}
                     className=""
                   />
                 </div>
@@ -163,6 +183,76 @@ const UserWallet = () => {
           </div>
         </div>
       </div>
+
+      {/* All Transactions Dialog */}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          className: "dark:bg-gray-800"
+        }}
+      >
+        <DialogTitle className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <FaHistory size={20} />
+            <span>All Transactions</span>
+          </div>
+          <IconButton onClick={handleDialogClose} aria-label="close">
+            <IoClose />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent dividers className="max-h-[70vh] overflow-y-auto">
+          {(!allTransactions || allTransactions.length === 0) ? (
+            <div className="p-6 text-center text-gray-500">
+              No transactions found
+            </div>
+          ) : (
+            allTransactions.map((transaction) => {
+              const { date, time } = formatDateTime(transaction.transactionDate || transaction.date);
+              return (
+                <div 
+                  key={transaction.id || transaction.transactionId} 
+                  className="flex justify-between items-center p-4 border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${transaction.amount > 0 ? 'text-green' : 'text-red'}`}>
+                      {transaction.amount > 0 ? (
+                        <FaPlus size={18} />
+                      ) : (
+                        <FaMinus size={18} />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{transaction.transactionType || 'Transaction'}</h3>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                        <span>{date}</span>
+                        <div className="flex items-center gap-1 ml-2">
+                          <BsClock size={14} />
+                          <span>{time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {transaction.amount > 0 ? '+' : ''}{formatCurrency(transaction.amount || 0)}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </DialogContent>
+        
+        <DialogActions>
+          <Button
+            label="Close"
+            onClick={handleDialogClose}
+            className="bg-gray-500"
+          />
+        </DialogActions>
+      </Dialog>
     </UserWrapper>
   );
 };

@@ -25,6 +25,7 @@ const QuotationPage = () => {
     pageIndex: 1,
     pageSize: 10,
     status: "",
+    descending: true,
   });
 
   // Update pagination when filters change
@@ -147,6 +148,7 @@ const QuotationPage = () => {
               createdDate: item.createdAt,
               status: item.status,
               isContractExist: item.isContractExisted,
+              isQuoteExisted: item.isQuoteExisted,
               serviceName: item.style,
               viewContract: () => {router.push(`/quotation/view-contract/${item.quotationCode}`)},
               onClick: () => {

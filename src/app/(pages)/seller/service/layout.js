@@ -1,5 +1,5 @@
 export const metadata = {
-    title: 'Publish Service'
+    title: 'Manage Service'
   }
   export default function ClientLayout({ children }) {
     return children

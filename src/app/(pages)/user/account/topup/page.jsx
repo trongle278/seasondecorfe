@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
 import Input from "@/app/components/ui/inputs/Input";
-import { Label } from "@/app/components/ui/inputs/Label";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { useForm } from "react-hook-form";
 import { TbCurrencyDong } from "react-icons/tb";

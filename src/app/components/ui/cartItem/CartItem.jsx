@@ -5,10 +5,8 @@ import { BorderBox } from "../BorderBox";
 import Image from "next/image";
 import Link from "next/link";
 import { LuBox } from "react-icons/lu";
-import StatusChip from "../StatusChip/StatusChip";
 import { FaTrashAlt } from "react-icons/fa";
 import ExampleNumberField from "../Select/NumberField";
-import { FaDongSign } from "react-icons/fa6";
 import { formatCurrency } from "@/app/helpers";
 
 const CartItem = ({

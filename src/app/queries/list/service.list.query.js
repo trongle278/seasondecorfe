@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery} from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -36,8 +36,11 @@ export function useGetListDecorService(paginationParams = defaultPagination) {
         queryParams.push(`PageIndex=${params.pageIndex}`);
         queryParams.push(`PageSize=${params.pageSize}`);
 
-        if (params.productName) {
-          queryParams.push(`ProductName=${params.productName}`);
+        if (params.style) {
+          queryParams.push(`Style=${params.style}`);
+        }
+        if (params.status) {
+          queryParams.push(`Status=${params.status}`);
         }
         if (params.minPrice) {
           queryParams.push(`MinPrice=${params.minPrice}`);
@@ -98,8 +101,10 @@ export function useGetDecorServiceListByProvider(paginationParams = {}) {
 
         url += `&PageSize=${params.pageSize}`;
 
-        if (params.productName)
-          url += `&ProductName=${encodeURIComponent(params.productName)}`;
+        if (params.style) url += `&Style=${encodeURIComponent(params.style)}`;
+
+        if (params.status)
+          url += `&Status=${encodeURIComponent(params.status)}`;
         if (params.minPrice) url += `&MinPrice=${params.minPrice}`;
         if (params.maxPrice) url += `&MaxPrice=${params.maxPrice}`;
         if (params.sortBy)

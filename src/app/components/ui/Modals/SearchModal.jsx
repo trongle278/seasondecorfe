@@ -3,8 +3,6 @@
 import * as React from "react";
 
 import Modal from "../Modal";
-import Heading from "./components/Heading";
-import { ClipLoader } from "react-spinners";
 import useSearchModal from "@/app/hooks/useSearchModal";
 import Input from "../inputs/Input";
 import { FcSearch } from "react-icons/fc";

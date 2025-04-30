@@ -3,7 +3,6 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import Link from "next/link";
 import { FaAngleDown } from "react-icons/fa";
 import { HeadTypo, BodyTypo } from "../Typography";
 

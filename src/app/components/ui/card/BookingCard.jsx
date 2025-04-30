@@ -9,6 +9,9 @@ import { TbCancel } from "react-icons/tb";
 import { MdErrorOutline } from "react-icons/md";
 import { BorderBox } from "../BorderBox";
 import Avatar from "../Avatar/Avatar";
+import ReviewButton from "../Buttons/ReviewButton";
+import FlipButton from "../Buttons/FlipButton";
+import { Divider } from "@mui/material";
 
 const BookingCard = ({
   providerAvatar,
@@ -24,63 +27,131 @@ const BookingCard = ({
   isContracting,
   detailClick,
   cancelClick,
-  isCanceled,
+  isCancelled,
   isQuoteExist,
   isDepositPaid,
   isPendingCancel,
+  isTracked,
+  trackingNavigate,
+  isCompleted,
+  isReviewed,
+  handleReview,
+  isSigned,
 }) => {
   const getStatusMessage = () => {
-    if (isCanceled) {
-      return "The request has been canceled";
-    }
-    
-    if (isDepositPaid) {
-      return "Your deposit has been paid";
-    }
-    
-    if (isQuoteExist && !isDepositPaid) {
-      return "The quotation has been created";
-    }
-    
-    if (isContracting) {
-      return "The contract is being processed";
+    // Cancelled states (highest priority)
+    if (isCancelled) {
+      return (
+        <FootTypo
+          footlabel="The request has been canceled"
+          className="text-red"
+        />
+      );
     }
 
     if (isPendingCancel) {
       return "Your cancellation request is pending";
     }
-    
-    if (!isPending && !isContracting && !isCanceled && !isQuoteExist) {
+
+    // Completed states
+    if (isCompleted) {
+      if (isReviewed) {
+        return (
+          <FlipButton
+            onClick={trackingNavigate}
+            first="View Booking"
+            second="View Booking"
+          />
+        );
+      }
+      return (
+        <div className="flex items-center gap-4">
+          <ReviewButton onClick={handleReview} />
+          <Divider orientation="vertical" flexItem />
+          <FlipButton
+            onClick={trackingNavigate}
+            first="View Booking"
+            second="View Booking"
+          />
+        </div>
+      );
+    }
+
+    // Tracking state
+    if (isTracked) {
+      return (
+        <FlipButton
+          onClick={trackingNavigate}
+          first="Your tracking is ready!"
+          second="View now"
+        />
+      );
+    }
+
+    // Contract & Payment states
+    if (isSigned) {
+      return (
+        <FootTypo
+          footlabel="The contract has been signed"
+          className="text-green"
+        />
+      );
+    }
+
+    if (isDepositPaid) {
+      return "Your deposit has been paid";
+    }
+
+    if (isContracting && isQuoteExist) {
+      return "The contract is being processed";
+    }
+
+    // Quotation states
+    if (isQuoteExist && !isDepositPaid) {
+      return "The quotation has been created";
+    }
+
+    // Pending & Processing states
+    if (!isPending && !isContracting && !isCancelled && !isQuoteExist) {
       return "Provider is preparing quotation";
     }
-    
+
+    // Default state (no specific message to show)
     return null;
   };
-  
+
   const statusMessage = getStatusMessage();
-  
+
   return (
     <BorderBox className="rounded-lg mb-4 border shadow-md p-4 relative flex justify-between items-start">
       <div className="flex flex-col gap-2 space-y-2">
         <div className="flex flex-col">
-          <FootTypo footlabel={`Booking Request for [${serviceName}]`} className="!m-0 font-semibold text-lg" />
+          <FootTypo
+            footlabel={`Booking Request for [${serviceName}]`}
+            className="!m-0 font-semibold text-lg"
+          />
           <FootTypo
             footlabel={formatDateVN(createdDate)}
-            className="!m-0 text-sm text-gray-600 mt-1"
+            className="!m-0 text-sm mt-1"
           />
         </div>
-        
-        <FootTypo 
-          footlabel={address} 
-          className="!m-0 text-sm"
-        />
+
+        <FootTypo footlabel={address} className="!m-0 text-sm" />
 
         <div className="flex items-center gap-2">
           <FootTypo footlabel="Provider" className="!m-0 text-sm" />
-          <Avatar userImg={providerAvatar} alt="Provider Avatar" w={32} h={32} />
-          <FootTypo footlabel={providerName} className="!m-0 text-lg font-bold" />
+          <Avatar
+            userImg={providerAvatar}
+            alt="Provider Avatar"
+            w={32}
+            h={32}
+          />
+          <FootTypo
+            footlabel={providerName}
+            className="!m-0 text-lg font-bold"
+          />
         </div>
-        
+
         <button
           onClick={detailClick}
           className="text-primary hover:text-primary-dark text-sm font-medium underline mt-1 self-start"
@@ -97,7 +168,7 @@ const BookingCard = ({
 
         <div className="flex flex-col items-end gap-2 mt-2">
           <div className="flex items-center gap-2">
-            <FootTypo footlabel="Total Price" className="!m-0 text-sm text-gray-600" />
+            <FootTypo footlabel="Total Price" className="!m-0 text-sm" />
             {totalPrice > 0 ? (
               <FootTypo
                 footlabel={`${formatCurrency(totalPrice)}`}
@@ -106,23 +177,22 @@ const BookingCard = ({
             ) : (
               <FootTypo
                 footlabel="Processing..."
-                className="!m-0 text-sm text-gray-500 italic"
+                className="!m-0 text-sm italic"
               />
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <FootTypo footlabel="Status" className="!m-0 text-sm text-gray-600" />
+            <FootTypo footlabel="Status" className="!m-0 text-sm" />
             <StatusChip status={status} isBooking={true} />
           </div>
 
           {statusMessage && (
-            <div className="flex items-center gap-2 text-gray-600 mt-1">
-              <MdErrorOutline size={16} />
-              <FootTypo 
-                footlabel={statusMessage} 
-                className="!m-0 text-sm"
-              />
+            <div className="flex items-center gap-2 mt-1">
+              {!isTracked && !isReviewed && !isCancelled ? (
+                <MdErrorOutline size={16} />
+              ) : null}
+              <FootTypo footlabel={statusMessage} className="!m-0 text-sm" />
             </div>
           )}
         </div>

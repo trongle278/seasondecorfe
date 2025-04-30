@@ -10,12 +10,14 @@ import StatusChip from "../statusChip/StatusChip";
 import { FaBarcode } from "react-icons/fa";
 import { LuBadgeCheck } from "react-icons/lu";
 import Folder from "../animated/Folder";
+import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 
 const QuotationCard = ({
   quotationCode,
   createdDate,
   status,
   onClick,
+  isQuoteExisted,
   isContractExist,
   viewContract,
   serviceName,
@@ -24,12 +26,23 @@ const QuotationCard = ({
   return (
     <section className="py-4">
       <BorderBox className="w-full font-semibold relative">
-        <div className="absolute top-[-10px] left-4">
+        <div className="absolute top-[-30px] left-4">
           <FootTypo
             footlabel={formatDateVN(createdDate)}
             className="!m-0 text-sm"
           />
         </div>
+        {isQuoteExisted && !isContractExist && (
+          <div className="absolute top-[-10] right-4">
+            <span className="flex flex-row items-center">
+              <MdOutlineKeyboardDoubleArrowRight
+                className="text-primary flex-shrink-0 animate-pulse"
+                size={20}
+              />
+              <FootTypo footlabel="Your quotation is ready" className="!m-0 text-sm" />
+            </span>
+          </div>
+        )}
         {isContractExist && (
           <>
             {isSigned ? (
@@ -39,7 +52,10 @@ const QuotationCard = ({
                     className="text-primary flex-shrink-0"
                     size={30}
                   />
-                  <FootTypo footlabel="Contract Signed" className="!m-0 text-sm" />
+                  <FootTypo
+                    footlabel="Contract Signed"
+                    className="!m-0 text-sm"
+                  />
                   <Folder
                     size={0.4}
                     color="#00d8ff"

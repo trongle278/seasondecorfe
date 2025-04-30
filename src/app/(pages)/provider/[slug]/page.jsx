@@ -24,7 +24,6 @@ import { ClipLoader } from "react-spinners";
 import { useParams } from "next/navigation";
 import MuiBreadcrumbs from "@/app/components/ui/breadcrums/Breadcrums";
 import { useFollow, useUnfollow } from "@/app/queries/user/user.query";
-import { useQueryClient } from "@tanstack/react-query";
 import { useGetFollowing } from "@/app/queries/list/follow.list.query";
 import { formatDateVN } from "@/app/helpers";
 import { useAddContact } from "@/app/queries/contact/contact.query";
@@ -42,13 +41,12 @@ const tabs = [
 const ProviderDetailPage = () => {
   const { slug } = useParams();
   const { data: provider, isLoading, isError } = useGetProviderBySlug(slug);
-  const queryClient = useQueryClient();
   const followMutation = useFollow();
   const unfollowMutation = useUnfollow();
   const { data: followingData, isLoading: followingLoading } =
     useGetFollowing();
   const { onOpen } = useChatBox();
-  const { setSelectedProvider } = useChat();
+  const { setSelectedReceiver } = useChat();
   const addContactMutation = useAddContact();
 
 
@@ -72,56 +70,53 @@ const ProviderDetailPage = () => {
     );
   }
 
-  const handleFollowToggle = async (providerId) => {
-    if (!providerId) {
-      console.error("No providerId provided");
+  const handleFollowToggle = async (receiverId) => {
+    if (!receiverId) {
+      console.error("No receiverId provided");
       return;
     }
 
-    if (isProviderFollowed(providerId)) {
+    if (isProviderFollowed(receiverId)) {
       unfollowMutation.mutate(
-        { followingId: providerId },
+        { followingId: receiverId },
         {
           onSuccess: () => {
             queryClient.invalidateQueries(["following"]);
           },
           onError: (error) => {
-            console.error("Error unfollowing provider:", error);
+            //console.error("Error unfollowing provider:", error);
           },
         }
       );
     } else {
       followMutation.mutate(
-        { followingId: providerId },
+        { followingId: receiverId },
         {
           onSuccess: () => {
             queryClient.invalidateQueries(["following"]);
           },
           onError: (error) => {
-            console.error("Error following provider:", error);
+            //console.error("Error following provider:", error);
           },
         }
       );
     }
   };
 
-  const isProviderFollowed = (providerId) => {
-    return followingData?.some(
-      (following) => following.accountId === providerId
-    );
+  const isProviderFollowed = (receiverId) => {
+    return followingData?.some((following) => following.accountId === receiverId);
   };
 
-  const handleChatClick = (provider) => {
-    const providerData = {
-      contactId: provider.id,
-      contactName: provider.businessName,
-      avatar: provider.avatar
+  const handleChatClick = (receiver) => {
+    const receiverData = {
+      contactId: receiver.id,
+      contactName: receiver.businessName,
+      avatar: receiver.avatar
     };
-    addContactMutation.mutate(provider.id, {
+    addContactMutation.mutate(receiver.id, {
       onSuccess: () => {
-        setSelectedProvider(providerData);
+        setSelectedReceiver(receiverData);
         onOpen();
-        queryClient.invalidateQueries(["get_list_contact"]);
       },
       onError: (error) => {
         console.error("Error adding contact:", error);

@@ -7,8 +7,9 @@ import { formatDateVN } from "@/app/helpers";
 import Button from "@/app/components/ui/Buttons/Button";
 import { TbCreditCardPay } from "react-icons/tb";
 import { TbCancel } from "react-icons/tb";
+import ReviewButton from "../Buttons/ReviewButton";
 
-const OrderCard = ({ name, code, price, status, orderDate, isPending, detailClick, cancelClick, procceedClick, isPaid }) => {
+const OrderCard = ({  code, price, status, orderDate, isPending, detailClick, cancelClick, procceedClick, isPaid, rateClick }) => {
   return (
     <div className="bg-transparent rounded-lg shadow-lg p-5 border dark:border-gray-50">
       <div className="flex items-center gap-4 justify-between">
@@ -28,10 +29,13 @@ const OrderCard = ({ name, code, price, status, orderDate, isPending, detailClic
             />
           </div>
 
-          <FootTypo
-            footlabel={formatDateVN(orderDate)}
-            className="!m-0 text-sm"
-          />
+          <div className="flex items-center gap-2">
+            <FootTypo footlabel="Order Date" className="!m-0 text-sm" />
+            <FootTypo
+              footlabel={formatDateVN(orderDate)}
+              className="!m-0 text-sm"
+            />
+          </div>
           <div className="flex items-center gap-2">
             <FootTypo footlabel="Status" className="!m-0 text-sm" />
             <StatusChip status={status} />
@@ -56,6 +60,10 @@ const OrderCard = ({ name, code, price, status, orderDate, isPending, detailClic
               icon={<TbCancel size={20} />}
             />
           </div>
+        )}
+
+        {isPaid && (
+          <ReviewButton onClick={rateClick} />
         )}
       </div>
     </div>

@@ -211,7 +211,7 @@ const ProductUpdate = () => {
   if (isLoadingProduct) {
     return (
       <SellerWrapper>
-        <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex justify-center items-center min-h-[60vh] w-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </SellerWrapper>
@@ -221,7 +221,7 @@ const ProductUpdate = () => {
   if (!productDetails && !isLoadingProduct) {
     return (
       <SellerWrapper>
-        <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex justify-center items-center min-h-[60vh] w-full">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
             <p className="mb-6">The product you are trying to update could not be found.</p>

@@ -1,13 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useGetAccountDetails } from "../queries/user/user.query";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setUserSlug, setUserLocationCode, setUserLocationProvince } from "../lib/redux/reducers/userSlice";
-import Spinner from "../components/Spinner";
 import { useLocationModal } from "../hooks/useLocationModal";
 import Image from "next/image";
 
@@ -79,7 +78,7 @@ export function UserProvider({ children }) {
   if (status === "loading" || isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Image src="/gif/loading.gif" alt="loading" width={150} height={150} />
+        <Image src="/gif/loading.gif" alt="loading" width={150} height={150} priority unoptimized/>
       </div>
     );
   }

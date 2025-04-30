@@ -10,13 +10,11 @@ import { IoIosArrowDown } from "react-icons/io";
 import { useUpdateUserLocation } from "@/app/queries/user/user.query";
 import { IoLocation } from "react-icons/io5";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 
 const LocationModal = () => {
   const locationModal = useLocationModal();
   const [provinces, setProvinces] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedProvinceCode, setSelectedProvinceCode] = useState("");
 
   const {
     register,
@@ -60,7 +58,6 @@ const LocationModal = () => {
       shouldValidate: true,
       shouldDirty: true,
     });
-    setSelectedProvinceCode(province.code);
     setIsOpen(false);
   };
 
@@ -76,7 +73,7 @@ const LocationModal = () => {
       },
       {
         onSuccess: (response) => {
-          console.log("Location updated successfully:", response);
+          //console.log("Location updated successfully:", response);
           localStorage.setItem("userProvince", selectedProvince.name);
           localStorage.setItem("userProvinceCode", selectedProvince.code);
           locationModal.onSuccessUpdate();

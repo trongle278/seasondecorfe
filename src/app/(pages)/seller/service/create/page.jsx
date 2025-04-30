@@ -8,7 +8,7 @@ import ImageUpload from "@/app/components/ui/upload/ImageUpload";
 import Input from "@/app/components/ui/inputs/Input";
 import { TbCurrencyDong } from "react-icons/tb";
 import { useForm } from "react-hook-form";
-import { Field, Textarea } from "@headlessui/react";
+import { Field } from "@headlessui/react";
 import ExampleNumberField from "@/app/components/ui/Select/NumberField";
 import { useGetListDecorCategory } from "@/app/queries/list/category.list.query";
 import { useUser } from "@/app/providers/userprovider";
@@ -22,14 +22,14 @@ import MultiSelectChip from "@/app/components/ui/chip/Chip";
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import TipTapEditor from "@/app/components/ui/editors/TipTapEditor";
 
 const ServiceCreate = () => {
-  const { user } = useUser();
   const router = useRouter();
 
   const { data: dataCategory } = useGetListDecorCategory();
 
-  const { data: dataSeason, isLoading: isLoadingSeason } = useGetListSeason();
+  const { data: dataSeason } = useGetListSeason();
 
   const [images, setImages] = React.useState([]);
   const [startDate, setStartDate] = React.useState(new Date());
@@ -155,8 +155,6 @@ const ServiceCreate = () => {
   const serviceStyle = watch("style");
   const serviceDescription = watch("description");
   const serviceProvince = watch("province");
-  const serviceCategoryId = watch("categoryId");
-  const serviceStartDate = watch("startDate");
 
   // Validation function for Step 1
   const validateStep = (step) => {
@@ -188,10 +186,6 @@ const ServiceCreate = () => {
     return true;
   };
 
-  const handleQuantityChange = (value) => {
-    setValue("quantity", value);
-    console.log("Updated Quantity:", value);
-  };
 
   const handleSeasonChange = (selectedIds) => {
     setSelectedSeasons(selectedIds);
@@ -227,7 +221,7 @@ const ServiceCreate = () => {
           <div className="step-1 form-detail">
             <FootTypo
               footlabel="Basic service information"
-              className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
+              className="text-2xl font-semibold pt-10 pb-5"
             />
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
@@ -341,19 +335,12 @@ const ServiceCreate = () => {
             />
             <div className="w-full">
               <Field>
-                <Textarea
-                  {...register("description", { required: true })}
-                  placeholder="Service descriptions"
-                  className={`
-      mt-3 block w-full resize-none rounded-lg border-[1px] 
-      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
-      bg-white dark:bg-gray-800 text-black dark:text-white
-      placeholder-gray-500 dark:placeholder-gray-400
-      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
-      transition duration-200
-    `}
-                  rows={10}
+                <TipTapEditor
+                  value={watch("description") || ""}
+                  onChange={(html) => setValue("description", html)}
+                  placeholder="Service descriptions..."
                 />
+                <input type="hidden" {...register("description")} />
               </Field>
             </div>
           </div>

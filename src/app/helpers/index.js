@@ -202,3 +202,8 @@ export const formatDateTime = (dateString) => {
 
   return { date: formattedDate, time: formattedTime };
 };
+
+ // Function to parse HTML content safely
+export const createMarkup = (htmlContent) => {
+  return { __html: htmlContent };
+};

@@ -3,13 +3,12 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { FootTypo } from "../Typography";
 import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const SuccessCheckmark = () => (
   <motion.div

@@ -3,7 +3,6 @@
 import { BorderBox } from "../BorderBox";
 import Image from "next/image";
 import { FcLike } from "react-icons/fc";
-import { FaDongSign } from "react-icons/fa6";
 import { IoIosStar } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -132,7 +131,7 @@ const FavoriteCard = ({
           >
             <FootTypo
               footlabel={name}
-              className="!m-0 font-semibold text-lg mb-1 line-clamp-1"
+              className="!m-0 font-semibold text-lg mb-1"
             />
             <div className="flex flex-wrap gap-2 items-center">
               {Array.isArray(season) && season.length > 0 ? (
@@ -157,10 +156,6 @@ const FavoriteCard = ({
               )}
             </div>
 
-            <FootTypo
-              footlabel={description}
-              className="!m-0 text-sm line-clamp-2 py-2"
-            />
 
             <div className="flex items-center gap-1">
               <MdLocationOn size={20} />
@@ -185,10 +180,6 @@ const FavoriteCard = ({
             <FootTypo
               footlabel={name}
               className="!m-0 font-semibold text-lg mb-1 line-clamp-1"
-            />
-            <FootTypo
-              footlabel={description}
-              className="!m-0 text-sm line-clamp-2 py-2"
             />
 
             <div className="flex items-center gap-2">

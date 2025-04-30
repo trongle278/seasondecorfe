@@ -6,6 +6,7 @@ import "nprogress/nprogress.css";
 const SUB_URL = `api/Quotation`;
 
 export function useCreateQuotation() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
       if (!data) throw new Error("No quotation data provided");
@@ -23,6 +24,9 @@ export function useCreateQuotation() {
       } finally {
         nProgress.done();
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get_list_quotation_for_customer"] });
     },
   });
 }

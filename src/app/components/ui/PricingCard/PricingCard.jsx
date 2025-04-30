@@ -14,9 +14,7 @@ const PricingCard = ({
   cardcontent4,
   cardcontent5,
   price,
-  description,
   className,
-  contentStyle,
   clickToBuy,
 }) => {
   return (

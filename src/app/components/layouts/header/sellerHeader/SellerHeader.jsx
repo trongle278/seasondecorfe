@@ -6,7 +6,7 @@ import Logo from "@/app/components/Logo";
 import { UserMenu } from "../UserMenu";
 import { useSession } from "next-auth/react";
 import { NotificationBtn } from "../components/indexBtn";
-import AnchorDrawer from "@/app/components/ui/drawer/Drawer";
+import AnchorDrawer from "@/app/components/ui/notification/Notifcation";
 
 const SellerHeader = () => {
   const { data } = useSession();

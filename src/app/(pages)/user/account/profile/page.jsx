@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from "react";
 import { UserWrapper } from "../../components/UserWrapper";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Input from "@/app/components/ui/inputs/Input";
@@ -47,7 +47,6 @@ const UserProfile = () => {
   };
 
   const onSubmit = useCallback(async (data) => {
-
     const userData = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -75,10 +74,6 @@ const UserProfile = () => {
             <FootTypo
               footlabel="My Profile"
               className="!m-0 text-lg font-semibold"
-            />
-            <FootTypo
-              footlabel="Manage profile information for secure account"
-              className="!m-0"
             />
           </div>
           <div className="pt-7">

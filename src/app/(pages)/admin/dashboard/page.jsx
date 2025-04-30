@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import AdminWrapper from "../components/AdminWrapper";
 import {

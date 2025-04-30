@@ -10,7 +10,6 @@ const tabs = [
   { name: "Pending", path: "/user/orders/pending" },
   { name: "Completed", path: "/user/orders/completed" },
   { name: "Cancelled", path: "/user/orders/canceled" },
-  { name: "Returned", path: "/user/orders/returned" },
 ];
 
 export default function OrdersLayout({ children }) {

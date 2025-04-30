@@ -7,8 +7,8 @@ const SUB_URL = `api/DecorService`;
 
 export function useCreateDecorService() {
   return useMutation({
-    mutationFn: async (data) => {
-      if (!data) throw new Error("No product provided");
+    mutationFn: async (formData) => {
+      if (!formData) throw new Error("No product provided");
 
       nProgress.start();
 
@@ -17,6 +17,21 @@ export function useCreateDecorService() {
       } finally {
         nProgress.done();
       }
+    },
+  });
+}
+
+export function useReopenService() {
+  return useMutation({
+    mutationFn: async (data) => {
+      if (!data) throw new Error("No data provided");
+      const { decorServiceId, startDate } = data;
+      if (!decorServiceId) throw new Error("No service id provided");
+      if (!startDate) throw new Error("No start date provided");
+      
+      return await BaseRequest.Put(`/${SUB_URL}/reOpen/${decorServiceId}`, { 
+        startDate 
+      });
     },
   });
 }
@@ -61,11 +76,6 @@ export function useSearchDecorService(params) {
         // Handle sublocation parameter
         if (params.Sublocation) {
           queryParams.append("Sublocation", params.Sublocation);
-        }
-        
-        // Handle province parameter
-        if (params.Province) {
-          queryParams.append("Province", params.Province);
         }
         
         // Handle category parameter

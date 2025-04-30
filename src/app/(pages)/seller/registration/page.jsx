@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { Label } from "@/app/components/ui/inputs/Label";
 import Input from "@/app/components/ui/inputs/Input";
 import ThemeSwitch from "@/app/components/ThemeSwitch";
@@ -17,7 +17,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateProviderProfile } from "@/app/queries/user/provider.query";
 import { useRouter } from "next/navigation";
 import { FaAngleRight } from "react-icons/fa6";
-import { Field, Textarea } from "@headlessui/react";
+import { Field } from "@headlessui/react";
+import TipTapEditor from "@/app/components/ui/editors/TipTapEditor";
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -36,6 +37,7 @@ export default function RegistrationPage() {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
     reset,
   } = useForm({
     resolver: yupResolver(schema),
@@ -46,7 +48,6 @@ export default function RegistrationPage() {
       phone: "",
       address: "",
     },
-    resolver: yupResolver(schema),
   });
 
   const onSubmit = useCallback(
@@ -63,7 +64,6 @@ export default function RegistrationPage() {
 
       mutationCreate.mutate(payload, {
         onSuccess: () => {
-          //console.log("Invitation sent successfully:", response);
           reset();
           router.push("/seller/dashboard");
         },
@@ -75,17 +75,13 @@ export default function RegistrationPage() {
     [mutationCreate, reset, router]
   );
 
-  const handleTest = () => {
-    console.log("test");
-  };
-
   return (
     <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2">
       <main className="flex h-full min-h-screen w-full relative z-10">
         <div className="absolute right-0 top-0">
           <ThemeSwitch />
         </div>
-        <div className="flex items-center w-full justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="flex items-start w-full justify-start px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto flex w-full flex-col justify-center gap-6 items-center">
             <div>
               <div className="logo-wrapper flex justify-center items-center relative">
@@ -103,8 +99,8 @@ export default function RegistrationPage() {
                   childStyle="left-60"
                 />
 
-                <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-                  <div className="flex flex-col space-y-2 w-full">
+                <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 ">
+                  <div className="flex w-full flex-col space-y-2">
                     <Label htmlFor="providerName">Provider's name</Label>
                     <Input
                       id="name"
@@ -118,48 +114,45 @@ export default function RegistrationPage() {
                       <p className="text-red">{errors.name.message}</p>
                     )}
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="providerName">Bio</Label>
-                    <div className="w-full">
-                      <Field>
-                        <Textarea
-                          {...register("bio", { required: true })}
-                          placeholder="Your bio"
-                          className={`
-      mt-3 block w-full resize-none rounded-lg border-[1px] 
-      border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
-      bg-white dark:bg-gray-800 text-black dark:text-white
-      placeholder-gray-500 dark:placeholder-gray-400
-      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
-      transition duration-200
-    `}
-                          rows={7}
-                        />
-                      </Field>
-                    </div>
+                  <div className="flex w-full flex-col space-y-2">
+                    <Label htmlFor="providerPhone"> Phone number</Label>
+                    <Input
+                      id="phone"
+                      placeholder="..."
+                      type="text"
+                      required
+                      className="pl-3"
+                      register={register}
+                    />
+                    {errors.phone && (
+                      <p className="text-red">{errors.phone.message}</p>
+                    )}
                   </div>
+                </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="providerPhone">Provider's phone</Label>
-                  <Input
-                    id="phone"
-                    placeholder="..."
-                    type="text"
-                    required
-                    className="pl-3"
-                    register={register}
-                  />
-                  {errors.phone && (
-                    <p className="text-red">{errors.phone.message}</p>
-                  )}
+                  <Label htmlFor="providerBio">Bio</Label>
+                  <div className="w-full">
+                    <Field>
+                      <TipTapEditor
+                        value={watch("bio") || ""}
+                        onChange={(html) => setValue("bio", html)}
+                        placeholder="Introduce yourself..."
+                      />
+                      {/* Hidden input for form submission */}
+                      <input type="hidden" {...register("bio")} />
+                    </Field>
+                    {errors.bio && (
+                      <p className="text-red">{errors.bio.message}</p>
+                    )}
+                  </div>
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="providerAddress">Provider's address</Label>
+                  <Label htmlFor="providerAddress">Address</Label>
                   <Input
                     id="address"
-                    placeholder="123 street"
+                    placeholder="ward, district, city"
                     type="text"
                     required
                     className="pl-3"

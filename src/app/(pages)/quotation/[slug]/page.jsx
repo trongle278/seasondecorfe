@@ -10,7 +10,6 @@ import {
   useAddProductToQuotation,
   useRemoveProductFromQuotation,
 } from "@/app/queries/quotation/quotation.query";
-import Spinner from "@/app/components/Spinner";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { formatDate, formatCurrency } from "@/app/helpers";
@@ -30,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setQuotationExisted,
   setQuotationSigned,
+  setQuotationConfirmed,
 } from "@/app/lib/redux/reducers/quotationSlice";
 import { useGetListRelatedProduct } from "@/app/queries/list/quotation.list.query";
 import Threads from "@/app/components/ui/animated/Threads";
@@ -39,6 +39,8 @@ import EmptyState from "@/app/components/EmptyState";
 import { generateSlug } from "@/app/helpers";
 import ScrollAnimationWrapper from "@/app/components/ScrollAnimation";
 import Skeleton from "@mui/material/Skeleton";
+import useProductRemoveModal from "@/app/hooks/useProductRemoveModal";
+import ProductRemoveModal from "@/app/components/ui/Modals/ProductRemoveModal";
 
 const QuotationDetailPage = () => {
   const params = useParams();
@@ -64,6 +66,10 @@ const QuotationDetailPage = () => {
     (state) => state.quotation.quotationSigned
   );
 
+  const quotationConfirmed = useSelector(
+    (state) => state.quotation.quotationConfirmed
+  );
+
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize: 10,
@@ -74,6 +80,8 @@ const QuotationDetailPage = () => {
     isLoading: isQuotationDetailLoading,
     refetch: refetchQuotationDetail,
   } = useGetQuotationDetailByCustomerId(slug);
+
+  const productRemoveModal = useProductRemoveModal();
 
   // First effect: Process quotation details and update Redux store
   useEffect(() => {
@@ -97,6 +105,10 @@ const QuotationDetailPage = () => {
 
       setIsStatusChecked(true);
     }
+
+    if (quotationDetail?.status === 1) {
+      dispatch(setQuotationConfirmed(true));
+    }
   }, [quotationDetail, dispatch]);
 
   // Only fetch related products when status has been checked
@@ -117,21 +129,26 @@ const QuotationDetailPage = () => {
         <div className="my-4">
           <Skeleton variant="text" width={300} height={30} />
         </div>
-        
+
         <div className="flex my-4 border-b">
-          <Skeleton variant="rectangular" width={120} height={40} sx={{ mr: 2 }} />
+          <Skeleton
+            variant="rectangular"
+            width={120}
+            height={40}
+            sx={{ mr: 2 }}
+          />
           <Skeleton variant="rectangular" width={120} height={40} />
         </div>
-        
+
         <div className="space-y-6">
           <div className="grid grid-cols-2 grid-rows-1 gap-4">
             <Skeleton variant="rectangular" height={150} />
             <Skeleton variant="rectangular" height={150} />
           </div>
-          
+
           <Skeleton variant="rectangular" height={200} />
           <Skeleton variant="rectangular" height={200} />
-          
+
           <div>
             <Skeleton variant="text" width={200} height={30} sx={{ mb: 2 }} />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -292,6 +309,7 @@ const QuotationDetailPage = () => {
 
   return (
     <Container>
+      <ProductRemoveModal onRemoveProduct={handleRemoveProductFromQuotation} />
       <MuiBreadcrumbs />
 
       {/* Tab Navigation */}
@@ -350,7 +368,7 @@ const QuotationDetailPage = () => {
               {quotationDetail?.status === 1 &&
                 !quotationDetail?.isContractExisted && (
                   <div className="flex flex-row gap-2 items-center mt-3">
-                    <PiSealWarning size={20} color="yellow" />
+                    <PiSealWarning size={20} />
                     <FootTypo
                       footlabel="The provider is preparing the contract"
                       className="!m-0 text-sm"
@@ -412,14 +430,14 @@ const QuotationDetailPage = () => {
                 <div className="flex flex-row gap-5 items-center mt-3">
                   <Button
                     label="Accept Quotation"
-                    className="!m-0 text-lg font-bold text-primary"
+                    className="bg-action text-lg font-bold text-white"
                     icon={<FaCheck size={20} />}
                     onClick={handleAcceptQuotation}
                   />
                   <Divider orientation="vertical" flexItem />
                   <Button
                     label="Reject Quotation"
-                    className="!m-0 text-lg font-bold bg-red"
+                    className="text-lg font-bold bg-red text-white"
                     icon={<IoIosRemove size={20} />}
                   />
                 </div>
@@ -460,7 +478,7 @@ const QuotationDetailPage = () => {
           </BorderBox>
 
           {/* Added Products Section */}
-          {!quotationSigned && (
+          {!quotationSigned && !quotationConfirmed && (
             <BorderBox>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">Added Products</h2>
@@ -523,13 +541,10 @@ const QuotationDetailPage = () => {
                           label="Remove"
                           className="bg-red text-white w-full justify-center"
                           onClick={() => {
-                            if (
-                              window.confirm(
-                                `Remove ${product.productName} from quotation?`
-                              )
-                            ) {
-                              handleRemoveProductFromQuotation(product.id);
-                            }
+                            productRemoveModal.onOpen(
+                              product.productId,
+                              product.productName
+                            );
                           }}
                           disabled={isRemovingProduct}
                         />
@@ -552,12 +567,81 @@ const QuotationDetailPage = () => {
             </BorderBox>
           )}
 
+          {/* Confirmed Products Section - Shown when quotation is signed or status is 1 */}
+          {(quotationSigned || quotationDetail?.status === 1) &&
+            quotationProducts.length > 0 && (
+              <BorderBox>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold">Add-on Funitures</h2>
+                  {totalProductsPrice > 0 && (
+                    <span className="text-primary font-semibold">
+                      Total: {formatCurrency(totalProductsPrice)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5 font-semibold">
+                  {quotationProducts.map((product) => (
+                    <BorderBox key={product.id} className="border">
+                      <div className="flex items-start gap-4">
+                        {/* Product Image */}
+                        <div className="h-16 w-16 flex-shrink-0">
+                          {product.image ? (
+                            <img
+                              className="h-16 w-16 rounded-md object-cover"
+                              src={product.image}
+                              alt={product.productName}
+                            />
+                          ) : (
+                            <div className="h-16 w-16 rounded-md bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                              <span className="text-gray-500 dark:text-gray-400 text-xs">
+                                No img
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="flex-1 flex flex-col">
+                          <div className="flex justify-between">
+                            <FootTypo
+                              footlabel={product.productName}
+                              className="!m-0 text-lg"
+                            />
+
+                            <FootTypo
+                              footlabel={formatCurrency(product.totalPrice)}
+                              className="!m-0"
+                            />
+                          </div>
+
+                          <FootTypo
+                            footlabel={`Quantity: ${product.quantity}`}
+                            className="!m-0"
+                          />
+
+                          <FootTypo
+                            footlabel={` Price: ${formatCurrency(
+                              product.unitPrice
+                            )}`}
+                            className="!m-0"
+                          ></FootTypo>
+                        </div>
+                      </div>
+                    </BorderBox>
+                  ))}
+                </div>
+              </BorderBox>
+            )}
+
           {/* Related Products Section - Only shown when quotation is not signed */}
-          {!quotationSigned && (
+          {!quotationSigned && !quotationConfirmed && (
             <>
-              <div style={{ width: "100%", height: "360px", position: "relative" }}>
+              <div
+                style={{ width: "100%", height: "360px", position: "relative" }}
+              >
                 <FootTypo
-                  footlabel="Make your space more beautiful with our products"
+                  footlabel="Make your space more beautiful with our funitures"
                   className="max-w-[20vw] break-after-all !m-0 text-base absolute top-1/2 -translate-y-1/2 bg-transparent  font-bold"
                 />
                 <Threads
@@ -575,7 +659,9 @@ const QuotationDetailPage = () => {
                     <DataMapper
                       data={products}
                       Component={ProductCard}
-                      emptyStateComponent={<EmptyState title="No products found" />}
+                      emptyStateComponent={
+                        <EmptyState title="No products found" />
+                      }
                       loading={false}
                       getKey={(item) => item.id}
                       componentProps={(product) => ({

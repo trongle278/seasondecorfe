@@ -26,6 +26,11 @@ import { MdOutlineEditNote } from "react-icons/md";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { IoFilterOutline } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
+import { LuClipboardList } from "react-icons/lu";
+import { FaTruck } from "react-icons/fa";
+import { IoBuild } from "react-icons/io5";
+import { MdOutlineFileUpload } from "react-icons/md";
+import RefreshButton from "@/app/components/ui/Buttons/RefreshButton";
 
 const SellerOrderManage = () => {
   const router = useRouter();
@@ -62,7 +67,7 @@ const SellerOrderManage = () => {
     }));
   };
 
-  const { data: bookingsData, isLoading } =
+  const { data: bookingsData, isLoading, refetch } =
     useGetPaginatedBookingsForProvider(pagination);
 
   const bookings = bookingsData?.data || [];
@@ -81,13 +86,218 @@ const SellerOrderManage = () => {
     { id: "6", name: "Preparing" },
     { id: "7", name: "In Transit" },
     { id: "8", name: "Progressing" },
-    { id: "9", name: "Labor Paid" },
-    { id: "10", name: "Completed" },
-    { id: "11", name: "Pending Cancel" },
-    { id: "12", name: "Cancelled" },
-    { id: "13", name: "Rejected" },
+    { id: "9", name: "All Done" },
+    { id: "10", name: "Final Paid" },
+    { id: "11", name: "Completed" },
+    { id: "12", name: "Pending Cancel" },
+    { id: "13", name: "Cancelled" },
+    { id: "14", name: "Rejected" },
   ];
 
+  // Create a dedicated component for action buttons with clear status-based logic
+  const ActionButtons = ({ booking }) => {
+    const status = booking.status;
+    const { bookingCode, customer, isQuoteExisted, isTracked, address } = booking;
+
+    // Helper function for routing to quotation creation
+    const navigateToQuotation = () => {
+      router.push(
+        `/seller/quotation/create/${bookingCode}?fullName=${encodeURIComponent(
+          customer.fullName || customer.businessName
+        )}&email=${encodeURIComponent(customer.email)}&address=${encodeURIComponent(address)}`
+      );
+    };
+    if (status === 11) {
+      return (
+        <FootTypo footlabel="Completed" className="text-green font-medium" />
+      );
+    }
+
+    // Pending Cancel status
+    if (status === 12) {
+      return (
+        <Button
+          label="Preview request"
+          onClick={() => router.push(`/seller/request/${bookingCode}`)}
+          className="bg-primary"
+          icon={<GoQuestion size={20} />}
+          isLoading={isChangingStatus}
+        />
+      );
+    }
+
+    // Pending Approval status (new booking)
+    if (status === 0) {
+      return (
+        <div className="flex gap-2">
+          <Button
+            label="Approved"
+            onClick={() => approveBooking(bookingCode)}
+            className="bg-green text-white"
+            icon={<FaCheck size={20} />}
+            isLoading={isApproving}
+          />
+          <Button
+            label="Reject"
+            onClick={() => rejectBooking(bookingCode)}
+            className="bg-red text-white"
+            icon={<MdCancel size={20} />}
+            isLoading={isRejecting}
+          />
+        </div>
+      );
+    }
+
+    // Planning status - Create quotation
+    if (status === 1) {
+      return (
+        <Button
+          label="Create Quotation"
+          onClick={() => {
+            changeBookingStatus(bookingCode, {
+              onSuccess: navigateToQuotation,
+            });
+          }}
+          className="bg-yellow"
+          icon={<TbReportAnalytics size={20} />}
+          isLoading={isChangingStatus}
+        />
+      );
+    }
+
+    // Quoting status - Edit quotation
+    if (status === 2 && !isQuoteExisted) {
+      return (
+        <Button
+          label="Edit Quotation"
+          onClick={navigateToQuotation}
+          className="bg-yellow"
+          icon={<MdOutlineEditNote size={20} />}
+          isLoading={isChangingStatus}
+        />
+      );
+    }
+
+    // Contracting status with quote
+    if (status === 3 && isQuoteExisted) {
+      return (
+        <FootTypo
+          footlabel="Preparing Contract"
+          className="!m-0 text-green font-medium"
+        />
+      );
+    }
+
+    if (status === 4) {
+      return (
+        <FootTypo
+          footlabel="Confirmed"
+          className="!m-0 text-green font-medium"
+        />
+      );
+    }
+
+    // Deposit paid status
+    if (status === 5) {
+      return (
+        <Button
+          label="Preparing"
+          className="bg-primary"
+          onClick={() => changeBookingStatus(bookingCode, {})}
+          icon={<LuClipboardList size={20} />}
+        />
+      );
+    }
+
+    if (status === 6) {
+      return (
+        <Button
+          label="In transit"
+          className="bg-primary"
+          onClick={() => changeBookingStatus(bookingCode, {})}
+          icon={<FaTruck size={20} />}
+        />
+      );
+    }
+    if (status === 7) {
+      return (
+        <Button
+          label="Progress Start"
+          className="bg-primary"
+          onClick={() => changeBookingStatus(bookingCode, {})}
+          icon={<IoBuild size={20} />}
+        />
+      );
+    }
+
+    if (status === 9) {
+      return (
+        <FootTypo
+          footlabel="Waiting for final payment"
+          className="text-yellow font-medium"
+        />
+      );
+    }
+
+    if (status === 10) {
+      return (
+        <Button
+          label="Finish service"
+          onClick={() => changeBookingStatus(bookingCode, {})}
+          s
+          className="bg-action text-white"
+          icon={<FaCheck size={20} />}
+        />
+      );
+    }
+
+    if (isTracked) {
+      return (
+        <Button
+          label="Update Progress"
+          className="bg-primary"
+          onClick={() => router.push(`/seller/tracking/${bookingCode}`)}
+          icon={<MdOutlineFileUpload size={20} />}
+        />
+      );
+    }
+
+    if (status === 8) {
+      return (
+        <Button
+          label="Progress Tracking"
+          className=""
+          onClick={() => router.push(`/seller/tracking/${bookingCode}`)}
+          icon={<MdOutlineFileUpload size={20} />}
+        />
+      );
+    }
+    
+
+    // Cancelled status
+    if (status === 12) {
+      return (
+        <FootTypo footlabel="Cancelled" className="!m-0 text-red font-medium" />
+      );
+    }
+
+    // Quote exists but not yet confirmed
+    if (isQuoteExisted) {
+      return (
+        <FootTypo
+          footlabel="Confirmation pending"
+          className="!m-0 text-yellow font-medium"
+        />
+      );
+    }
+
+    // Default - No specific action
+    return (
+      <FootTypo footlabel="No action required" className="!m-0 text-gray-500" />
+    );
+  };
+
+  // Update the columns definition to use the ActionButtons component
   const columns = [
     {
       header: "ID",
@@ -137,112 +347,7 @@ const SellerOrderManage = () => {
 
     {
       header: "Actions",
-      cell: ({ row }) => {
-        if (row.original.status === 3 && row.original.isQuoteExisted) {
-          return (
-            <FootTypo
-              footlabel="Preparing Contract"
-              className="!m-0 text-green font-medium"
-            />
-          );
-        }
-        if (row.original.status === 12) {
-          return (
-            <FootTypo
-              footlabel="Cancelled by customer"
-              className="!m-0 text-red font-medium"
-            />
-          );
-        }
-        if (row.original.isQuoteExisted) {
-          return (
-            <FootTypo
-              footlabel="Confirmation pending"
-              className="!m-0 text-yellow font-medium"
-            />
-          );
-        }
-
-        if (row.original.status === 1) {
-          return (
-            <Button
-              label="Create Quotation"
-              onClick={() => {
-                changeBookingStatus(row.original.bookingCode, {
-                  onSuccess: () => {
-                    router.push(
-                      `/seller/quotation/create/${
-                        row.original.bookingCode
-                      }?fullName=${encodeURIComponent(
-                        row.original.customer.fullName ||
-                          row.original.customer.businessName
-                      )}&email=${encodeURIComponent(
-                        row.original.customer.email
-                      )}`
-                    );
-                  },
-                });
-              }}
-              className="bg-yellow"
-              icon={<TbReportAnalytics size={20} />}
-              isLoading={isChangingStatus}
-            />
-          );
-        }
-
-        if (row.original.status === 2) {
-          return (
-            <Button
-              label="Edit Quotation"
-              onClick={() => {
-                router.push(
-                  `/seller/quotation/create/${
-                    row.original.bookingCode
-                  }?fullName=${encodeURIComponent(
-                    row.original.customer.fullName ||
-                      row.original.customer.businessName
-                  )}&email=${encodeURIComponent(row.original.customer.email)}`
-                );
-              }}
-              className="bg-yellow"
-              icon={<MdOutlineEditNote size={20} />}
-              isLoading={isChangingStatus}
-            />
-          );
-        }
-
-        if (row.original.status === 11) {
-          return (
-            <Button 
-              label="Preview request"
-              onClick={() => {
-                router.push(`/seller/request/${row.original.bookingCode}`);
-              }}
-              className="bg-primary"
-              icon={<GoQuestion size={20} />}
-              isLoading={isChangingStatus}
-            />
-          );
-        }
-        return (
-          <div className="flex gap-2">
-            <Button
-              label="Approved"
-              onClick={() => approveBooking(row.original.bookingCode)}
-              className="bg-green"
-              icon={<FaCheck size={20} />}
-              isLoading={isApproving}
-            />
-            <Button
-              label="Reject"
-              onClick={() => rejectBooking(row.original.bookingCode)}
-              className="bg-red"
-              icon={<MdCancel size={20} />}
-              isLoading={isRejecting}
-            />
-          </div>
-        );
-      },
+      cell: ({ row }) => <ActionButtons booking={row.original} />,
     },
     {
       header: "Detail",
@@ -326,7 +431,14 @@ const SellerOrderManage = () => {
 
   return (
     <SellerWrapper>
-      <h1 className="text-2xl font-bold mb-6">Request Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Request Management</h1>
+        <RefreshButton 
+          onRefresh={refetch} 
+          isLoading={isLoading}
+          tooltip="Refresh request list"
+        />
+      </div>
 
       <FilterSelectors />
 
@@ -341,8 +453,8 @@ const SellerOrderManage = () => {
           <h2 className="text-xl font-semibold mb-4">No Orders Found</h2>
           <p>
             {filters.status
-              ? "No orders match your filter criteria. Try adjusting your filters."
-              : "You don't have any orders at the moment."}
+              ? "No requests match your filter criteria. Try adjusting your filters."
+              : "You don't have any requests at the moment."}
           </p>
         </div>
       ) : (
