@@ -61,7 +61,6 @@ export default function SignUp() {
     //resolver: yupResolver(schema),
   });
 
-  const Gender = watch("gender");
 
   const handleGenderChange = (selectedGender) => {
     setValue("gender", selectedGender); // Update form value
