@@ -17,12 +17,14 @@ import { useGetCancelType } from "@/app/queries/type/cancel.type.query";
 import { useCancelBookingRequest } from "@/app/queries/book/book.query";
 import { toast } from "sonner";
 import { FootTypo } from "../Typography";
+import { useRemoveTracking } from "@/app/queries/tracking/tracking.query";
 
 const DeleteConfirmModal = () => {
   const deleteConfirmModal = useDeleteConfimModal();
   const deleteMutation = useDeleteAddress();
   const cancelOrderMutation = useCancelOrder();
   const cancelRequestMutation = useCancelBookingRequest();
+  const removeTrackingMutation = useRemoveTracking();
   const queryClient = useQueryClient();
 
   // State for storing selected cancel reason
@@ -39,10 +41,10 @@ const DeleteConfirmModal = () => {
 
   // Track loading state for all mutations
   const isLoading =
-    deleteMutation.isLoading ||
-    cancelOrderMutation.isLoading ||
-    cancelRequestMutation.isLoading;
-
+    deleteMutation.isPending ||
+    cancelOrderMutation.isPending ||
+    cancelRequestMutation.isPending ||
+    removeTrackingMutation.isPending
   // Reset form values when modal opens/closes
   useEffect(() => {
     if (!deleteConfirmModal.isOpen) {
@@ -92,6 +94,15 @@ const DeleteConfirmModal = () => {
           console.error("Error cancelling request:", error);
         },
       });
+    } else if (deleteConfirmModal.type === "tracking") {
+      removeTrackingMutation.mutate(deleteConfirmModal.itemToDelete, {
+        onSuccess: () => {
+          deleteConfirmModal.onClose();
+        },
+        onError: (error) => {
+          console.error("Error deleting tracking:", error);
+        },
+      }); 
     }
   };
 
@@ -106,6 +117,10 @@ const DeleteConfirmModal = () => {
 
     if (type === "request") {
       return `Cancellation request for ${title}`;
+    }
+
+    if (type === "tracking") {
+      return `Are you sure you want to delete this ${title}`
     }
 
     return `Are you sure you want to delete this ${title}?`;

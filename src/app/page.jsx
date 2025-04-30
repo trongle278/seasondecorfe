@@ -9,7 +9,6 @@ import {
 } from "./components/ui/Buttons/Button2colors";
 import ProductSection from "./components/ui/landing/ProductSection";
 import HighlightSection from "./components/ui/landing/HighlightSection";
-import InspiredSection from "./components/ui/landing/InspiredSection";
 import ScrollAnimationWrapper from "./components/ScrollAnimation";
 import ProviderSign from "./components/ui/landing/ProviderSign";
 import MainWrapper from "./components/MainWrapper";
@@ -21,8 +20,6 @@ import { people } from "@/app/constant/people";
 import DisclosureSection from "./components/ui/landing/Disclosure";
 
 export default function Main() {
-  const words = ["spring", "summer", "autumn ", "winter"];
-
   return (
     <>
       <MainWrapper>
@@ -44,7 +41,7 @@ export default function Main() {
                       {" "}
                       For
                       <RotatingText
-                        texts={["Spring", "Summer", "Fall", "Winter"]}
+                        texts={["Spring", "Summer", "Fall", "Winter", "Tet", "Christmas", "New Year", "Halloween", "Valentine"]}
                         mainClassName="px-2 sm:px-2 md:px-3 bg-cyan-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-start rounded-lg w-fit mt-3"
                         staggerFrom={"last"}
                         initial={{ y: "100%" }}
@@ -70,7 +67,10 @@ export default function Main() {
                   are.
                 </h2>
                 <div className="flex relative sm:flex-row flex-col space-y-2 justify-center dark:text-white sm:space-y-0 sm:space-x-4 sm:justify-center mb-4 w-full">
-                  <WhiteBgButon whiteBtnlable="Browse providers" href="/provider" />
+                  <WhiteBgButon
+                    whiteBtnlable="Browse providers"
+                    href="/provider"
+                  />
                   <BlackBgButton blackBtnlable="Book now" href="/booking" />
                 </div>
                 <div>

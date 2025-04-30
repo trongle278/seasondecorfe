@@ -5,7 +5,6 @@ import Button2 from "./Buttons/Button2";
 import { IoMdClose } from "react-icons/io";
 import { ClipLoader } from "react-spinners";
 import { useOutsideClick } from "@/app/hooks/OutsideClick";
-import clsx from "clsx";
 
 const Modal = ({
   isOpen,

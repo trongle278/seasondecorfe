@@ -11,6 +11,7 @@ import SearchModal from "./components/ui/Modals/SearchModal";
 import ChatBox from "./components/ui/chatBox/ChatBox";
 import InformationModal from "./components/ui/Modals/InformationModal";
 import LocationModal from "./components/ui/Modals/LocationModal";
+import ScrollToTop from "./components/ui/Buttons/ScrollToTopBtn";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
             <InformationModal />
             <AdressModal />
             <LocationModal />
+            <ScrollToTop />
             <main className="flex-1">{children}</main>
             <Footer />
           </ClientOnly>

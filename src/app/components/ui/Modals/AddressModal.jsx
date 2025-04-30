@@ -3,13 +3,10 @@
 import * as React from "react";
 
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import Modal from "../Modal";
 import Heading from "./components/Heading";
 import Input from "../inputs/Input";
 import useAddressModal from "@/app/hooks/useAddressModal";
-import { ClipLoader } from "react-spinners";
 import ProvinceDistrictWardSelect from "@/app/(pages)/user/components/ProvinceDropdown";
 import { RadioGroup } from "../Select/RadioGroup";
 import {

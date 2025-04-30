@@ -156,3 +156,48 @@ export function usePaymentBooking() {
   });
 }
 
+export function useGetPendingCancelByBookingCode(bookingCode, shouldFetch = false) {
+  return useQuery({
+    queryKey: ["pending-cancel-by-booking-code", bookingCode, shouldFetch],
+    queryFn: async () => {
+      nProgress.start();
+      try {
+        const res = await BaseRequest.Get(`/${SUB_URL}/getPendingCancelBookingDetailByBookingCode/${bookingCode}`, false);
+        return res.data;
+      } finally {
+        nProgress.done();
+      }
+    },
+    enabled: shouldFetch,
+  });
+}
+
+export function useApproveCancelRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (bookingCode) => {
+      return await BaseRequest.Put(`/${SUB_URL}/approveCancellation/${bookingCode}`);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["booking-detail-for-provider"] }),
+        queryClient.invalidateQueries({ queryKey: ["booking-list-for-provider"] }),
+      ]);
+    },
+  });
+}
+
+export function useRevokeCancelRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (bookingCode) => {
+      return await BaseRequest.Put(`/${SUB_URL}/revokeCancellation/${bookingCode}`);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["booking-detail-for-provider"] }),
+        queryClient.invalidateQueries({ queryKey: ["booking-list-for-provider"] }),
+      ]);
+    },
+  });
+}

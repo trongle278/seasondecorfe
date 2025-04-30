@@ -4,8 +4,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import { FaCalendar } from "react-icons/fa";
 import { Label } from "../inputs/Label";
 
-export default function BasicDatePicker({ label, selectedDate, onChange, required, value }) {
-  const [startDate, setStartDate] = React.useState();
+export default function BasicDatePicker({ label, selectedDate, onChange, required}) {
   
 
   return (

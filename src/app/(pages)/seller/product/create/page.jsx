@@ -188,7 +188,7 @@ const ProductCreate = () => {
           <div className="step-1 form-detail">
             <FootTypo
               footlabel="Basic information"
-              className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
+              className="text-2xl font-semibold pt-10 pb-5"
             />
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
@@ -206,13 +206,13 @@ const ProductCreate = () => {
                 id="name"
                 placeholder="Product name"
                 required
-                className=""
+                className="pl-3"
                 register={register}
               />
             </div>
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo
-                footlabel="Product Name :"
+                footlabel="Price :"
                 className="!m-0 text-lg font-semibold w-40"
               />
               <Input
@@ -251,10 +251,10 @@ const ProductCreate = () => {
           </div>
         </Step>
         <Step>
-          <div className="step-2 form min-h-screen">
+          <div className="step-2 form">
             <FootTypo
               footlabel="Basic information"
-              className="text-2xl font-semibold border-b-[1px] pt-10 pb-5"
+              className="text-2xl font-semibold pt-10 pb-5"
             />
             <div className="form inline-flex items-center w-full h-full gap-5 my-5">
               <FootTypo

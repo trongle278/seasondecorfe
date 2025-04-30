@@ -174,25 +174,25 @@ const DataTable = ({
             <Button
               onClick={() => handlePageChange('first')}
               disabled={!table.getCanPreviousPage() || isLoading}
-              className="px-4 py-2 bg-gray-100 disabled:opacity-50"
+              className=" disabled:opacity-50"
               label="First"
             />
             <Button
               onClick={() => handlePageChange('previous')}
               disabled={!table.getCanPreviousPage() || isLoading}
-              className="px-4 py-2 bg-gray-100 disabled:opacity-50"
+              className=" disabled:opacity-50"
               label="Previous"
             />
             <Button
               onClick={() => handlePageChange('next')}
               disabled={!table.getCanNextPage() || isLoading}
-              className="px-4 py-2 bg-gray-100 disabled:opacity-50"
+              className=" disabled:opacity-50"
               label="Next"
             />
             <Button
               onClick={() => handlePageChange('last')}
               disabled={!table.getCanNextPage() || isLoading}
-              className="px-4 py-2 bg-gray-100 disabled:opacity-50"
+              className=" disabled:opacity-50"
               label="Last"
             />
           </div>

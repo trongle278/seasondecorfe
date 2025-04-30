@@ -2,14 +2,18 @@ import Container from "../../layouts/Container";
 import clsx from "clsx";
 import DropdownSelect from "../Select/DropdownSelect";
 
-export const ListWrapper = ({ children, filters }) => {
+export const ListWrapper = ({ children, filters, customFilterComponents = [] }) => {
   return (
     <Container>
       <div className="min-h-screen pt-5">
         <div className="flex container rounded-lg">
           <div className="flex-shrink-0 w-[200px] pr-10">
             <div className="flex">
-              <ListSidebar filters={filters} className="flex-col" />
+              <ListSidebar 
+                filters={filters} 
+                className="flex-col" 
+                customFilterComponents={customFilterComponents}
+              />
             </div>
           </div>
           <div className="flex-grow">
@@ -23,7 +27,7 @@ export const ListWrapper = ({ children, filters }) => {
   );
 };
 
-export const ListSidebar = ({ filters, className }) => {
+export const ListSidebar = ({ filters, className, customFilterComponents = [] }) => {
   return (
     <div className="flex w-full justify-start items-center">
       <div className={clsx("w-full flex gap-10", className)}>
@@ -37,6 +41,17 @@ export const ListSidebar = ({ filters, className }) => {
             />
           </div>
         ))}
+        
+        {/* Render custom filter components */}
+        {customFilterComponents.length > 0 && (
+          <div className="w-full mt-4">
+            {customFilterComponents.map((component, index) => (
+              <div key={`custom-filter-${index}`} className="mb-4">
+                {component}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

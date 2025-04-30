@@ -21,8 +21,8 @@ export const BodyTypo = ({ bodylabel }) => {
 
   export const FootTypo = ({footlabel, className}) => {
     return (
-      <p className={clsx("mx-auto", className)}>
+      <span className={clsx("", className)}>
         {footlabel}
-      </p>
+      </span>
     );
   };

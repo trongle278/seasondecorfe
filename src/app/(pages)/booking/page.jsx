@@ -73,7 +73,7 @@ const BookingPage = () => {
       setCurrentPage(1); // Reset to page 1
       // Explicitly set page size again when returning to default listing
       refetchInitialList().then(() => {
-        console.log("Refetched with page size:", pageSize);
+        //console.log("Refetched with page size:", pageSize);
       });
       return;
     }
@@ -129,9 +129,9 @@ const BookingPage = () => {
               <div className="flex relative sm:flex-row flex-col space-y-2 justify-center dark:text-white sm:space-y-0 sm:space-x-4 sm:justify-center mb-4 w-full"></div>
 
               <div
-                className={`flex gap-4 items-center justify-center w-full max-w-[1000px] justify-self-center pb-5 transition-all duration-500 ${
+                className={`flex items-center justify-center w-full max-w-[1000px] mx-auto pb-5 transition-all duration-300 ease-in-out ${
                   isSticky
-                    ? "fixed top-1 left-0 right-0 z-[50] bg-transparent px-4"
+                    ? "fixed top-1 left-0 right-0 z-[50] max-w-[850px]"
                     : ""
                 }`}
               >
@@ -147,13 +147,10 @@ const BookingPage = () => {
           </div>
         </div>
       </AuroraBg>
-      {isSticky && <div className="h-[100px]" />}
+      {isSticky && <div className="h-[120px]" />}
       <RollingGallery autoplay={true} pauseOnHover={false} />
       <div className="bg-[linear-gradient(to_right,transparent_1%,var(--gray-50)_10%,var(--gray-50)_90%,transparent_99%)] pb-20 dark:bg-[linear-gradient(to_right,transparent_0%,var(--neutral-900)_10%,var(--neutral-900)_90%,transparent_100%)]">
         <Container>
-          <div className="mb-20 ">
-            <ListSidebar filters={filters} className="max-w-[170px]" />
-          </div>
           <div className="flex flex-col gap-10 md:gap-20">
             {isLoading ? (
               <div className="flex justify-center py-10">
@@ -200,8 +197,8 @@ const BookingPage = () => {
             )}
 
             <div className="flex justify-center gap-4">
-              <Button  onClick={handlePreviousPage} disabled={currentPage === 1} className="text-primary" icon={<MdNavigateBefore size={20} />}/>
-              <Button  onClick={handleLoadMore} disabled={currentPage === calculatedTotalPages} className="text-primary" icon={<MdNavigateNext size={20} />}/>
+              <Button onClick={handlePreviousPage} disabled={currentPage === 1} className="text-primary" icon={<MdNavigateBefore size={20} />}/>
+              <Button onClick={handleLoadMore} disabled={currentPage === calculatedTotalPages} className="text-primary" icon={<MdNavigateNext size={20} />}/>
             </div>
           </div>
         </Container>

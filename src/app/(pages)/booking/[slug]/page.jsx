@@ -27,7 +27,7 @@ import ReviewCard from "@/app/components/ui/card/ReviewCard";
 import { FaFlag } from "react-icons/fa";
 import Link from "next/link";
 import HostSection from "@/app/(pages)/booking/components/HostSection";
-import { Skeleton } from "@mui/material";
+import { Skeleton, Box, Grid, Paper } from "@mui/material";
 import useInfoModal from "@/app/hooks/useInfoModal";
 import PickDate from "@/app/(pages)/booking/components/PickDate";
 import { useBookService } from "@/app/queries/book/book.query";
@@ -45,7 +45,108 @@ import { Label } from "@/app/components/ui/inputs/Label";
 import { Field, Textarea } from "@headlessui/react";
 import { CiClock1 } from "react-icons/ci";
 import Spinner from "@/app/components/Spinner";
+import { useGetListReviewByService } from "@/app/queries/list/review.list.query";
+import DataMapper from "@/app/components/DataMapper";
+import EmptyState from "@/app/components/EmptyState";
 
+// Service Detail Skeleton Component
+const ServiceDetailSkeleton = () => {
+  return (
+    <Container>
+      <Box className="w-full">
+        <Skeleton variant="text" width={150} height={30} className="mb-5" />
+        <Skeleton variant="text" width={300} height={50} className="mb-4" />
+        
+        {/* Image Gallery Skeleton */}
+        <Grid container spacing={2} className="mb-10">
+          <Grid item xs={12} md={6}>
+            <Skeleton variant="rectangular" height={500} className="rounded-lg" />
+          </Grid>
+          <Grid item xs={12} md={6} className="hidden md:block">
+            <Grid container spacing={2}>
+              {[1, 2, 3, 4].map((i) => (
+                <Grid item xs={6} key={i}>
+                  <Skeleton variant="rectangular" height={240} className="rounded-lg" />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+        
+        {/* Content Skeleton */}
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Box className="space-y-6">
+              <Box className="flex items-center gap-2">
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="text" width={200} />
+              </Box>
+              
+              <Box className="flex items-center gap-2">
+                <Skeleton variant="text" width={100} />
+                <Box className="flex flex-wrap gap-2">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} variant="rectangular" width={80} height={30} className="rounded-xl" />
+                  ))}
+                </Box>
+              </Box>
+              
+              <Box className="flex items-center gap-2">
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="text" width={250} />
+              </Box>
+              
+              <Box className="space-y-2">
+                <Skeleton variant="text" width={140} />
+                <Skeleton variant="rectangular" height={200} className="rounded-lg" />
+                <Skeleton variant="text" width={100} />
+              </Box>
+              
+              <Box className="mt-8 pt-6 border-t">
+                <Box className="flex gap-4">
+                  <Skeleton variant="rectangular" width={150} height={50} className="rounded-lg" />
+                  <Skeleton variant="rectangular" width={150} height={50} className="rounded-lg" />
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+          
+          <Grid item xs={12} md={6}>
+            <Box className="space-y-6">
+              <Skeleton variant="text" width={160} />
+              <Skeleton variant="rectangular" height={56} className="rounded-lg" />
+              <Skeleton variant="rectangular" height={300} className="rounded-lg" />
+              <Skeleton variant="text" width={180} className="mx-auto mt-4" />
+            </Box>
+          </Grid>
+        </Grid>
+        
+        {/* Reviews Section Skeleton */}
+        <Box className="mt-16 border-t pt-8">
+          <Box className="relative flex justify-center">
+            <Skeleton variant="rectangular" width={280} height={40} className="rounded-xl" />
+          </Box>
+          
+          <Box className="my-8">
+            <Skeleton variant="rectangular" height={180} className="rounded-lg" />
+          </Box>
+          
+          <Box className="mt-6">
+            <Skeleton variant="rectangular" height={120} className="rounded-lg mb-6" />
+            
+            <Grid container spacing={4}>
+              {[1, 2, 3, 4].map((i) => (
+                <Grid item xs={12} md={6} key={i}>
+                  <Skeleton variant="rectangular" height={200} className="rounded-lg" />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
+  );
+};
 
 const ServiceDetail = () => {
   const pagination = {
@@ -63,6 +164,7 @@ const ServiceDetail = () => {
   const { data: addressData, isLoading: addressLoading } = useGetAllAddress();
   const { data: bookings, isLoading: isBookingsLoading } =
     useGetPaginatedBookingsForCustomer(pagination);
+
   const [resultModalOpen, setResultModalOpen] = React.useState(false);
   const [resultModalData, setResultModalData] = React.useState({
     title: "",
@@ -84,15 +186,22 @@ const ServiceDetail = () => {
     },
   });
 
-  const { data: serviceDetail, isLoading } = useGetDecorServiceById(serviceId);
+  const { data: serviceDetail, isLoading: isServiceLoading } = useGetDecorServiceById(serviceId);
   const { data: favorites, isLoading: isLoadingFavorites } =
     useGetListFavorite();
+
+  const { data: review, isLoading: isReviewsLoading } =
+    useGetListReviewByService(serviceId, {
+      enabled: !!serviceId,
+    });
+
+  const reviewData = review?.data || [];
 
   const { mutate: addFavoriteDecorService, isPending } =
     useAddFavoriteDecorService();
 
   // Use pagination to prevent loading all services at once
-  const { data: listDecorService } = useGetListDecorService({
+  const { data: listDecorService, isLoading: isListLoading } = useGetListDecorService({
     pageIndex: 1,
     pageSize: 10,
     forcePagination: true,
@@ -127,7 +236,6 @@ const ServiceDetail = () => {
     if (!favorites || !serviceId) return false;
     return favorites.some((fav) => fav.decorServiceDetails.id === serviceId);
   }, [favorites, serviceId]);
-
 
   const handleAddToFavorites = () => {
     if (isInFavorites) return;
@@ -198,7 +306,9 @@ const ServiceDetail = () => {
           type: "success",
         });
         setResultModalOpen(true);
-        queryClient.invalidateQueries({ queryKey: ["get_decor_service_by_id"] });
+        queryClient.invalidateQueries({
+          queryKey: ["get_decor_service_by_id"],
+        });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -207,8 +317,11 @@ const ServiceDetail = () => {
     });
   };
 
+  // Show skeleton loading when data is loading
+  const isLoading = isServiceLoading || (!serviceDetail && isListLoading);
+
   if (isLoading) {
-    return <Skeleton variant="rectangular" width="100%" height="100%" />;
+    return <ServiceDetailSkeleton />;
   }
 
   if (!serviceDetail) {
@@ -257,6 +370,7 @@ const ServiceDetail = () => {
                   className="object-cover hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
+                  unoptimized={true}
                 />
               </div>
 
@@ -393,15 +507,17 @@ const ServiceDetail = () => {
               </div>
               {!serviceDetail.isBooked && (
                 <div className="space-y-4">
-                  <Label htmlFor="note">Your requirements for this service</Label>
+                  <Label htmlFor="note">
+                    Your requirements for this service
+                  </Label>
                   <div className="w-full">
-                  <Field>
-                    <Textarea
-                      id="note"
-                      name="note"
-                      {...register("note")}
-                      placeholder="Type something..."
-                      className={`
+                    <Field>
+                      <Textarea
+                        id="note"
+                        name="note"
+                        {...register("note")}
+                        placeholder="Type something..."
+                        className={`
       mt-3 block w-full resize-none rounded-lg border-[1px] 
       border-black dark:border-gray-600 py-1.5 px-3 text-sm/6 
       bg-white dark:bg-gray-800 text-black dark:text-white
@@ -409,8 +525,8 @@ const ServiceDetail = () => {
       focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
       transition duration-200
     `}
-                      rows={7}
-                    />
+                        rows={7}
+                      />
                     </Field>
                   </div>
                 </div>
@@ -420,8 +536,14 @@ const ServiceDetail = () => {
                 {!isServiceProvider ? (
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      label={serviceDetail.isBooked ? "Waiting for confirmation" : "Book now"}
-                      className={`${serviceDetail.isBooked ? "bg-yellow" : "bg-primary"}`}
+                      label={
+                        serviceDetail.isBooked
+                          ? "Waiting for confirmation"
+                          : "Book now"
+                      }
+                      className={`${
+                        serviceDetail.isBooked ? "bg-yellow" : "bg-primary"
+                      }`}
                       icon={
                         serviceDetail.isBooked ? (
                           <CiClock1 size={20} />
@@ -430,7 +552,9 @@ const ServiceDetail = () => {
                         )
                       }
                       disabled={
-                        serviceDetail.isBooked || !selectedAddress || !selectedBookingData
+                        serviceDetail.isBooked ||
+                        !selectedAddress ||
+                        !selectedBookingData
                       }
                       onClick={handleSubmit(onSubmit)}
                     />
@@ -463,12 +587,12 @@ const ServiceDetail = () => {
           <div>
             <div className="space-y-5 mb-5 w-full">
               {serviceDetail.isBooked ? (
-                <BorderBox>
+                <BorderBox className="flex flex-col gap-2">
                   <div className="flex flex-row items-center gap-2 rounded-lg mb-4">
                     <FcFolder size={20} />
                     <FootTypo
                       footlabel="You have a pending booking for this service"
-                      className="!m-0 font-semibold"
+                      className="font-semibold"
                     />
                   </div>
                   <Link
@@ -482,7 +606,7 @@ const ServiceDetail = () => {
                 <>
                   <FootTypo
                     footlabel="Where to survey"
-                    className="!m-0 font-bold text-lg"
+                    className="font-bold text-lg"
                   />
                   {addressLoading ? (
                     <Skeleton height={56} animation="wave" />
@@ -552,44 +676,62 @@ const ServiceDetail = () => {
         />
 
         {/* Ratings Overview */}
-        <OverallRating
-          overallRating={serviceDetail.averageRating || 5.0}
-          cleanliness={5.0}
-          accuracy={5.0}
-          checkIn={5.0}
-          communication={4.9}
-          location={4.9}
-          value={4.8}
-        />
+        {isReviewsLoading ? (
+          <Box className="w-full my-6 pb-6 text-sm border-b border-gray-200 dark:border-gray-700">
+            <Skeleton variant="rectangular" height={180} className="rounded-lg" />
+          </Box>
+        ) : (
+          <OverallRating 
+            overallRating={review?.averageRate || 0} 
+            rateCount={review?.rateCount || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }}
+            totalReviews={review?.totalCount || 0}
+          />
+        )}
       </section>
 
       {/* Full ReviewSection with form (can be kept or removed) */}
       <div className="mt-10">
         <ReviewSection
-          label="Leave a review"
-          reviews={[]}
-          serviceId={serviceId}
-          averageRating={serviceDetail.averageRating || 0}
-          totalReviews={serviceDetail.reviews?.length || 0}
-          onAddReview={({ rating, comment, serviceId }) => {
-            return new Promise((resolve) => {
-              console.log("Submit review:", { rating, comment, serviceId });
-              setTimeout(() => {
-                queryClient.invalidateQueries({
-                  queryKey: ["get_decor_service_by_id", serviceId],
-                });
-                resolve();
-              }, 1000);
-            });
-          }}
+          averageRating={review?.averageRate || 0}
+          totalReviews={review?.totalCount || 0}
         />
       </div>
+      
       {/* Individual Reviews */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mt-8">
-        <ReviewCard />
-        <div className="col-span-2 text-center py-10">
-          <p className="text-gray-500">No reviews yet</p>
-        </div>
+        {isReviewsLoading ? (
+          <>
+            {[1, 2, 3, 4].map((i) => (
+              <Box key={i} className="mb-6">
+                <Box className="flex items-center gap-3 mb-3">
+                  <Skeleton variant="circular" width={48} height={48} />
+                  <Box>
+                    <Skeleton variant="text" width={120} />
+                    <Skeleton variant="text" width={80} />
+                  </Box>
+                </Box>
+                <Skeleton variant="text" width={100} className="mb-2" />
+                <Skeleton variant="rectangular" height={80} className="rounded-lg" />
+              </Box>
+            ))}
+          </>
+        ) : (
+          <DataMapper
+            data={reviewData}
+            Component={ReviewCard}
+            emptyStateComponent={<EmptyState title="No reviews yet" />}
+            getKey={(review) => review.id}
+            componentProps={(review) => ({
+              id: review.id,
+              comment: review.comment,
+              rate: review.rate,
+              createAt: review.createAt,
+              images: review.images?.map((img) => img) || [],
+              username: review.name || "User",
+              userAvatar: review.avatar || "",
+            })}
+          />
+        )}
       </div>
 
       <div className="mt-10">

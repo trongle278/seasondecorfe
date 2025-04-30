@@ -29,6 +29,7 @@ export function useGetAccountDetails(accountId) {
 }
 
 export function useFollow() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ followingId }) => {
       if (!followingId) throw new Error("No followingId provided");
@@ -44,10 +45,14 @@ export function useFollow() {
         nProgress.done();
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+    },
   });
 }
 
 export function useUnfollow() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ followingId }) => {
       if (!followingId) throw new Error("No followingId provided");
@@ -62,6 +67,9 @@ export function useUnfollow() {
       } finally {
         nProgress.done();
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["following"] });
     },
   });
 }

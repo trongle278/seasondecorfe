@@ -20,18 +20,41 @@ import {
   Select,
   MenuItem,
   Skeleton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Rating,
+  TextField,
+  IconButton,
+  Box,
+  Typography,
 } from "@mui/material";
 import Button from "@/app/components/ui/Buttons/Button";
 import { IoFilterOutline } from "react-icons/io5";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import useDeleteConfirmModal from "@/app/hooks/useDeleteConfirmModal";
 import { generateSlug } from "@/app/helpers";
+import { toast } from "sonner";
+import { FaStar } from "react-icons/fa";
+import { MdClose, MdUploadFile } from "react-icons/md";
+import Image from "next/image";
+import { useReviewService } from "@/app/queries/review/review.query";
 
-  
 const BookingRequestPage = () => {
   const router = useRouter();
   const { onOpen, onClose } = useInfoModal();
   const deleteConfirmModal = useDeleteConfirmModal();
+  const { mutate: reviewService, isPending: isReviewing } = useReviewService();
+
+  // Review Modal State
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [currentReviewBooking, setCurrentReviewBooking] = useState(null);
+
   const [filters, setFilters] = useState({
     status: "",
   });
@@ -57,6 +80,51 @@ const BookingRequestPage = () => {
     }));
   };
 
+  // Review Dialog Handlers
+  const handleOpenReviewDialog = (booking) => {
+    setCurrentReviewBooking(booking);
+    setReviewDialogOpen(true);
+  };
+
+  const handleCloseReviewDialog = () => {
+    setReviewDialogOpen(false);
+    // Reset form state
+    setRating(0);
+    setComment("");
+    setSelectedImages([]);
+    setPreviewImages([]);
+    setCurrentReviewBooking(null);
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setSelectedImages([...selectedImages, ...files]);
+
+    // Create previews for the images
+    const newPreviews = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+
+    setPreviewImages([...previewImages, ...newPreviews]);
+  };
+
+  const handleRemoveImage = (index) => {
+    // Release object URL to avoid memory leaks
+    URL.revokeObjectURL(previewImages[index].url);
+
+    // Remove the image from state
+    const newPreviews = [...previewImages];
+    newPreviews.splice(index, 1);
+    setPreviewImages(newPreviews);
+
+    const newSelected = [...selectedImages];
+    newSelected.splice(index, 1);
+    setSelectedImages(newSelected);
+  };
+
   // Status options for the filter
   const statusOptions = [
     { id: "", name: "All" },
@@ -69,11 +137,12 @@ const BookingRequestPage = () => {
     { id: "6", name: "Preparing" },
     { id: "7", name: "In Transit" },
     { id: "8", name: "Progressing" },
-    { id: "9", name: "Final Paid" },
-    { id: "10", name: "Completed" },
-    { id: "11", name: "Pending Cancel" },
-    { id: "12", name: "Cancelled" },
-    { id: "13", name: "Rejected" },
+    { id: "9", name: "All Done" },
+    { id: "10", name: "Final Paid" },
+    { id: "11", name: "Completed" },
+    { id: "12", name: "Pending Cancel" },
+    { id: "13", name: "Cancelled" },
+    { id: "14", name: "Rejected" },
   ];
 
   const {
@@ -152,6 +221,39 @@ const BookingRequestPage = () => {
     </div>
   );
 
+  const handleSubmitReview = () => {
+    if (!currentReviewBooking) return;
+
+    // Create FormData for multipart/form-data request
+    const formData = new FormData();
+
+    // Add required fields
+    formData.append("Rate", rating);
+    formData.append("Comment", comment);
+    formData.append("BookingId", currentReviewBooking.bookingId);
+
+    // Add optional images if present
+    if (selectedImages.length > 0) {
+      selectedImages.forEach((image) => {
+        formData.append("Images", image);
+      });
+    }
+
+    // Use the reviewService hook for creating a new review
+    reviewService(formData, {
+      onSuccess: () => {
+        //toast.success("Thank you for your review!");
+        refetchInitialList();
+        handleCloseReviewDialog();
+      },
+      onError: (error) => {
+        toast.error(
+          error.message || "Failed to submit review. Please try again."
+        );
+      },
+    });
+  };
+
   return (
     <Container>
       <MuiBreadcrumbs />
@@ -225,19 +327,32 @@ const BookingRequestPage = () => {
               isPending: booking.status === 0,
               isPlanning: booking.status === 1,
               isContracting: booking.status === 3,
-              isCanceled: booking.status === 12,
+              isCancelled: booking.status === 13,
               isDepositPaid: booking.status === 5,
               isQuoteExist: booking.isQuoteExisted,
-              isPendingCancel: booking.status === 11,
+              isCompleted: booking.status === 11,
+              isPendingCancel: booking.status === 12,
+              isTracked: booking.isTracked,
+              isSigned: booking.isContractSigned,
               address: booking.address,
+              isReviewed: booking.isReviewed,
               providerAvatar: booking.provider.avatar,
               providerName: booking.provider.businessName,
               serviceName: booking.decorService.style,
+              serviceId: booking.decorService.id,
+              handleReview: () => handleOpenReviewDialog(booking),
+              trackingNavigate: () =>
+                router.push(
+                  `progress/${booking.bookingCode}?is-tracked=${booking.isTracked}&status=${booking.status}&quotation-code=${booking.quotationCode}&provider=${booking.provider.businessName}&avatar=${booking.provider.avatar}&is-reviewed=${booking.isReviewed}`
+                ),
 
               detailClick: () =>
                 onOpen({
                   isBooking: true,
-                  viewService: () => router.push(`/booking/${generateSlug(booking.decorService.style)}`),
+                  viewService: () =>
+                    router.push(
+                      `/booking/${generateSlug(booking.decorService.style)}`
+                    ),
                   buttonLabel: "Done",
                   title: "Booking Details",
                   bookingCode: booking.bookingCode,
@@ -255,7 +370,12 @@ const BookingRequestPage = () => {
                     onClose();
                   },
                 }),
-                cancelClick: () => deleteConfirmModal.onOpen(booking.bookingCode, booking.bookingCode, 'request'),
+              cancelClick: () =>
+                deleteConfirmModal.onOpen(
+                  booking.bookingCode,
+                  booking.bookingCode,
+                  "request"
+                ),
             })}
           />
 
@@ -288,6 +408,124 @@ const BookingRequestPage = () => {
           )}
         </>
       )}
+
+      {/* Review Dialog */}
+      <Dialog open={reviewDialogOpen} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <div className="flex justify-between items-center">
+            <Typography variant="h6" component="div">
+              Rate Your Experience with{" "}
+              <span className="font-bold">
+                {currentReviewBooking?.provider?.businessName}
+              </span>
+            </Typography>
+            <IconButton onClick={handleCloseReviewDialog}>
+              <MdClose />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent dividers>
+          <div className="space-y-6">
+            <div className="flex flex-col items-center">
+              <Typography component="legend" className="mb-2 text-center">
+                How would you rate your experience?
+              </Typography>
+              <Rating
+                name="service-rating"
+                value={rating}
+                onChange={(event, newValue) => {
+                  setRating(newValue);
+                }}
+                precision={1}
+                className="space-x-2"
+                icon={<FaStar className="text-amber-400" fontSize="inherit" />}
+                emptyIcon={
+                  <FaStar className="text-gray-300" fontSize="inherit" />
+                }
+                size="large"
+              />
+            </div>
+
+            <div>
+              <Typography component="legend" className="mb-2">
+                Share your thoughts about the service
+                <span className="font-bold ml-2">
+                  {currentReviewBooking?.decorService?.style}
+                </span>
+              </Typography>
+              <TextField
+                autoFocus
+                id="comment"
+                multiline
+                rows={4}
+                fullWidth
+                placeholder="Tell provider what you liked or didn't like about this service..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                variant="outlined"
+              />
+            </div>
+
+            <div>
+              <Typography component="legend" className="mb-2">
+                Add Photos
+              </Typography>
+              <div className="flex flex-wrap gap-2 my-2">
+                {previewImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <div className="h-24 w-24 relative overflow-hidden rounded-lg">
+                      <Image
+                        src={image.url}
+                        alt={`Preview ${index}`}
+                        className="object-cover"
+                        fill
+                        sizes="96px"
+                        unoptimized={false}
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                      aria-label="Remove image"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <Box
+                  component="label"
+                  htmlFor="upload-image"
+                  className="h-24 w-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                >
+                  <MdUploadFile size={24} />
+                  <Typography variant="caption">Add Photo</Typography>
+                  <input
+                    id="upload-image"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </Box>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button label="Cancel" onClick={handleCloseReviewDialog} />
+
+          <Button
+            label={isReviewing ? "Submitting..." : "Submit Review"}
+            isLoading={isReviewing}
+            onClick={handleSubmitReview}
+            disabled={!comment.trim() || rating === 0}
+            className={`${
+              !comment.trim() || rating === 0 ? "bg-gray-400" : "bg-primary"
+            } text-white`}
+          />
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

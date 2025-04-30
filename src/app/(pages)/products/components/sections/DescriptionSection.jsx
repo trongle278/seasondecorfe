@@ -9,7 +9,7 @@ const DescrriptionSection = ({ description }) => {
       <section className="px-3 pt-3 whitespace-pre-line">
         <FootTypo
           footlabel="DESCRIPTION"
-          className="text-lg !mx-0 font-semibold p-3 bg-gray-50 capitalize w-full dark:bg-zinc-800"
+          className="text-lg !mx-0 font-semibold p-2 bg-primary rounded-lg capitalize w-full"
         />
         <div className="mt-3 mx-3 mb-3">{description}</div>
       </section>

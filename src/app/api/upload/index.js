@@ -1,6 +1,5 @@
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryClient } from "@/app/providers/providers";
 
 const SUB_URL = `api/AccountProfile`;
 

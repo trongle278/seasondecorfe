@@ -8,6 +8,18 @@ import { IoIosRemove } from "react-icons/io";
 import { formatCurrency } from "@/app/helpers";
 import { AiOutlineStop } from "react-icons/ai";
 
+// Define measurement unit options
+const UNIT_OPTIONS = [
+  { value: "m²", label: "Square meters (m²)" },
+  { value: "m", label: "Meters (m)" },
+  { value: "cm", label: "Centimeters (cm)" },
+  { value: "m³", label: "Cubic meters (m³)" },
+  { value: "L", label: "Liters (L)" },
+  { value: "kg", label: "Kilograms (kg)" },
+  { value: "lux", label: "Lumens per square meter (lux)" },
+  { value: "pcs", label: "Pieces" },
+];
+
 const LabourTab = ({
   constructionTasks,
   onTaskChange,
@@ -88,17 +100,22 @@ const LabourTab = ({
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Input
+                      <select
                         id={`constructionTasks.${index}.unit`}
                         name={`constructionTasks.${index}.unit`}
                         value={task.unit || ""}
                         onChange={(e) =>
                           onTaskChange(index, "unit", e.target.value)
                         }
-                        className="pl-3"
-                        placeholder="Unit"
-                        register={() => ({})}
-                      />
+                        className="pl-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full"
+                      >
+                        <option value="" disabled>Select unit</option>
+                        {UNIT_OPTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Input

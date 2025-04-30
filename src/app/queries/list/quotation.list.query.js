@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import BaseRequest from "@/app/lib/api/config/Axios-config";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -93,7 +93,8 @@ export function useGetListQuotationForProvider(paginationParams = {}) {
 }
 
 export function useGetListRelatedProduct(paginationParams = {}, quotationCode, isStatusChecked = false) {
-  const shouldFetchRelatedProduct = useSelector((state) => state.quotation.quotationExisted);
+  const isQuoteExisted = useSelector((state) => state.quotation.quotationExisted);
+  const isQuoteConfirmed = useSelector((state) => state.quotation.quotationConfirmed);
   const params = {
     ...defaultPagination,
     ...paginationParams,
@@ -120,6 +121,6 @@ export function useGetListRelatedProduct(paginationParams = {}, quotationCode, i
         nProgress.done();
       }
     },
-    enabled: isStatusChecked && !!shouldFetchRelatedProduct,
+    enabled: isStatusChecked && !!isQuoteExisted && !isQuoteConfirmed,
   });
 }

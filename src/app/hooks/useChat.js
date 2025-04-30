@@ -3,14 +3,14 @@ import { create } from "zustand";
 const useChat = create((set, get) => ({
   
   conversations: {},
-  selectedProvider: null,
-  setSelectedProvider: (provider) => set({ selectedProvider: provider }),
-  addMessage: (providerId, message) => {
+  selectedReceiver: null,
+  setSelectedReceiver: (receiver) => set({ selectedReceiver: receiver }),
+  addMessage: (receiverId, message) => {
     set((state) => ({
       conversations: {
         ...state.conversations,
-        [providerId]: [
-          ...(state.conversations[providerId] || []),
+        [receiverId]: [
+          ...(state.conversations[receiverId] || []),
           {
             ...message,
             id: Date.now(),
@@ -20,9 +20,9 @@ const useChat = create((set, get) => ({
       },
     }));
   },
-  getConversation: (providerId) => {
+  getConversation: (receiverId) => {
     const state = get();
-    return state.conversations[providerId] || [];
+    return state.conversations[receiverId] || [];
   },
 }));
 

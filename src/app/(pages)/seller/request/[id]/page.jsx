@@ -1,13 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SellerWrapper from "../../components/SellerWrapper";
 import { TbArrowLeft } from "react-icons/tb";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { useRouter } from "next/navigation";
 import Avatar from "@/app/components/ui/Avatar/Avatar";
 import { useParams } from "next/navigation";
-import { useGetBookingDetailForProvider } from "@/app/queries/book/book.query";
+import {
+  useGetBookingDetailForProvider,
+  useApproveCancelRequest,
+  useRevokeCancelRequest,
+} from "@/app/queries/book/book.query";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { Skeleton } from "@mui/material";
 import { formatDate } from "@/app/helpers";
@@ -22,20 +26,75 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoLocationOutline } from "react-icons/io5";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { formatCurrency } from "@/app/helpers";
-
+import { useGetPendingCancelByBookingCode } from "@/app/queries/book/book.query";
+import { Textarea } from "@headlessui/react";
+import useChatBox from "@/app/hooks/useChatBox";
+import useChat from "@/app/hooks/useChat";
+import { useAddContact } from "@/app/queries/contact/contact.query";
 
 const RequestDetail = () => {
   const router = useRouter();
   const { id } = useParams();
-  const { data: bookingsData, isLoading } = useGetBookingDetailForProvider(id);
+  const [shouldFetch, setShouldFetch] = useState(false);
 
-  if (isLoading) {
+  const addContactMutation = useAddContact();
+
+  const { onOpen } = useChatBox();
+  const { setSelectedReceiver } = useChat();
+
+  const { data: bookingsData, isLoading: isBookingLoading } =
+    useGetBookingDetailForProvider(id);
+
+  useEffect(() => {
+    if (bookingsData?.status === 12) {
+      setShouldFetch(true);
+    }
+  }, [bookingsData]);
+
+  const { data: cancelDetails, isLoading: isCancelDetailsLoading } =
+    useGetPendingCancelByBookingCode(id, shouldFetch);
+
+  const {
+    mutate: approveCancelRequest,
+    isPending: isApproveCancelRequestPending,
+  } = useApproveCancelRequest();
+  const {
+    mutate: revokeCancelRequest,
+    isPending: isRevokeCancelRequestPending,
+  } = useRevokeCancelRequest();
+
+  if (isBookingLoading || isCancelDetailsLoading) {
     return (
       <SellerWrapper>
         <Skeleton />
       </SellerWrapper>
     );
   }
+
+  const handleApproveCancelRequest = () => {
+    approveCancelRequest(id);
+  };
+
+  const handleRevokeCancelRequest = () => {
+    revokeCancelRequest(id);
+  };
+
+  const handleChatClick = (receiver) => {
+    const receiverData = {
+      contactId: receiver.id,
+      contactName: receiver.businessName,
+      avatar: receiver.avatar,
+    };
+    addContactMutation.mutate(receiver.id, {
+      onSuccess: () => {
+        setSelectedReceiver(receiverData);
+        onOpen();
+      },
+      onError: (error) => {
+        console.error("Error adding contact:", error);
+      },
+    });
+  };
 
   return (
     <SellerWrapper>
@@ -57,7 +116,10 @@ const RequestDetail = () => {
           </div>
           <div className="flex flex-row gap-3 items-center">
             <CgCalendarDates size={20} />
-            <FootTypo footlabel="Requested survey date" className="!m-0 text-sm" />
+            <FootTypo
+              footlabel="Requested survey date"
+              className="!m-0 text-sm"
+            />
             <FootTypo
               footlabel={formatDate(bookingsData.surveyDate)}
               className="!m-0"
@@ -73,7 +135,7 @@ const RequestDetail = () => {
           <div className="flex flex-row gap-3 items-center">
             <HiOutlineStatusOnline size={20} />
             <FootTypo footlabel="Status" className="!m-0 text-sm" />
-            <StatusChip status={bookingsData.status} isBooking={true}/>
+            <StatusChip status={bookingsData.status} isBooking={true} />
           </div>
         </BorderBox>
         <BorderBox className="flex flex-col gap-2 border shadow-xl">
@@ -107,13 +169,88 @@ const RequestDetail = () => {
             />
           </div>
           <Button
+            onClick={()=> handleChatClick(bookingsData.customer)}
             icon={<RiMessage2Line size={20} />}
             label="Send Message"
-            className="w-fit bg-primary text-white"
+            className="w-fit bg-primary"
           />
         </BorderBox>
       </div>
-      <BorderBox className="flex flex-col gap-2 border shadow-xl w-full col-span-2 font-semibold">
+      {bookingsData.status === 12 ? (
+        <BorderBox className="flex flex-col gap-2 border shadow-xl w-full col-span-2 font-semibold">
+          <FootTypo
+            footlabel="Cancellation Request"
+            className="!m-0 text-lg text-red-500"
+          />
+          <div className="flex flex-row gap-3 items-center">
+            <FootTypo footlabel="Requested on:" className="!m-0 text-sm" />
+            <FootTypo
+              footlabel={formatDate(cancelDetails?.createdAt)}
+              className="!m-0"
+            />
+          </div>
+          <div className="flex justify-between mt-2 p-4 bg-rose-50 dark:bg-rose-900/10 rounded-lg border border-red font-semibold">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <PiSealWarning size={24} />
+                <FootTypo
+                  footlabel="Reason for Cancellation"
+                  className="!m-0 text-sm"
+                />
+                <FootTypo
+                  footlabel={
+                    cancelDetails?.cancelTypeName ||
+                    "No specific reason provided by the customer."
+                  }
+                  className="!m-0 text-lg"
+                />
+              </div>
+              <div className="ml-9 py-2 border-t">
+                <FootTypo
+                  footlabel="Customer's Explaination"
+                  className="!m-0 text-sm"
+                />
+                <Textarea
+                  as="textarea"
+                  name="note"
+                  value={cancelDetails?.cancelReason}
+                  className="block w-full resize-none rounded-2xl bg-gray-100 dark:bg-gray-700
+      border border-transparent py-3 px-4  text-gray-800 dark:text-white
+      placeholder-gray-400 dark:placeholder-gray-500
+      focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white
+      transition duration-300 whitespace-pre-wrap shadow-sm"
+                  placeholder="No explaination provided."
+                  rows={5}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-row gap-3 items-center">
+              <Button
+                label="Approve"
+                onClick={handleApproveCancelRequest}
+                isLoading={isApproveCancelRequestPending}
+              />
+              <Button
+                label="Reject"
+                className="bg-red text-white"
+                onClick={handleRevokeCancelRequest}
+                isLoading={isRevokeCancelRequestPending}
+              />
+            </div>
+          </div>
+        </BorderBox>
+      ) : bookingsData.status === 13 ? (
+        <div className="flex flex-col gap-2 border border-red rounded-xl p-4 shadow-xl w-full col-span-2 font-semibold">
+          <FootTypo
+            footlabel="The request is closed"
+            className="!m-0 text-lg self-center"
+          />
+        </div>
+      ) : (
+        <BorderBox className="flex flex-col gap-2 border shadow-xl w-full col-span-2 font-semibold">
           <FootTypo footlabel="Service Details" className="!m-0 text-lg" />
           <div className="flex flex-row gap-3 items-center">
             <FootTypo footlabel="Service name" className="!m-0 text-sm" />
@@ -133,10 +270,13 @@ const RequestDetail = () => {
           {bookingsData.bookingDetails.length > 0 ? (
             <div className="flex flex-col gap-4 ">
               {bookingsData.bookingDetails.map((detail, index) => (
-                <div key={detail.id} className="flex flex-col gap-2 p-4 rounded-lg">
+                <div
+                  key={detail.id}
+                  className="flex flex-col gap-2 p-4 rounded-lg"
+                >
                   <div className="flex justify-between items-center">
-                    <FootTypo 
-                      footlabel={detail.serviceItem} 
+                    <FootTypo
+                      footlabel={detail.serviceItem}
                       className="!m-0 font-semibold text-primary"
                     />
                   </div>
@@ -146,20 +286,6 @@ const RequestDetail = () => {
                       footlabel={formatCurrency(detail.cost)}
                       className="!m-0 font-semibold text-lg"
                     />
-                  </div>
-                  <div className="flex flex-row gap-3 items-center">
-                    <FootTypo footlabel="Estimated Completion:" className="!m-0 text-sm" />
-                    {bookingsData.status === 7 ? (
-                    <FootTypo
-                      footlabel={formatDate(detail.estimatedCompletion)}
-                      className="!m-0 text-sm"
-                    />
-                    ): (
-                      <FootTypo
-                        footlabel="Updating ..."
-                        className="!m-0 text-lg animate-pulse"
-                      />
-                    )}
                   </div>
                 </div>
               ))}
@@ -174,6 +300,7 @@ const RequestDetail = () => {
             </div>
           )}
         </BorderBox>
+      )}
     </SellerWrapper>
   );
 };

@@ -9,10 +9,26 @@ import {
   IconReceipt,
   IconBrandTabler,
   IconChartBarPopular,
-  IconMessages,
-  IconSettings
+  IconSettings,
 } from "@tabler/icons-react";
 import { cn } from "@/app/utils/Utils";
+import ScrollToTop from "@/app/components/ScrollToTop";
+import { usePathname } from "next/navigation";
+
+const SidebarLinkWithActiveState = ({ link }) => {
+  const pathname = usePathname();
+  const isActive = pathname.startsWith(link.href);
+
+  return (
+    <SidebarLink
+      link={link}
+      className={cn(
+        isActive &&
+          "font-bold text-primary bg-primary/10 border-r-2 border-primary"
+      )}
+    />
+  );
+};
 
 export default function AdminWrapper({ children }) {
   const links = [
@@ -49,12 +65,13 @@ export default function AdminWrapper({ children }) {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <div className="mt-8 flex flex-col gap-4">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+                <SidebarLinkWithActiveState key={idx} link={link} />
               ))}
             </div>
           </div>
         </SidebarBody>
       </Sidebar>
+      <ScrollToTop />
       <Dashboard props={children} />
     </div>
   );

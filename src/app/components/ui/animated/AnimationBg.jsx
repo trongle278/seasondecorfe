@@ -49,9 +49,5 @@ export const EffectBackground = ({
 };
 
 export const AnimationBackground = ({ children }) => {
-  return (
-    <EffectBackground>
-      <div className="dark:text-white">{children}</div>
-    </EffectBackground>
-  );
+  return <EffectBackground>{children}</EffectBackground>;
 };

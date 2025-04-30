@@ -4,19 +4,16 @@ import {
   MdBed,
   MdChair,
   MdTableRestaurant,
-  MdOutlineDeck,
 } from "react-icons/md";
 import {
   GiLockedChest,
   GiSofa,
   GiBookshelf,
-  GiTrophyCup,
 } from "react-icons/gi";
 import { PiDesk } from "react-icons/pi";
 import { GiHanger } from "react-icons/gi";
 import { BiCabinet, BiCloset } from "react-icons/bi";
-import { FaCouch, FaBath, FaChair, FaUtensils } from "react-icons/fa";
-import { RiComputerLine, RiSheoLine } from "react-icons/ri";
+import { FaCouch, FaBath } from "react-icons/fa";
 import CategoryBox from "./CategoryBox";
 import { useSearchParams, useRouter } from "next/navigation";
 import { HeadTypo, BodyTypo } from "../../Typography";

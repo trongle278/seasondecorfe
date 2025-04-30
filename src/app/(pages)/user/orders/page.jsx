@@ -6,7 +6,7 @@ import PendingTab from "./pending/page";
 
 export default function UserOrder() {
   return (
-    <div className="rounded-xl bg-transparent p-3">
+    <div className="rounded-xl bg-transparent">
       <AllTabs />
     </div>
   );

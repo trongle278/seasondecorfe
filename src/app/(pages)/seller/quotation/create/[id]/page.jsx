@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import SellerWrapper from "../../../components/SellerWrapper";
 import { FootTypo } from "@/app/components/ui/Typography";
 import Button from "@/app/components/ui/Buttons/Button";
-import { MdAdd, MdDelete, MdModeEdit, MdPreview } from "react-icons/md";
+import { MdModeEdit, MdPreview } from "react-icons/md";
 import { IoDownloadOutline } from "react-icons/io5";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { useForm } from "react-hook-form";
@@ -27,6 +27,7 @@ const QuotationPage = () => {
   const searchParams = useSearchParams();
   const fullName = searchParams.get("fullName") || "";
   const email = searchParams.get("email") || "";
+  const address = searchParams.get("address") || "";
 
   const { mutate: createQuotation, isLoading: isCreatingQuotation } =
     useCreateQuotation();
@@ -34,13 +35,13 @@ const QuotationPage = () => {
     useUploadQuotationFile();
 
   const [showEditor, setShowEditor] = useState(true);
-  const [activeTab, setActiveTab] = useState("Information");
   const [isPdfReady, setIsPdfReady] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [quotationData, setQuotationData] = useState({
     quotationCode: id,
     customerName: fullName || "John Doe",
     customerEmail: email || "john.doe@example.com",
+    customerAddress: address || "123 Main St, Anytown, USA",
     terms:
       "Payment due within 30 days. Cancelation policy: 50% refund if canceled 30 days before the event.",
     materials: [
@@ -66,8 +67,6 @@ const QuotationPage = () => {
     handleSubmit,
     setValue,
     getValues,
-    watch,
-    formState: { errors },
     control,
   } = useForm({
     defaultValues: {},
@@ -373,7 +372,7 @@ const QuotationPage = () => {
         depositPercentage: depositPercentage,
       };
 
-      console.log("Submitting payload:", quotationPayload);
+     // console.log("Submitting payload:", quotationPayload);
 
       // First API call: Create quotation
       createQuotation(quotationPayload, {
@@ -509,6 +508,7 @@ const QuotationPage = () => {
                   isUploadingFile ||
                   !isQuotationValid()
                 }
+                isLoading={isProcessing}
               />
 
               {!isQuotationValid() &&
@@ -608,6 +608,10 @@ const QuotationPage = () => {
                       <div className="flex flex-row gap-3 items-center">
                         <FootTypo footlabel="Email" className="!m-0 text-sm" />
                         <FootTypo footlabel={email} className="!m-0 text-lg" />
+                      </div>
+                      <div className="flex flex-row gap-3 items-center">
+                        <FootTypo footlabel="Address" className="!m-0 text-sm" />
+                        <FootTypo footlabel={address} className="!m-0 text-lg" />
                       </div>
                     </div>
                   </TabPanel>

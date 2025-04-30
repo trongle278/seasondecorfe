@@ -29,8 +29,11 @@ export function useCreateOrder() {
         nProgress.done();
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get_list_cart"], queryKey: ["order_list"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["get_list_cart"]}),
+        queryClient.invalidateQueries({ queryKey: ["order_list"]}),
+      ]);
     },
   });
 }
@@ -67,9 +70,12 @@ export function usePayOrder() {
         nProgress.done();
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["order_list"], queryKey: ["get_wallet"] });
-
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["order_list"] }),
+        queryClient.invalidateQueries({ queryKey: ["get_wallet"] }),
+        queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+      ]);
     },
   });
 }

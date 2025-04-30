@@ -6,10 +6,8 @@ import Avatar from "@/app/components/ui/Avatar/Avatar";
 import { FootTypo } from "@/app/components/ui/Typography";
 import { MdEdit } from "react-icons/md";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { IoNotificationsSharp } from "react-icons/io5";
-import Sidebar from "./UserSidebar";
 import { usePathname } from "next/navigation";
+import Sidebar from "./UserSidebar";
 import { BorderBox } from "@/app/components/ui/BorderBox";
 import { useSession } from "next-auth/react";
 import { useGetAccountDetails } from "@/app/queries/user/user.query";
@@ -19,10 +17,9 @@ export const UserWrapper = ({ children }) => {
   const {data: session} = useSession();
   const accountId = session?.accountId;
 
-  const { data: account, isLoading: isFetchingAccount } = useGetAccountDetails(accountId);
+  const { data: account} = useGetAccountDetails(accountId);
 
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <>

@@ -7,8 +7,6 @@ import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { addDays, format } from "date-fns";
-import Button from "@/app/components/ui/Buttons/Button";
-import { IoCalendarOutline } from "react-icons/io5";
 
 // Custom styles to override default react-date-range styles
 export const customCalendarStyles = `

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { EditorContent } from "@tiptap/react";
 import { IoSend, IoClose, IoEyeSharp } from "react-icons/io5";
 import { BsImage } from "react-icons/bs";
-import { AiOutlineFileGif } from "react-icons/ai";
 import { ImAttachment } from "react-icons/im";
 import { GoDownload } from "react-icons/go";
 import { FaFilePdf } from "react-icons/fa6";
 import { LuCheck } from "react-icons/lu";
 import { CgSpinner } from "react-icons/cg";
 import fileDownload from "js-file-download";
+import Image from "next/image";
+import { BsPersonCircle } from "react-icons/bs";
 
 const ChatView = ({
   messages = [],
@@ -23,6 +24,7 @@ const ChatView = ({
   handleSendMessage,
   messagesEndRef,
   isLoading,
+  selectedReceiver,
 }) => {
   const [downloadingFiles, setDownloadingFiles] = useState({});
 
@@ -37,28 +39,28 @@ const ChatView = ({
 
   const getFileIcon = (fileName) => {
     if (isPdfFile(fileName))
-      return <BsFilePdf className="text-red-500" size={18} />;
+      return <FaFilePdf className="text-red-500" size={18} />;
     return <ImAttachment size={18} />;
   };
-  
+
   const handleDownloadFile = async (fileUrl, fileName, fileId) => {
     try {
       // Set downloading state for this file
-      setDownloadingFiles(prev => ({ ...prev, [fileId]: true }));
-      
+      setDownloadingFiles((prev) => ({ ...prev, [fileId]: true }));
+
       const response = await fetch(fileUrl);
-      if (!response.ok) throw new Error('Network response was not ok');
-      
+      if (!response.ok) throw new Error("Network response was not ok");
+
       // For large files, this might take some time
       const blob = await response.blob();
       fileDownload(blob, fileName);
     } catch (error) {
       console.error("Error downloading file:", error);
       // Fallback to direct download if fetch fails
-      window.open(fileUrl, '_blank');
+      window.open(fileUrl, "_blank");
     } finally {
       // Clear downloading state
-      setDownloadingFiles(prev => ({ ...prev, [fileId]: false }));
+      setDownloadingFiles((prev) => ({ ...prev, [fileId]: false }));
     }
   };
 
@@ -79,10 +81,30 @@ const ChatView = ({
                   msg.senderId === user?.id ? "justify-end" : "justify-start"
                 } mb-4`}
               >
+                {/* Receiver Avatar */}
+                {msg.senderId !== user?.id && (
+                  <div className="flex-shrink-0 mr-2">
+                    <div className="w-8 h-8 rounded-full overflow-hidden relative">
+                      {selectedReceiver?.avatar ? (
+                        <Image 
+                          src={selectedReceiver.avatar} 
+                          alt={selectedReceiver.contactName || "Contact"}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <BsPersonCircle size={20} className="text-gray-500" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div
                   className={`max-w-[250px] rounded-lg p-3 break-words whitespace-pre-wrap ${
                     msg.senderId === user?.id
-                      ? "bg-primary"
+                      ? "bg-primary text-white"
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
@@ -97,12 +119,9 @@ const ChatView = ({
                       {msg.files.map((file, fileIndex) => {
                         const fileId = `${msg.id}-${file.fileId || fileIndex}`;
                         const isDownloading = downloadingFiles[fileId];
-                        
+
                         return (
-                          <div
-                            key={fileId}
-                            className="flex flex-col gap-2"
-                          >
+                          <div key={fileId} className="flex flex-col gap-2">
                             {isImageFile(file.fileName) ? (
                               <div className="relative group">
                                 <img
@@ -120,26 +139,36 @@ const ChatView = ({
                             ) : isPdfFile(file.fileName) ? (
                               <div className="bg-white/10 p-3 rounded-lg border border-gray-200">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <FaFilePdf className="text-red-500" size={20} />
+                                  <FaFilePdf
+                                    className="text-red-500"
+                                    size={20}
+                                  />
                                   <span className="text-xs font-medium truncate max-w-[180px]">
                                     {file.fileName}
                                   </span>
                                 </div>
                                 <div className="flex gap-2">
                                   <button
-                                    onClick={() => 
-                                      handleDownloadFile(file.fileUrl, file.fileName, fileId)
+                                    onClick={() =>
+                                      handleDownloadFile(
+                                        file.fileUrl,
+                                        file.fileName,
+                                        fileId
+                                      )
                                     }
                                     disabled={isDownloading}
                                     className={`flex items-center gap-1 ${
-                                      isDownloading 
-                                        ? "bg-gray-200 text-gray-500" 
+                                      isDownloading
+                                        ? "bg-gray-200 text-gray-500"
                                         : "bg-gray-100 hover:bg-gray-200 text-gray-800"
                                     } text-xs py-1 px-2 rounded transition-colors`}
                                   >
                                     {isDownloading ? (
                                       <>
-                                        <CgSpinner size={12} className="animate-spin" />
+                                        <CgSpinner
+                                          size={12}
+                                          className="animate-spin"
+                                        />
                                         Downloading...
                                       </>
                                     ) : (
@@ -198,6 +227,26 @@ const ChatView = ({
                     )}
                   </div>
                 </div>
+
+                {/* Sender Avatar */}
+                {msg.senderId === user?.id && (
+                  <div className="flex-shrink-0 ml-2">
+                    <div className="w-8 h-8 rounded-full overflow-hidden relative">
+                      {user?.avatar ? (
+                        <Image 
+                          src={user.avatar} 
+                          alt={user.name || "You"}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-primary/20 flex items-center justify-center">
+                          <BsPersonCircle size={20} className="text-primary" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           ) : (
@@ -284,18 +333,6 @@ const ChatView = ({
                   disabled={isUploading}
                 >
                   <BsImage
-                    size={18}
-                    className={`text-gray-500 ${
-                      isUploading ? "opacity-50" : ""
-                    }`}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                  disabled={isUploading}
-                >
-                  <AiOutlineFileGif
                     size={18}
                     className={`text-gray-500 ${
                       isUploading ? "opacity-50" : ""

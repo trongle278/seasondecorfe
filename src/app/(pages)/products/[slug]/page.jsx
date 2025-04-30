@@ -10,7 +10,6 @@ import Button from "@/app/components/ui/Buttons/Button";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { AiOutlineShop } from "react-icons/ai";
 import { BorderBox } from "@/app/components/ui/BorderBox";
-import DetailSection from "../components/sections/DetailSection";
 import DescrriptionSection from "../components/sections/DescriptionSection";
 import ExampleNumberField from "@/app/components/ui/Select/NumberField";
 import ReviewSection from "@/app/components/ui/review/ReviewSection";
@@ -40,6 +39,12 @@ import {
   useRemoveFavoriteDecorProduct,
 } from "@/app/queries/favorite/favorit.query";
 import { useGetListFavoriteProduct } from "@/app/queries/list/favorite.list.query";
+import { useGetListReviewByProduct } from "@/app/queries/list/review.list.query";
+import { Box, Skeleton } from "@mui/material";
+import OverallRating from "@/app/components/ui/review/OverallRating";
+import ReviewCard from "@/app/components/ui/card/ReviewCard";
+import DataMapper from "@/app/components/DataMapper";
+import EmptyState from "@/app/components/EmptyState";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -67,6 +72,15 @@ const ProductDetail = () => {
     if (!favorites || !productId) return false;
     return favorites.some((fav) => fav.productDetail.id === productId);
   }, [favorites, productId]);
+
+  const { data: reviewData, isLoading: isReviewsLoading } = useGetListReviewByProduct(productId, {
+    pageIndex: 1,
+    pageSize: 10,
+  }, {
+    enabled: !!productId
+  });
+
+  const reviews = reviewData?.data || [];
 
   useEffect(() => {
     if (productsData && productsData.data && Array.isArray(productsData.data)) {
@@ -191,9 +205,9 @@ const ProductDetail = () => {
                   <div className="inline-flex">
                     <div className="flex gap-2 items-center border-l-[1px] px-5">
                       <button className="underline" onClick={handleRatingClick}>
-                        {productDetail.totalRate === 0
+                        {productDetail.totalCount === 0
                           ? "No Rating Yet"
-                          : `${productDetail.totalRate} Ratings`}
+                          : `${reviewData.totalCount} Ratings`}
                       </button>
                     </div>
                     <div className="flex gap-2 items-center border-l-[1px] px-5">
@@ -375,25 +389,78 @@ const ProductDetail = () => {
           </div>
         </BorderBox>
         <DescrriptionSection description={productDetail.description} />
-        {/* Review Section */}
-        <ReviewSection
-          label="PRODUCT REVIEWS"
-          reviews={productDetail.reviews || []}
-          productId={productDetail.id}
-          averageRating={productDetail.averageRating || 0}
-          totalReviews={productDetail.reviews?.length || 0}
-          onAddReview={({ rating, comment, productId }) => {
-            return new Promise((resolve) => {
-              console.log("Submit review:", { rating, comment, productId });
-              setTimeout(() => {
-                queryClient.invalidateQueries({
-                  queryKey: ["get_product_by_id", productId],
-                });
-                resolve();
-              }, 1000);
-            });
-          }}
-        />
+        
+        {/* Ratings and Reviews Section */}
+        <section className="mt-16 border-t pt-8 relative">
+          <FootTypo
+            footlabel="Ratings and Reviews"
+            className="!m-0 text-2xl font-bold mb-8 absolute top-[-25px] left-1/2 -translate-x-1/2 bg-gray-100 dark:bg-black p-2 rounded-xl"
+          />
+
+          {/* Ratings Overview */}
+          {isReviewsLoading ? (
+            <Box className="w-full my-6 pb-6 text-sm border-b border-gray-200 dark:border-gray-700">
+              <Skeleton variant="rectangular" height={180} className="rounded-lg" />
+            </Box>
+          ) : (
+            <OverallRating 
+              overallRating={reviewData?.averageRate || 0} 
+              rateCount={{ 
+                5: reviewData?.rateCount?.[5] || 0, 
+                4: reviewData?.rateCount?.[4] || 0, 
+                3: reviewData?.rateCount?.[3] || 0, 
+                2: reviewData?.rateCount?.[2] || 0, 
+                1: reviewData?.rateCount?.[1] || 0 
+              }}
+              totalReviews={reviewData?.totalCount || 0}
+            />
+          )}
+        </section>
+
+        {/* Overview ReviewSection */}
+        <div className="mt-10">
+          <ReviewSection
+            averageRating={reviewData?.averageRate || 0}
+            totalReviews={reviewData?.totalCount || 0}
+          />
+        </div>
+        
+        {/* Individual Reviews */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mt-8">
+          {isReviewsLoading ? (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <Box key={i} className="mb-6">
+                  <Box className="flex items-center gap-3 mb-3">
+                    <Skeleton variant="circular" width={48} height={48} />
+                    <Box>
+                      <Skeleton variant="text" width={120} />
+                      <Skeleton variant="text" width={80} />
+                    </Box>
+                  </Box>
+                  <Skeleton variant="text" width={100} className="mb-2" />
+                  <Skeleton variant="rectangular" height={80} className="rounded-lg" />
+                </Box>
+              ))}
+            </>
+          ) : (
+            <DataMapper
+              data={reviews}
+              Component={ReviewCard}
+              emptyStateComponent={<EmptyState title="No reviews yet" />}
+              getKey={(review) => review.id}
+              componentProps={(review) => ({
+                id: review.id,
+                comment: review.comment,
+                rate: review.rate,
+                createAt: review.createAt,
+                images: review.images?.map((img) => img) || [],
+                username: review.name || "User",
+                userAvatar: review.avatar || "",
+              })}
+            />
+          )}
+        </div>
       </Container>
     </>
   );

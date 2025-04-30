@@ -3,7 +3,6 @@ import Cookies from "js-cookie";
 
 import { toast } from "sonner";
 import { getSession, signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
 
 export const BASE_URL = "http://localhost:5297";
 
