@@ -2,10 +2,8 @@
 
 import React from "react";
 
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
 import Link from "next/link";
 import Input from "@/app/components/ui/inputs/Input";
 import { useForm } from "react-hook-form";
@@ -19,7 +17,7 @@ import { useLogin } from "@/app/queries/user/authen.query";
 
 export default function Login() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+
   const mutateLogin = useLogin();
   const {
     register,
